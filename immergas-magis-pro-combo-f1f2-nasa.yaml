@@ -14,8 +14,8 @@
 # This config never writes. With transmit: true it only sends READ requests for the FSV values.
 
 substitutions:
-  device_name: immergas-f1f2-nasa
-  friendly_name: Immergas F1F2 NASA
+  device_name: immergas-f1f2-atom      # hostname, max 31 characters
+  friendly_name: Immergas F1-F2 Atom
   # Entity language: en | pl   (one line - see TRANSLATING.md to add yours)
   language: en
 
