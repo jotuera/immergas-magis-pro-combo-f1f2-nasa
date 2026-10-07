@@ -50,7 +50,6 @@ def _extra(config):
             raise cv.Invalid(f"Unknown FSV {code}", [CONF_FSV])
         e = FSV[code]
         d["name"] = fsv_name(code)
-        d["entity_category"] = "diagnostic"
         d["icon"] = "mdi:cog-outline"
         if "unit" in e:
             d["unit_of_measurement"] = e["unit"]
@@ -61,6 +60,8 @@ def _extra(config):
         d["entity_category"] = "diagnostic"
         d["accuracy_decimals"] = 0
         d["icon"] = "mdi:counter"
+    elif CONF_PDU in config:
+        d["entity_category"] = "diagnostic"  # undecoded raw value
     return d
 
 

@@ -155,7 +155,7 @@ sensor:
   - {platform: immergas_nasa, type: bad_frames}
   - {platform: immergas_nasa, type: tx_frames}
   - {platform: immergas_nasa, type: timeouts}
-  # ---------------- FSV installer settings (read with READ requests, diagnostic)
+  # ---------------- FSV installer settings (read with READ requests, read-only)
   - {platform: immergas_nasa, fsv: 1011}
   - {platform: immergas_nasa, fsv: 1012}
   - {platform: immergas_nasa, fsv: 1021}

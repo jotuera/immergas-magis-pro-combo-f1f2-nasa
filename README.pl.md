@@ -16,7 +16,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 - **Stany**: tryb jednostki zewnętrznej (Postój / Tryb bezpieczny / Normalna praca / Odszranianie …), tryb jednostki wewnętrznej, pompa, grzałki.
 - **Błędy**: kod Samsunga z opisem, np. `E101: Błąd komunikacji jednostka wewn. - zewn.`.
 - **Firmware**: numery części i daty płyty głównej ODU, jej EEPROM, falownika i płytki MIM.
-- **Wszystkie 94 parametry instalatora FSV**, odczytywane zapytaniami: krzywa grzewcza, limity CWU, grzałki itd. Widoczne jako encje diagnostyczne tylko do odczytu.
+- **Wszystkie 94 parametry instalatora FSV**, odczytywane zapytaniami: krzywa grzewcza, limity CWU, grzałki itd. Widoczne jako zwykłe sensory tylko do odczytu.
 - **Wartości pochodne**: ΔT obiegu, chwilowy i całkowity COP, energia dzienna.
 - **Nieznane PDU** jako diagnostyczne encje `RAW`, plus opcjonalny **sniffer magistrali**, który pomaga je rozszyfrować (zob. [PDU_MAP.md](PDU_MAP.md)).
 - **Tłumaczenia**: nazwy encji, teksty stanów i opisy błędów są tłumaczone, a język zmienia **jedna linia** (`language: en | pl`). Nowy język to jeden plik (zob. [TRANSLATING.md](TRANSLATING.md)).

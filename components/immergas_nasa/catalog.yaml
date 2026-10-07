@@ -28,7 +28,7 @@ sensors:
   zone2_target:           {pdu: 0x42D6, src: indoor, dec: temp, unit: "°C", dc: temperature, sc: measurement, acc: 1}
   eva_in_temp:            {pdu: 0x4205, src: indoor, dec: temp, unit: "°C", dc: temperature, sc: measurement, acc: 1}
   water_out_tw2:          {pdu: 0x4204, src: indoor, dec: temp, unit: "°C", dc: temperature, sc: measurement, acc: 1}
-  outdoor_temp_copy:      {pdu: 0x420C, src: indoor, dec: temp, unit: "°C", dc: temperature, sc: measurement, acc: 1, cat: diagnostic}
+  outdoor_temp_copy:      {pdu: 0x420C, src: indoor, dec: temp, unit: "°C", dc: temperature, sc: measurement, acc: 1}
   heater_out_temp:        {pdu: 0x4239, src: indoor, dec: temp, unit: "°C", dc: temperature, sc: measurement, acc: 1}
   mixing_valve_temp:      {pdu: 0x428C, src: indoor, dec: temp, unit: "°C", dc: temperature, sc: measurement, acc: 1}
   flow_rate:              {pdu: 0x42E9, src: indoor, dec: raw, mul: 0.1, unit: "L/min", dc: volume_flow_rate, sc: measurement, acc: 1}
@@ -114,8 +114,8 @@ text_sensors:
   dhw_mode:                 {pdu: 0x4066, src: indoor, mode: map, map: dhw_mode}
   operation_mode_text:      {pdu: 0x4001, src: indoor, mode: map, map: operation_mode}
   three_way_valve_text:     {pdu: 0x4067, src: indoor, mode: map, map: three_way_valve}
-  firmware_outdoor:         {pdu: 0x0608, src: outdoor, mode: firmware, cat: diagnostic, icon: "mdi:chip"}
-  firmware_outdoor_eeprom:  {pdu: 0x060C, src: outdoor, mode: firmware, cat: diagnostic, icon: "mdi:chip"}
-  firmware_inverter:        {pdu: 0x8601, src: outdoor, mode: firmware, cat: diagnostic, icon: "mdi:chip"}
-  firmware_indoor:          {pdu: 0x0608, src: indoor, mode: firmware, cat: diagnostic, icon: "mdi:chip"}
+  firmware_outdoor:         {pdu: 0x0608, src: outdoor, mode: firmware, icon: "mdi:chip"}
+  firmware_outdoor_eeprom:  {pdu: 0x060C, src: outdoor, mode: firmware, icon: "mdi:chip"}
+  firmware_inverter:        {pdu: 0x8601, src: outdoor, mode: firmware, icon: "mdi:chip"}
+  firmware_indoor:          {pdu: 0x0608, src: indoor, mode: firmware, poll: true, icon: "mdi:chip"}
   raw_4604:                 {pdu: 0x4604, src: indoor, mode: hex, cat: diagnostic, status: unknown}

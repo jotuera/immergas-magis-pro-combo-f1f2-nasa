@@ -34,6 +34,8 @@ def _extra(config):
     if CONF_TYPE in config:
         t = str(config[CONF_TYPE])
         return {"name": tr()["text_sensors"].get(t, t), "entity_category": "diagnostic"}
+    if CONF_PDU in config:
+        return {"entity_category": "diagnostic"}  # undecoded raw value
     return {}
 
 
@@ -71,6 +73,7 @@ async def to_code(config):
     if CONF_KEY in config:
         entry = CATALOG["text_sensors"][config[CONF_KEY]]
         pdu, source, mode = entry["pdu"], entry["src"], entry.get("mode", "map")
+        cg.add(var.set_poll(entry.get("poll", False)))
         if mode == "map":
             options = dict(t["maps"].get(entry["map"], {}))
     else:

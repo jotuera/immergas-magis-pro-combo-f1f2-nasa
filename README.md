@@ -16,7 +16,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 - **State**: outdoor driving mode (Stop / Safety / Normal / Defrost …), indoor operation mode, pump, booster / backup heater.
 - **Errors**: Samsung error code with a description, e.g. `E101: Indoor - outdoor communication error`.
 - **Firmware**: part numbers and build dates of the outdoor main board, its EEPROM, the inverter board and the MIM board.
-- **All 94 FSV installer settings**, read on demand. The water law, DHW limits, heater settings and so on show up as read-only diagnostic entities.
+- **All 94 FSV installer settings**, read on demand. The water law, DHW limits, heater settings and so on show up as read-only sensors.
 - **Derived values**: flow ΔT, instantaneous and total COP, daily energy.
 - **Unknown PDUs** are exposed as diagnostic `RAW` entities, and an optional **bus sniffer** helps decode them (see [PDU_MAP.md](PDU_MAP.md)).
 - **Translations**: entity names, state texts and error texts are translated, and you switch language with **one line** (`language: en | pl`). Adding a language means adding one file (see [TRANSLATING.md](TRANSLATING.md)).
