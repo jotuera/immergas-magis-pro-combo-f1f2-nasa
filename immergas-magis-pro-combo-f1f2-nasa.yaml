@@ -1,0 +1,327 @@
+# Immergas Magis Pro / Combo - Samsung NASA bus (F1/F2) reader for ESPHome (M5Stack Atom + RS485)
+#
+# Reads the heat-pump data the outdoor unit (Samsung EHS, e.g. Audax Pro V2) and the indoor interface board
+# (Samsung MIM-B19N inside the Magis) exchange on the F1/F2 bus: temperatures, compressor, fan, EEV, power,
+# energy, defrost, errors, firmware and all FSV installer settings. Uses its own component `immergas_nasa`
+# (no third-party NASA component needed). Entity names come from components/immergas_nasa/translations/.
+#
+# Project : jotuera.immergas-magis-pro-combo-f1f2-nasa  |  v0.9.0 (beta)
+# Repo    : https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa
+# License : MIT (c) 2026 JoTu
+# Tested  : Magis Combo 9 Plus V2 + Audax Pro 9 V2 outdoor unit, MIM-B19N rotary switch = 1.
+#
+# IMPORTANT: on F1/F2 only READ is safe and useful - writes are ignored by the Immergas controller.
+# This config never writes. With transmit: true it only sends READ requests for the FSV values.
+
+substitutions:
+  device_name: immergas-f1f2-nasa
+  friendly_name: Immergas F1F2 NASA
+  # Entity language: en | pl   (one line - see TRANSLATING.md to add yours)
+  language: en
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  min_version: 2026.5.0
+  project:
+    name: jotuera.immergas-magis-pro-combo-f1f2-nasa
+    version: 0.9.0
+
+esp32:
+  board: m5stack-atom
+  framework:
+    type: esp-idf
+
+external_components:
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@main
+    components: [immergas_nasa]
+    refresh: 1d
+
+logger:
+  level: INFO
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap: {}
+
+captive_portal:
+
+web_server:
+  port: 80
+  version: 3
+
+time:
+  - platform: homeassistant
+    id: ha_time
+
+# M5Stack Atom + Atomic RS485 Base: A/B -> F1/F2. 9600 8E1.
+uart:
+  id: nasa_uart
+  tx_pin: GPIO19
+  rx_pin: GPIO22
+  baud_rate: 9600
+  parity: EVEN
+  stop_bits: 1
+  rx_buffer_size: 1024
+
+immergas_nasa:
+  uart_id: nasa_uart
+  language: ${language}
+  transmit: true            # false = listen only (no FSV values)
+  poll_interval: 30min      # how often FSV are re-read
+  # flow_control_pin: GPIO23  # only for RS485 boards with a DE/RE pin
+
+sensor:
+  # ---------------- decoded (indoor unit 20.00.01 + outdoor unit 10.00.00)
+  - {platform: immergas_nasa, key: flow_temp_out, id: flow_temp_out}
+  - {platform: immergas_nasa, key: flow_temp_return, id: flow_temp_return}
+  - {platform: immergas_nasa, key: water_outlet_target}
+  - {platform: immergas_nasa, key: dhw_temperature}
+  - {platform: immergas_nasa, key: dhw_target}
+  - {platform: immergas_nasa, key: zone1_room_temp}
+  - {platform: immergas_nasa, key: zone1_target}
+  - {platform: immergas_nasa, key: zone2_room_temp}   # not broadcast on every install
+  - {platform: immergas_nasa, key: zone2_target}   # not broadcast on every install
+  - {platform: immergas_nasa, key: eva_in_temp}
+  - {platform: immergas_nasa, key: water_out_tw2}
+  - {platform: immergas_nasa, key: outdoor_temp_copy}
+  - {platform: immergas_nasa, key: heater_out_temp}
+  - {platform: immergas_nasa, key: mixing_valve_temp}
+  - {platform: immergas_nasa, key: flow_rate}   # not broadcast on every install
+  - {platform: immergas_nasa, key: capacity_request}
+  - {platform: immergas_nasa, key: capacity_absolute}
+  - {platform: immergas_nasa, key: power_produced, id: power_produced}   # not broadcast on every install
+  - {platform: immergas_nasa, key: energy_produced_total, id: energy_produced_total}   # not broadcast on every install
+  - {platform: immergas_nasa, key: indoor_eev}
+  - {platform: immergas_nasa, key: two_way_valve}
+  - {platform: immergas_nasa, key: three_way_valve}
+  - {platform: immergas_nasa, key: operation_mode}
+  - {platform: immergas_nasa, key: control_reference}
+  - {platform: immergas_nasa, key: status_bits_440e}
+  - {platform: immergas_nasa, key: outdoor_temperature}
+  - {platform: immergas_nasa, key: compressor_frequency}
+  - {platform: immergas_nasa, key: order_frequency}
+  - {platform: immergas_nasa, key: target_frequency}
+  - {platform: immergas_nasa, key: fan_speed_target}
+  - {platform: immergas_nasa, key: fan_speed_actual}
+  - {platform: immergas_nasa, key: power_consumed, id: power_consumed}
+  - {platform: immergas_nasa, key: outdoor_power}
+  - {platform: immergas_nasa, key: energy_consumed_total, id: energy_consumed_total}
+  - {platform: immergas_nasa, key: outdoor_current}
+  - {platform: immergas_nasa, key: heat_pump_voltage}
+  - {platform: immergas_nasa, key: mains_voltage}
+  - {platform: immergas_nasa, key: dc_link_voltage}
+  - {platform: immergas_nasa, key: unit_capacity}
+  - {platform: immergas_nasa, key: discharge_temp}
+  - {platform: immergas_nasa, key: target_discharge_temp}
+  - {platform: immergas_nasa, key: comp_top_temp}
+  - {platform: immergas_nasa, key: cond_out_temp}
+  - {platform: immergas_nasa, key: ipm_temp}
+  - {platform: immergas_nasa, key: main_eev}
+  - {platform: immergas_nasa, key: start_sequence}
+  - {platform: immergas_nasa, key: restart_inhibit}
+  - {platform: immergas_nasa, key: error_code}
+  - {platform: immergas_nasa, key: linked_indoor_units}
+  # ---------------- unknown / raw (diagnostic) - help decoding them: PDU_MAP.md
+  - {platform: immergas_nasa, key: raw_0402}
+  - {platform: immergas_nasa, key: raw_0411}
+  - {platform: immergas_nasa, key: raw_0412}
+  - {platform: immergas_nasa, key: raw_0413}
+  - {platform: immergas_nasa, key: raw_0414}
+  - {platform: immergas_nasa, key: raw_0415}
+  - {platform: immergas_nasa, key: raw_4006}
+  - {platform: immergas_nasa, key: raw_440a}
+  - {platform: immergas_nasa, key: raw_041b}
+  - {platform: immergas_nasa, key: raw_8201}
+  - {platform: immergas_nasa, key: raw_8239}
+  - {platform: immergas_nasa, key: raw_823f}
+  - {platform: immergas_nasa, key: raw_8243}
+  - {platform: immergas_nasa, key: raw_824b}
+  - {platform: immergas_nasa, key: raw_824c}
+  - {platform: immergas_nasa, key: raw_82e1}
+  - {platform: immergas_nasa, key: raw_840f}
+  - {platform: immergas_nasa, key: raw_8417}
+  # ---------------- bus statistics
+  - {platform: immergas_nasa, type: rx_frames}
+  - {platform: immergas_nasa, type: bad_frames}
+  - {platform: immergas_nasa, type: tx_frames}
+  - {platform: immergas_nasa, type: timeouts}
+  # ---------------- FSV installer settings (read with READ requests, diagnostic)
+  - {platform: immergas_nasa, fsv: 1011}
+  - {platform: immergas_nasa, fsv: 1012}
+  - {platform: immergas_nasa, fsv: 1021}
+  - {platform: immergas_nasa, fsv: 1022}
+  - {platform: immergas_nasa, fsv: 1031}
+  - {platform: immergas_nasa, fsv: 1032}
+  - {platform: immergas_nasa, fsv: 1041}
+  - {platform: immergas_nasa, fsv: 1042}
+  - {platform: immergas_nasa, fsv: 1051}
+  - {platform: immergas_nasa, fsv: 1052}
+  - {platform: immergas_nasa, fsv: 2011}
+  - {platform: immergas_nasa, fsv: 2012}
+  - {platform: immergas_nasa, fsv: 2021}
+  - {platform: immergas_nasa, fsv: 2022}
+  - {platform: immergas_nasa, fsv: 2031}
+  - {platform: immergas_nasa, fsv: 2032}
+  - {platform: immergas_nasa, fsv: 2041}
+  - {platform: immergas_nasa, fsv: 2051}
+  - {platform: immergas_nasa, fsv: 2052}
+  - {platform: immergas_nasa, fsv: 2061}
+  - {platform: immergas_nasa, fsv: 2062}
+  - {platform: immergas_nasa, fsv: 2071}
+  - {platform: immergas_nasa, fsv: 2072}
+  - {platform: immergas_nasa, fsv: 2081}
+  - {platform: immergas_nasa, fsv: 2091}
+  - {platform: immergas_nasa, fsv: 2092}
+  - {platform: immergas_nasa, fsv: 2093}
+  - {platform: immergas_nasa, fsv: 3011}
+  - {platform: immergas_nasa, fsv: 3021}
+  - {platform: immergas_nasa, fsv: 3022}
+  - {platform: immergas_nasa, fsv: 3023}
+  - {platform: immergas_nasa, fsv: 3024}
+  - {platform: immergas_nasa, fsv: 3025}
+  - {platform: immergas_nasa, fsv: 3026}
+  - {platform: immergas_nasa, fsv: 3031}
+  - {platform: immergas_nasa, fsv: 3032}
+  - {platform: immergas_nasa, fsv: 3033}
+  - {platform: immergas_nasa, fsv: 3041}
+  - {platform: immergas_nasa, fsv: 3042}
+  - {platform: immergas_nasa, fsv: 3043}
+  - {platform: immergas_nasa, fsv: 3044}
+  - {platform: immergas_nasa, fsv: 3045}
+  - {platform: immergas_nasa, fsv: 3046}
+  - {platform: immergas_nasa, fsv: 3051}
+  - {platform: immergas_nasa, fsv: 3052}
+  - {platform: immergas_nasa, fsv: 3061}
+  - {platform: immergas_nasa, fsv: 3071}
+  - {platform: immergas_nasa, fsv: 3081}
+  - {platform: immergas_nasa, fsv: 3082}
+  - {platform: immergas_nasa, fsv: 3083}
+  - {platform: immergas_nasa, fsv: 4011}
+  - {platform: immergas_nasa, fsv: 4012}
+  - {platform: immergas_nasa, fsv: 4013}
+  - {platform: immergas_nasa, fsv: 4021}
+  - {platform: immergas_nasa, fsv: 4022}
+  - {platform: immergas_nasa, fsv: 4023}
+  - {platform: immergas_nasa, fsv: 4024}
+  - {platform: immergas_nasa, fsv: 4025}
+  - {platform: immergas_nasa, fsv: 4031}
+  - {platform: immergas_nasa, fsv: 4032}
+  - {platform: immergas_nasa, fsv: 4033}
+  - {platform: immergas_nasa, fsv: 4041}
+  - {platform: immergas_nasa, fsv: 4042}
+  - {platform: immergas_nasa, fsv: 4043}
+  - {platform: immergas_nasa, fsv: 4044}
+  - {platform: immergas_nasa, fsv: 4045}
+  - {platform: immergas_nasa, fsv: 4046}
+  - {platform: immergas_nasa, fsv: 4051}
+  - {platform: immergas_nasa, fsv: 4052}
+  - {platform: immergas_nasa, fsv: 4053}
+  - {platform: immergas_nasa, fsv: 4061}
+  - {platform: immergas_nasa, fsv: 5011}
+  - {platform: immergas_nasa, fsv: 5012}
+  - {platform: immergas_nasa, fsv: 5013}
+  - {platform: immergas_nasa, fsv: 5014}
+  - {platform: immergas_nasa, fsv: 5015}
+  - {platform: immergas_nasa, fsv: 5016}
+  - {platform: immergas_nasa, fsv: 5017}
+  - {platform: immergas_nasa, fsv: 5018}
+  - {platform: immergas_nasa, fsv: 5019}
+  - {platform: immergas_nasa, fsv: 5021}
+  - {platform: immergas_nasa, fsv: 5022}
+  - {platform: immergas_nasa, fsv: 5023}
+  - {platform: immergas_nasa, fsv: 5041}
+  - {platform: immergas_nasa, fsv: 5042}
+  - {platform: immergas_nasa, fsv: 5043}
+  - {platform: immergas_nasa, fsv: 5051}
+  - {platform: immergas_nasa, fsv: 5081}
+  - {platform: immergas_nasa, fsv: 5082}
+  - {platform: immergas_nasa, fsv: 5083}
+  - {platform: immergas_nasa, fsv: 5091}
+  - {platform: immergas_nasa, fsv: 5092}
+  - {platform: immergas_nasa, fsv: 5093}
+  - {platform: immergas_nasa, fsv: 5094}
+  # ---------------- derived values
+  - platform: template
+    name: Flow Temp Delta
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    update_interval: 10s
+    lambda: |-
+      return id(flow_temp_out).state - id(flow_temp_return).state;
+  - platform: template
+    name: COP - Instant
+    icon: mdi:chart-bar
+    state_class: measurement
+    accuracy_decimals: 2
+    update_interval: 10s
+    lambda: |-
+      float in = id(power_consumed).state, out = id(power_produced).state;
+      if (std::isnan(in) || std::isnan(out) || in <= 0) return NAN;
+      return std::min(8.0f, std::max(0.0f, out / in));
+  - platform: template
+    name: COP - Total
+    icon: mdi:chart-bar
+    accuracy_decimals: 2
+    update_interval: 300s
+    lambda: |-
+      float in = id(energy_consumed_total).state, out = id(energy_produced_total).state;
+      if (std::isnan(in) || std::isnan(out) || in <= 0) return NAN;
+      return out / in;
+  - platform: total_daily_energy
+    name: Daily Energy Consumed
+    power_id: power_consumed
+    unit_of_measurement: kWh
+    accuracy_decimals: 3
+    filters:
+      - multiply: 0.001
+
+binary_sensor:
+  - {platform: immergas_nasa, key: water_pump}
+  - {platform: immergas_nasa, key: backup_heater}
+  - {platform: immergas_nasa, key: booster_heater}
+  - {platform: immergas_nasa, key: defrost}
+  - {platform: immergas_nasa, key: dhw_power}
+  - {platform: immergas_nasa, key: zone1_power}
+  - {platform: immergas_nasa, key: zone2_power}
+  - {platform: immergas_nasa, key: pv_control}
+  - {platform: immergas_nasa, key: smart_grid}
+  - {platform: immergas_nasa, key: compressor}
+  - {platform: immergas_nasa, key: four_way_valve}
+  - {platform: immergas_nasa, key: hot_gas_valve}
+  - {platform: immergas_nasa, key: base_heater}
+
+text_sensor:
+  - {platform: immergas_nasa, key: outdoor_driving_mode}
+  - {platform: immergas_nasa, key: outdoor_operation_state}
+  - {platform: immergas_nasa, key: outdoor_fan_state}
+  - {platform: immergas_nasa, key: defrost_stage}
+  - {platform: immergas_nasa, key: system_error}
+  - {platform: immergas_nasa, key: dhw_mode}
+  - {platform: immergas_nasa, key: operation_mode_text}
+  - {platform: immergas_nasa, key: three_way_valve_text}
+  - {platform: immergas_nasa, key: firmware_outdoor}
+  - {platform: immergas_nasa, key: firmware_outdoor_eeprom}
+  - {platform: immergas_nasa, key: firmware_inverter}
+  - {platform: immergas_nasa, key: firmware_indoor}
+  - {platform: immergas_nasa, key: raw_4604}
+  # sniffer output (only while the sniffer switch is on)
+  - {platform: immergas_nasa, type: last_frame}
+  - {platform: immergas_nasa, type: last_change}
+
+switch:
+  - platform: immergas_nasa   # bus sniffer: logs every frame and value change (tag "sniff")
+
+button:
+  - platform: immergas_nasa   # read all FSV now
