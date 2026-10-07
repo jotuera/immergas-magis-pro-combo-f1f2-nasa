@@ -105,6 +105,20 @@ text_sensors:
   raw_4604: NASA PDU wewn. 4604 RAW
   last_frame: NASA ostatnia ramka
   last_change: NASA ostatnia zmiana
+  devices: NASA urządzenia na magistrali
+
+device_classes:
+  0x10: jednostka zewnętrzna
+  0x11: moduł hydro (HTU)
+  0x20: jednostka wewnętrzna
+  0x50: sterownik przewodowy
+  0x58: moduł PIM
+  0x59: moduł SIM
+  0x62: moduł Wi-Fi
+  0x63: moduł MIM
+  0x65: sterownik centralny
+  0x6A: DMS
+  0x80: narzędzie serwisowe
 
 switches:
   sniffer: Sniffer NASA

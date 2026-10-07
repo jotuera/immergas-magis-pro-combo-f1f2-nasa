@@ -191,6 +191,10 @@ async def to_code(config):
     cg.add(var.set_poll_interval(config[CONF_POLL_INTERVAL].total_milliseconds))
     cg.add(var.set_republish_interval(config[CONF_REPUBLISH_INTERVAL].total_milliseconds))
     cg.add(var.set_sniffer(config[CONF_SNIFFER]))
+    cg.add(var.set_indoor_address(config[CONF_INDOOR_ADDRESS]))
+    cg.add(var.set_outdoor_address(config[CONF_OUTDOOR_ADDRESS]))
+    for cls, label in sorted(translation(config[CONF_LANGUAGE]).get("device_classes", {}).items()):
+        cg.add(var.add_class_label(int(cls), str(label)))
     if CONF_FLOW_CONTROL_PIN in config:
         pin = await cg.gpio_pin_expression(config[CONF_FLOW_CONTROL_PIN])
         cg.add(var.set_flow_control_pin(pin))

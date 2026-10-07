@@ -12,6 +12,7 @@ namespace immergas_nasa {
 static const char *const TAG = "immergas_nasa";
 static const uint32_t RX_GAP_RESET_MS = 50;  // a pause inside a frame means it was truncated
 static const uint32_t STATS_INTERVAL_MS = 10000;
+static const uint32_t ADDRESS_CHECK_MS = 60000;  // time to collect devices before checking the addresses
 
 // ---------------------------------------------------------------- ValueDecoder
 
@@ -70,6 +71,11 @@ void NasaHub::dump_config() {
   for (auto &kv : this->listeners_)
     n += kv.second.size();
   ESP_LOGCONFIG(TAG, "  Entities: %u (message ids: %u)", unsigned(n), unsigned(this->listeners_.size()));
+  ESP_LOGCONFIG(TAG, "  Indoor unit address: %s, outdoor unit address: %s",
+                Address::from_raw(this->indoor_address_).to_string().c_str(),
+                Address::from_raw(this->outdoor_address_).to_string().c_str());
+  for (auto &kv : this->devices_)
+    ESP_LOGCONFIG(TAG, "  Seen on bus: %s", this->device_label_(Address::from_raw(kv.first)).c_str());
   LOG_PIN("  Flow control pin: ", this->flow_control_pin_);
 }
 
@@ -103,6 +109,11 @@ void NasaHub::loop() {
         this->poll_now();
     }
     this->try_transmit_();
+  }
+
+  if (!this->addresses_checked_ && now > ADDRESS_CHECK_MS) {
+    this->addresses_checked_ = true;
+    this->check_addresses_();
   }
 
   if (now - this->last_stats_ >= STATS_INTERVAL_MS) {
@@ -161,6 +172,8 @@ void NasaHub::handle_packet_(const Packet &p) {
   if (p.src == this->address_)
     return;  // echo of our own transmission on a half-duplex bus
 
+  this->note_device_(p.src);
+
   if (this->sniffer_)
     this->sniff_(p);
 
@@ -214,6 +227,67 @@ void NasaHub::sniff_(const Packet &p) {
     if (this->last_change_text_ != nullptr)
       this->last_change_text_->publish_state(b);
 #endif
+  }
+}
+
+// ---------------------------------------------------------------- address discovery
+
+std::string NasaHub::device_label_(const Address &a) const {
+  std::string s = a.to_string();
+  auto it = this->class_labels_.find(a.cls);
+  if (it != this->class_labels_.end()) {
+    s += " " + it->second;
+  } else {
+    char b[16];
+    snprintf(b, sizeof(b), " (0x%02X)", a.cls);
+    s += b;
+  }
+  return s;
+}
+
+void NasaHub::note_device_(const Address &a) {
+  if (a.cls >= 0xB0)
+    return;  // broadcast / layer addresses are never senders, ignore garbage
+  auto it = this->devices_.find(a.raw());
+  if (it != this->devices_.end()) {
+    it->second++;
+    return;
+  }
+  this->devices_[a.raw()] = 1;
+  ESP_LOGI(TAG, "Found device on the bus: %s", this->device_label_(a).c_str());
+#ifdef USE_TEXT_SENSOR
+  if (this->devices_text_ != nullptr) {
+    std::string list;
+    for (auto &kv : this->devices_) {
+      if (!list.empty())
+        list += ", ";
+      list += this->device_label_(Address::from_raw(kv.first));
+    }
+    this->devices_text_->publish_state(list);
+  }
+#endif
+}
+
+void NasaHub::check_addresses_() {
+  if (this->devices_.empty()) {
+    ESP_LOGW(TAG, "No NASA frames received in 60 s. Check wiring F1/F2 -> A/B (swap A/B), 9600 8E1, "
+                  "and set the MIM-B19N rotary switch to 1 (at 0 the bus stays silent).");
+    return;
+  }
+  const uint32_t configured[2] = {this->indoor_address_, this->outdoor_address_};
+  const char *const option[2] = {"indoor_address", "outdoor_address"};
+  for (int i = 0; i < 2; i++) {
+    if (this->devices_.count(configured[i]))
+      continue;
+    uint8_t cls = uint8_t(configured[i] >> 16);
+    for (auto &kv : this->devices_) {
+      if (uint8_t(kv.first >> 16) == cls) {
+        std::string seen = Address::from_raw(kv.first).to_string();
+        ESP_LOGW(TAG, "%s is %s, but that device is not on the bus. Found %s instead - set '%s: %s'.", option[i],
+                 Address::from_raw(configured[i]).to_string().c_str(), seen.c_str(), option[i], seen.c_str());
+        break;
+      }
+    }
   }
 }
 

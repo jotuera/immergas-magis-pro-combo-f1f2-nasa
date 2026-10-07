@@ -108,6 +108,21 @@ text_sensors:
   # hub sniffer (type:)
   last_frame: NASA Last Frame
   last_change: NASA Last Change
+  devices: NASA Devices
+
+# Labels for device address classes in the "NASA Devices" list
+device_classes:
+  0x10: outdoor unit
+  0x11: hydro unit (HTU)
+  0x20: indoor unit
+  0x50: wired remote
+  0x58: PIM module
+  0x59: SIM module
+  0x62: Wi-Fi kit
+  0x63: MIM module
+  0x65: central controller
+  0x6A: DMS
+  0x80: service tool
 
 switches:
   sniffer: NASA Sniffer

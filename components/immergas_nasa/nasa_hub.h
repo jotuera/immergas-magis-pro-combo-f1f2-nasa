@@ -71,6 +71,10 @@ class NasaHub : public Component, public uart::UARTDevice {
   void set_republish_interval(uint32_t ms) { this->republish_interval_ = ms; }
   void set_flow_control_pin(GPIOPin *pin) { this->flow_control_pin_ = pin; }
   void set_sniffer(bool on) { this->sniffer_ = on; }
+  void set_indoor_address(uint32_t a) { this->indoor_address_ = a; }
+  void set_outdoor_address(uint32_t a) { this->outdoor_address_ = a; }
+  // Label shown in the device list for an address class (translated in codegen).
+  void add_class_label(uint8_t cls, const std::string &label) { this->class_labels_[cls] = label; }
 
   void register_listener(NasaListener *l);
 
@@ -83,6 +87,7 @@ class NasaHub : public Component, public uart::UARTDevice {
 #ifdef USE_TEXT_SENSOR
   void set_last_frame_text_sensor(text_sensor::TextSensor *s) { this->last_frame_text_ = s; }
   void set_last_change_text_sensor(text_sensor::TextSensor *s) { this->last_change_text_ = s; }
+  void set_devices_text_sensor(text_sensor::TextSensor *s) { this->devices_text_ = s; }
 #endif
 
   // --- runtime API ---
@@ -114,6 +119,9 @@ class NasaHub : public Component, public uart::UARTDevice {
   uint8_t next_packet_number_();
   void publish_stats_();
   void sniff_(const Packet &p);
+  void note_device_(const Address &a);
+  std::string device_label_(const Address &a) const;
+  void check_addresses_();
 
   Address address_{ADDR_CLASS_JIG_TESTER, 0xFF, 0x00};
   Address read_address_{0xB2, 0x00, 0x20};
@@ -141,6 +149,13 @@ class NasaHub : public Component, public uart::UARTDevice {
 
   std::map<uint32_t, uint32_t> sniff_last_;  // (source<<16 | id) -> last value
 
+  // devices seen on the bus (address -> frames) for address discovery
+  std::map<uint32_t, uint32_t> devices_;
+  std::map<uint8_t, std::string> class_labels_;
+  uint32_t indoor_address_{0x200001};
+  uint32_t outdoor_address_{0x100000};
+  bool addresses_checked_{false};
+
   uint32_t rx_frames_{0}, crc_errors_{0}, tx_frames_{0}, timeouts_{0}, nacks_{0};
   uint32_t last_stats_{0};
 #ifdef USE_SENSOR
@@ -152,6 +167,7 @@ class NasaHub : public Component, public uart::UARTDevice {
 #ifdef USE_TEXT_SENSOR
   text_sensor::TextSensor *last_frame_text_{nullptr};
   text_sensor::TextSensor *last_change_text_{nullptr};
+  text_sensor::TextSensor *devices_text_{nullptr};
 #endif
 };
 

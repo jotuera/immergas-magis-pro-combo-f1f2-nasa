@@ -6,7 +6,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 
 > Część rodziny [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, emulator Dominusa i paneli), **tt-bms** (T-/T+, Modbus BMS) i **f1f2-nasa** (to repo).
 
-> ⚠️ **Beta (v0.9.0).** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane.
+> ⚠️ **Beta (v0.10.0).** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane.
 
 ## Co dostajesz
 
@@ -19,6 +19,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 - **Wszystkie 94 parametry instalatora FSV**, odczytywane zapytaniami: krzywa grzewcza, limity CWU, grzałki itd. Widoczne jako zwykłe sensory tylko do odczytu.
 - **Wartości pochodne**: ΔT obiegu, chwilowy i całkowity COP, energia dzienna.
 - **Nieznane PDU** jako diagnostyczne encje `RAW`, plus opcjonalny **sniffer magistrali**, który pomaga je rozszyfrować (zob. [PDU_MAP.md](PDU_MAP.md)).
+- **Wykrywanie adresów**: encja `NASA urządzenia na magistrali` pokazuje wszystkie urządzenia na magistrali, a log podpowiada, czy trzeba zmienić `indoor_address` / `outdoor_address` (zob. [Jak ustalić adresy](#jak-ustalić-adresy)).
 - **Tłumaczenia**: nazwy encji, teksty stanów i opisy błędów są tłumaczone, a język zmienia **jedna linia** (`language: en | pl`). Nowy język to jeden plik (zob. [TRANSLATING.md](TRANSLATING.md)).
 
 ### Dlaczego tylko odczyt?
@@ -44,9 +45,30 @@ Do sterowania kotłem służą [dd-modbus](https://github.com/jotuera/immergas-m
 
 ### Wersje
 
-Przykład przypina komponent do tagu wydania: `github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.9.0`. Żeby zaktualizować, zmień `@v0.9.0` na nowszy tag; `@main` oznacza zawsze najnowszą wersję rozwojową. Z GitHuba pobiera się tylko komponent, Twój YAML zostaje u Ciebie.
+Przykład przypina komponent do tagu wydania: `github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.10.0`. Żeby zaktualizować, zmień `@v0.10.0` na nowszy tag; `@main` oznacza zawsze najnowszą wersję rozwojową. Z GitHuba pobiera się tylko komponent, Twój YAML zostaje u Ciebie.
 
 Opcje komponentu i sposoby deklarowania encji (po `key`, po kodzie `fsv` albo jako surowy `pdu`) opisuje [README.md](README.md#component-options). Pełna lista kluczy jest w [PDU_MAP.md](PDU_MAP.md).
+
+## Jak ustalić adresy
+
+Każde urządzenie na magistrali NASA ma 3-bajtowy adres `klasa.kanał.adres`:
+
+| Adres | Urządzenie | Opcja |
+|---|---|---|
+| `10.00.00` | jednostka zewnętrzna (Samsung EHS) | `outdoor_address` |
+| `20.00.01` | jednostka wewnętrzna = płytka MIM-B19N w Magisie | `indoor_address` |
+| `80.FF.00` | ten ESP (wysyła tylko zapytania READ) | `address` |
+
+Wartości domyślne pasują do Magis Combo / Pro V2 z przełącznikiem obrotowym MIM na **1**. Ostatni bajt adresu jednostki wewnętrznej odpowiada pozycji przełącznika (1 → `20.00.01`); w typowych modułach hydro Samsunga bywa `20.00.00`.
+
+Nie trzeba zgadywać, komponent sam znajduje urządzenia:
+
+1. Wgraj z ustawieniami domyślnymi.
+2. Zajrzyj do encji **NASA urządzenia na magistrali** (albo do logu: `Found device on the bus: ...`). Jest tam lista wszystkich urządzeń, które nadają, np. `10.00.00 jednostka zewnętrzna, 20.00.01 jednostka wewnętrzna`.
+3. Po 60 s komponent porównuje listę z ustawieniami. Jeśli się różnią, w logu pojawia się ostrzeżenie z gotową linią do wpisania, np. `Found 20.00.00 instead - set 'indoor_address: 20.00.00'`.
+4. Wpisz tę linię pod `immergas_nasa:` i wgraj ponownie.
+
+Jeśli lista zostaje pusta, log mówi o tym po 60 s. Sprawdź podłączenie F1/F2 → A/B (zamień A/B), 9600 8E1 i przełącznik obrotowy MIM (przy 0 magistrala milczy).
 
 ## Sniffer
 

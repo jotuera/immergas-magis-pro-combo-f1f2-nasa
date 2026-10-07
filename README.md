@@ -6,7 +6,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 
 > Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo).
 
-> ⚠️ **Beta (v0.9.0).** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome.
+> ⚠️ **Beta (v0.10.0).** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome.
 
 ## What you get
 
@@ -19,6 +19,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 - **All 94 FSV installer settings**, read on demand. The water law, DHW limits, heater settings and so on show up as read-only sensors.
 - **Derived values**: flow ΔT, instantaneous and total COP, daily energy.
 - **Unknown PDUs** are exposed as diagnostic `RAW` entities, and an optional **bus sniffer** helps decode them (see [PDU_MAP.md](PDU_MAP.md)).
+- **Address discovery**: a `NASA Devices` entity lists every unit on the bus, and the log tells you if `indoor_address` / `outdoor_address` need changing (see [Finding the addresses](#finding-the-addresses)).
 - **Translations**: entity names, state texts and error texts are translated, and you switch language with **one line** (`language: en | pl`). Adding a language means adding one file (see [TRANSLATING.md](TRANSLATING.md)).
 
 ### Why read-only?
@@ -48,11 +49,11 @@ The example pins the component to a release tag:
 
 ```yaml
 external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.9.0
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.10.0
     components: [immergas_nasa]
 ```
 
-Change `@v0.9.0` to a newer tag to upgrade, or to `@main` to follow the development version. Only the component is fetched from GitHub; your YAML stays local.
+Change `@v0.10.0` to a newer tag to upgrade, or to `@main` to follow the development version. Only the component is fetched from GitHub; your YAML stays local.
 
 ### Component options
 
@@ -85,6 +86,27 @@ sensor:
 ```
 
 You can override any field, e.g. `name:`, `filters:` or `entity_category:`. All keys are listed in [PDU_MAP.md](PDU_MAP.md).
+
+## Finding the addresses
+
+Every unit on the NASA bus has a 3-byte address `class.channel.address`:
+
+| Address | Unit | Option |
+|---|---|---|
+| `10.00.00` | outdoor unit (Samsung EHS) | `outdoor_address` |
+| `20.00.01` | indoor unit = the MIM-B19N board in the Magis | `indoor_address` |
+| `80.FF.00` | this ESP (only sends READ requests) | `address` |
+
+The defaults match a Magis Combo / Pro V2 with the MIM rotary switch at **1**. The last byte of the indoor address follows the rotary switch (rotary 1 → `20.00.01`); generic Samsung EHS hydro units often use `20.00.00`.
+
+You don't have to guess. The component finds the units itself:
+
+1. Install with the defaults.
+2. Look at the **NASA Devices** entity (or the log line `Found device on the bus: ...`). It lists every unit that sends frames, e.g. `10.00.00 outdoor unit, 20.00.01 indoor unit`.
+3. After 60 s the component compares the list with your settings. If they differ it logs a warning with the exact line to use, e.g. `indoor_address is 20.00.01, but that device is not on the bus. Found 20.00.00 instead - set 'indoor_address: 20.00.00'.`
+4. Put that line under `immergas_nasa:` and install again.
+
+If the list stays empty, the log says so after 60 s. Check F1/F2 → A/B (swap A/B), 9600 8E1, and the MIM rotary switch (at 0 the bus is silent).
 
 ## Sniffer
 

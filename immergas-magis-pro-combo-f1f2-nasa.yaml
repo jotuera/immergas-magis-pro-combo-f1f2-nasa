@@ -5,10 +5,15 @@
 # energy, defrost, errors, firmware and all FSV installer settings. Uses its own component `immergas_nasa`
 # (no third-party NASA component needed). Entity names come from components/immergas_nasa/translations/.
 #
-# Project : jotuera.immergas-magis-pro-combo-f1f2-nasa  |  v0.9.0 (beta)
+# Project : jotuera.immergas-magis-pro-combo-f1f2-nasa  |  v0.10.0 (beta)
 # Repo    : https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa
 # License : MIT (c) 2026 JoTu
 # Tested  : Magis Combo 9 Plus V2 + Audax Pro 9 V2 outdoor unit, MIM-B19N rotary switch = 1.
+#
+# Changelog:
+#   v0.10.0 - Address discovery: "NASA Devices" entity lists the units on the bus; after 60 s the log warns
+#             if indoor_address / outdoor_address do not match and shows the line to use.
+#   v0.9.0  - First public beta.
 #
 # IMPORTANT: on F1/F2 only READ is safe and useful - writes are ignored by the Immergas controller.
 # This config never writes. With transmit: true it only sends READ requests for the FSV values.
@@ -25,17 +30,17 @@ esphome:
   min_version: 2026.5.0
   project:
     name: jotuera.immergas-magis-pro-combo-f1f2-nasa
-    version: 0.9.0
+    version: 0.10.0
 
 esp32:
   board: m5stack-atom
   framework:
     type: esp-idf
 
-# The component is downloaded from GitHub. @v0.9.0 = this release (recommended);
+# The component is downloaded from GitHub. @v0.10.0 = this release (recommended);
 # @main = always the latest development version.
 external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.9.0
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.10.0
     components: [immergas_nasa]
     refresh: 1d
 
@@ -318,6 +323,8 @@ text_sensor:
   - {platform: immergas_nasa, key: firmware_inverter}
   - {platform: immergas_nasa, key: firmware_indoor}
   - {platform: immergas_nasa, key: raw_4604}
+  # devices that talk on the bus (address discovery) - see README "Finding the addresses"
+  - {platform: immergas_nasa, type: devices}
   # sniffer output (only while the sniffer switch is on)
   - {platform: immergas_nasa, type: last_frame}
   - {platform: immergas_nasa, type: last_change}

@@ -27,7 +27,11 @@ CONF_OPTIONS = "options"
 NasaTextSensor = immergas_nasa_ns.class_("NasaTextSensor", text_sensor.TextSensor)
 TextMode = immergas_nasa_ns.enum("TextMode", is_class=True)
 MODES = {"map": TextMode.MAP, "error": TextMode.MAP, "firmware": TextMode.FIRMWARE, "hex": TextMode.HEX}
-HUB_TYPES = {"last_frame": "set_last_frame_text_sensor", "last_change": "set_last_change_text_sensor"}
+HUB_TYPES = {
+    "last_frame": "set_last_frame_text_sensor",
+    "last_change": "set_last_change_text_sensor",
+    "devices": "set_devices_text_sensor",
+}
 
 
 def _extra(config):
