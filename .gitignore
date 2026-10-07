@@ -4,3 +4,6 @@ secrets.yaml
 # ESPHome build artifacts
 .esphome/
 *.bin
+
+# Python cache (created when ESPHome loads the component)
+__pycache__/

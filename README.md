@@ -42,6 +42,18 @@ To control the boiler, use [dd-modbus](https://github.com/jotuera/immergas-magis
 3. Install. The component is fetched from this repo by `external_components`.
 4. After about 30 s the FSV values are read; after that they are re-read every `poll_interval`, or on demand with the **Read FSV Now** button.
 
+### Versions
+
+The example pins the component to a release tag:
+
+```yaml
+external_components:
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.9.0
+    components: [immergas_nasa]
+```
+
+Change `@v0.9.0` to a newer tag to upgrade, or to `@main` to follow the development version. Only the component is fetched from GitHub; your YAML stays local.
+
 ### Component options
 
 ```yaml

@@ -32,8 +32,10 @@ esp32:
   framework:
     type: esp-idf
 
+# The component is downloaded from GitHub. @v0.9.0 = this release (recommended);
+# @main = always the latest development version.
 external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@main
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.9.0
     components: [immergas_nasa]
     refresh: 1d
 

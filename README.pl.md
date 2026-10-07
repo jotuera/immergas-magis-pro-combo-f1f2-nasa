@@ -42,6 +42,10 @@ Do sterowania kotłem służą [dd-modbus](https://github.com/jotuera/immergas-m
 3. Wgraj. Komponent pobiera się z tego repo przez `external_components`.
 4. Po ok. 30 s odczytają się FSV; potem są odświeżane co `poll_interval` albo na żądanie przyciskiem **Odczytaj FSV teraz**.
 
+### Wersje
+
+Przykład przypina komponent do tagu wydania: `github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.9.0`. Żeby zaktualizować, zmień `@v0.9.0` na nowszy tag; `@main` oznacza zawsze najnowszą wersję rozwojową. Z GitHuba pobiera się tylko komponent, Twój YAML zostaje u Ciebie.
+
 Opcje komponentu i sposoby deklarowania encji (po `key`, po kodzie `fsv` albo jako surowy `pdu`) opisuje [README.md](README.md#component-options). Pełna lista kluczy jest w [PDU_MAP.md](PDU_MAP.md).
 
 ## Sniffer
