@@ -36,10 +36,12 @@ sensors:
   raw_0415: NASA Indoor PDU 0415 LONG RAW
   raw_4006: NASA Indoor PDU 4006 RAW
   raw_440a: NASA Indoor PDU 440A LONG RAW
+  raw_428d: NASA Indoor PDU 428D RAW
   outdoor_temperature: Outdoor Temperature
   compressor_frequency: Compressor Current Frequency
   order_frequency: Compressor 1 Order Frequency
   target_frequency: Compressor 1 Target Frequency
+  frequency_limit: Compressor Frequency Limit
   fan_speed_target: Outdoor Fan Speed (target)
   fan_speed_actual: Outdoor Fan Speed (actual)
   power_consumed: Power Consumed last Minute
@@ -68,6 +70,7 @@ sensors:
   raw_824b: NASA Outdoor PDU 824B RAW
   raw_824c: NASA Outdoor PDU 824C RAW
   raw_82e1: NASA Outdoor PDU 82E1 RAW
+  raw_80b1: NASA Outdoor PDU 80B1 RAW
   raw_840f: NASA Outdoor PDU 840F LONG RAW
   raw_8417: NASA Outdoor PDU 8417 LONG RAW
   # hub statistics (type:)

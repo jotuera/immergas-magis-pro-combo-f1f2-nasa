@@ -51,12 +51,16 @@ sensors:
   raw_0415:               {pdu: 0x0415, src: indoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_4006:               {pdu: 0x4006, src: indoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_440a:               {pdu: 0x440A, src: indoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
+  raw_428d:               {pdu: 0x428D, src: indoor, dec: raw, acc: 0, cat: diagnostic, status: candidate}
 
   # ---------------------------------------------------------------- outdoor unit, 10.00.00
   outdoor_temperature:    {pdu: 0x8204, src: outdoor, dec: temp, unit: "°C", dc: temperature, sc: measurement, acc: 1}
   compressor_frequency:   {pdu: 0x8238, src: outdoor, dec: raw, unit: "Hz", dc: frequency, sc: measurement, acc: 0}
   order_frequency:        {pdu: 0x8236, src: outdoor, dec: raw, unit: "Hz", dc: frequency, sc: measurement, acc: 0}
   target_frequency:       {pdu: 0x8237, src: outdoor, dec: raw, unit: "Hz", dc: frequency, sc: measurement, acc: 0}
+  # 0x8239 = upper compressor frequency limit: 95 stopped / start, ~64 in Normal mode, 19 during the Immergas
+  # night function (U11: boiler writes 30 % to the MIM -> 30 % x 64 Hz). Confirmed live 2026-10-13.
+  frequency_limit:        {pdu: 0x8239, src: outdoor, dec: raw, unit: "Hz", dc: frequency, sc: measurement, acc: 0, icon: "mdi:speedometer"}
   fan_speed_target:       {pdu: 0x823D, src: outdoor, dec: raw, unit: "RPM", sc: measurement, acc: 0, icon: "mdi:fan"}
   fan_speed_actual:       {pdu: 0x82D9, src: outdoor, dec: raw, unit: "RPM", sc: measurement, acc: 0, icon: "mdi:fan"}
   power_consumed:         {pdu: 0x8413, src: outdoor, dec: raw, nan: [0xFFFFFFFF], unit: "W", dc: power, sc: measurement, acc: 0}
@@ -80,12 +84,13 @@ sensors:
   # unknown / raw (diagnostic)
   raw_041b:               {pdu: 0x041B, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_8201:               {pdu: 0x8201, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
-  raw_8239:               {pdu: 0x8239, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: candidate}
+  raw_8239:               {pdu: 0x8239, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: deprecated}   # use frequency_limit
   raw_823f:               {pdu: 0x823F, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_8243:               {pdu: 0x8243, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_824b:               {pdu: 0x824B, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_824c:               {pdu: 0x824C, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_82e1:               {pdu: 0x82E1, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
+  raw_80b1:               {pdu: 0x80B1, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: candidate}
   raw_840f:               {pdu: 0x840F, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_8417:               {pdu: 0x8417, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
 

@@ -6,12 +6,12 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 
 > Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo).
 
-> ⚠️ **Beta (v0.10.0).** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome.
+> ⚠️ **Beta (v0.11.0).** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome.
 
 ## What you get
 
 - **Temperatures**: flow / return, active water target, outdoor, discharge, compressor top, condenser out, refrigerant liquid, IPM.
-- **Compressor**: actual / ordered / target frequency, start sequence stage, restart inhibit, current, power, energy (kWh), DC-link and mains voltage.
+- **Compressor**: actual / ordered / target frequency, frequency limit (drops to 19 Hz during the Immergas night function U11), start sequence stage, restart inhibit, current, power, energy (kWh), DC-link and mains voltage.
 - **Outdoor fan and valves**: target / actual RPM, main EEV position (0–2000), 4-way valve, hot-gas valve, base heater, defrost mode and stage.
 - **State**: outdoor driving mode (Stop / Safety / Normal / Defrost …), indoor operation mode, pump, booster / backup heater.
 - **Errors**: Samsung error code with a description, e.g. `E101: Indoor - outdoor communication error`.
@@ -49,11 +49,11 @@ The example pins the component to a release tag:
 
 ```yaml
 external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.10.0
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.11.0
     components: [immergas_nasa]
 ```
 
-Change `@v0.10.0` to a newer tag to upgrade, or to `@main` to follow the development version. Only the component is fetched from GitHub; your YAML stays local.
+Change `@v0.11.0` to a newer tag to upgrade, or to `@main` to follow the development version. Only the component is fetched from GitHub; your YAML stays local.
 
 ### Component options
 

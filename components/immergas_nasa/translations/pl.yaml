@@ -35,10 +35,12 @@ sensors:
   raw_0415: NASA PDU wewn. 0415 LONG RAW
   raw_4006: NASA PDU wewn. 4006 RAW
   raw_440a: NASA PDU wewn. 440A LONG RAW
+  raw_428d: NASA PDU wewn. 428D RAW
   outdoor_temperature: Temperatura zewnętrzna
   compressor_frequency: Częstotliwość sprężarki
   order_frequency: Częstotliwość zlecona sprężarki
   target_frequency: Częstotliwość docelowa sprężarki
+  frequency_limit: Limit częstotliwości sprężarki
   fan_speed_target: Obroty wentylatora (zadane)
   fan_speed_actual: Obroty wentylatora (rzeczywiste)
   power_consumed: Pobór mocy (ostatnia minuta)
@@ -67,6 +69,7 @@ sensors:
   raw_824b: NASA PDU zewn. 824B RAW
   raw_824c: NASA PDU zewn. 824C RAW
   raw_82e1: NASA PDU zewn. 82E1 RAW
+  raw_80b1: NASA PDU zewn. 80B1 RAW
   raw_840f: NASA PDU zewn. 840F LONG RAW
   raw_8417: NASA PDU zewn. 8417 LONG RAW
   rx_frames: NASA odebrane ramki

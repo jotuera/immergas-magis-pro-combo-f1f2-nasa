@@ -43,10 +43,12 @@ Status: decoded unless marked *candidate* / *unknown*. **Help with the unknown o
 | `0x0415` | indoor | `raw_0415` | NASA Indoor PDU 0415 LONG RAW | raw |  | *unknown* LVAR_AD_INSTALL_LEVEL_CONTACT_CONTROL. |
 | `0x4006` | indoor | `raw_4006` | NASA Indoor PDU 4006 RAW | raw |  | *unknown* Indoor fan mode - meaningless on EHS. |
 | `0x440A` | indoor | `raw_440a` | NASA Indoor PDU 440A LONG RAW | raw |  | *unknown* Device status heat pump / boiler - stays 1, also while the gas boiler runs. |
+| `0x428D` | indoor | `raw_428d` | NASA Indoor PDU 428D RAW | raw |  | *candidate* 0 -> 286 when the Immergas night function started (22:00:59, 48 s after the boiler wrote the 30 % limit to the MIM); did not return to 0 at the end of the window. Samsung's code list mentions it for "EHS Mono HT Quiet". |
 | `0x8204` | outdoor | `outdoor_temperature` | Outdoor Temperature | temp | °C |  |
 | `0x8238` | outdoor | `compressor_frequency` | Compressor Current Frequency | raw | Hz |  |
 | `0x8236` | outdoor | `order_frequency` | Compressor 1 Order Frequency | raw | Hz |  |
 | `0x8237` | outdoor | `target_frequency` | Compressor 1 Target Frequency | raw | Hz |  |
+| `0x8239` | outdoor | `frequency_limit` | Compressor Frequency Limit | raw | Hz | Upper compressor frequency limit: 95 stopped / start, ~64 in Normal mode, **19 during the Immergas night function** (U11 - the boiler writes a 30 % capacity limit to the MIM; 30 % x 64 Hz = 19). Applied ~6 min after the compressor start, released ~40 s after the night window ends. |
 | `0x823D` | outdoor | `fan_speed_target` | Outdoor Fan Speed (target) | raw | RPM | 0x823D = target, 0x82D9 = actual. |
 | `0x82D9` | outdoor | `fan_speed_actual` | Outdoor Fan Speed (actual) | raw | RPM |  |
 | `0x8413` | outdoor | `power_consumed` | Power Consumed last Minute | raw nan=4294967295 | W |  |
@@ -69,12 +71,13 @@ Status: decoded unless marked *candidate* / *unknown*. **Help with the unknown o
 | `0x0207` | outdoor | `linked_indoor_units` | Linked Indoor Units | raw |  | Number of indoor units linked to the outdoor unit. |
 | `0x041B` | outdoor | `raw_041b` | NASA Outdoor PDU 041B LONG RAW | raw |  | *unknown*  |
 | `0x8201` | outdoor | `raw_8201` | NASA Outdoor PDU 8201 RAW | raw |  | *unknown* Constant 181. |
-| `0x8239` | outdoor | `raw_8239` | NASA Outdoor PDU 8239 RAW | raw |  | *candidate* Changes together with 0x8032/0x8033 in Normal mode (95 -> 64). Candidate: frequency limit [Hz]. |
+| `0x8239` | outdoor | `raw_8239` | NASA Outdoor PDU 8239 RAW | raw |  | *deprecated* - same value as `frequency_limit`, kept so existing configs keep working. |
 | `0x823F` | outdoor | `raw_823f` | NASA Outdoor PDU 823F RAW | raw |  | *unknown* Constant 200. |
 | `0x8243` | outdoor | `raw_8243` | NASA Outdoor PDU 8243 RAW | raw |  | *unknown*  |
 | `0x824B` | outdoor | `raw_824b` | NASA Outdoor PDU 824B RAW | raw |  | *unknown* Constant 2100. |
 | `0x824C` | outdoor | `raw_824c` | NASA Outdoor PDU 824C RAW | raw |  | *unknown*  |
 | `0x82E1` | outdoor | `raw_82e1` | NASA Outdoor PDU 82E1 RAW | raw |  | *unknown* Constant 0x5A5A. |
+| `0x80B1` | outdoor | `raw_80b1` | NASA Outdoor PDU 80B1 RAW | raw |  | *candidate* 0 -> 1 together with the night frequency limit (0x8239 -> 19 Hz) while the compressor was running; back to 0 when the compressor stopped at the end of the window. Candidate: "capacity limit active". |
 | `0x840F` | outdoor | `raw_840f` | NASA Outdoor PDU 840F LONG RAW | raw |  | *unknown*  |
 | `0x8417` | outdoor | `raw_8417` | NASA Outdoor PDU 8417 LONG RAW | raw |  | *unknown*  |
 

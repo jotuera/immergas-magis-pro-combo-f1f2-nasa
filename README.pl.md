@@ -6,12 +6,12 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 
 > Część rodziny [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, emulator Dominusa i paneli), **tt-bms** (T-/T+, Modbus BMS) i **f1f2-nasa** (to repo).
 
-> ⚠️ **Beta (v0.10.0).** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane.
+> ⚠️ **Beta (v0.11.0).** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane.
 
 ## Co dostajesz
 
 - **Temperatury**: zasilanie i powrót, aktywna zadana wody, zewnętrzna, tłoczenie, głowica sprężarki, wymiennik zewnętrzny, faza ciekła, IPM.
-- **Sprężarka**: częstotliwość rzeczywista, zlecona i docelowa, etap startu, blokada restartu, prąd, moc, energia (kWh), napięcie szyny DC i sieci.
+- **Sprężarka**: częstotliwość rzeczywista, zlecona i docelowa, limit częstotliwości (spada do 19 Hz w funkcji nocnej Immergasa U11), etap startu, blokada restartu, prąd, moc, energia (kWh), napięcie szyny DC i sieci.
 - **Wentylator i zawory**: obroty zadane i rzeczywiste, pozycja EEV (0–2000), zawór 4-drogowy, zawór gorącego gazu, grzałka tacy, odszranianie i jego etap.
 - **Stany**: tryb jednostki zewnętrznej (Postój / Tryb bezpieczny / Normalna praca / Odszranianie …), tryb jednostki wewnętrznej, pompa, grzałki.
 - **Błędy**: kod Samsunga z opisem, np. `E101: Błąd komunikacji jednostka wewn. - zewn.`.
@@ -45,7 +45,7 @@ Do sterowania kotłem służą [dd-modbus](https://github.com/jotuera/immergas-m
 
 ### Wersje
 
-Przykład przypina komponent do tagu wydania: `github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.10.0`. Żeby zaktualizować, zmień `@v0.10.0` na nowszy tag; `@main` oznacza zawsze najnowszą wersję rozwojową. Z GitHuba pobiera się tylko komponent, Twój YAML zostaje u Ciebie.
+Przykład przypina komponent do tagu wydania: `github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.11.0`. Żeby zaktualizować, zmień `@v0.11.0` na nowszy tag; `@main` oznacza zawsze najnowszą wersję rozwojową. Z GitHuba pobiera się tylko komponent, Twój YAML zostaje u Ciebie.
 
 Opcje komponentu i sposoby deklarowania encji (po `key`, po kodzie `fsv` albo jako surowy `pdu`) opisuje [README.md](README.md#component-options). Pełna lista kluczy jest w [PDU_MAP.md](PDU_MAP.md).
 

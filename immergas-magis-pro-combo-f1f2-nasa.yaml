@@ -5,12 +5,14 @@
 # energy, defrost, errors, firmware and all FSV installer settings. Uses its own component `immergas_nasa`
 # (no third-party NASA component needed). Entity names come from components/immergas_nasa/translations/.
 #
-# Project : jotuera.immergas-magis-pro-combo-f1f2-nasa  |  v0.10.0 (beta)
+# Project : jotuera.immergas-magis-pro-combo-f1f2-nasa  |  v0.11.0 (beta)
 # Repo    : https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa
 # License : MIT (c) 2026 JoTu
 # Tested  : Magis Combo 9 Plus V2 + Audax Pro 9 V2 outdoor unit, MIM-B19N rotary switch = 1.
 #
 # Changelog:
+#   v0.11.0 - 0x8239 decoded as the compressor frequency limit (frequency_limit; 19 Hz during the Immergas night
+#             function U11). New raw candidates 0x80B1, 0x428D. raw_8239 kept but deprecated.
 #   v0.10.0 - Address discovery: "NASA Devices" entity lists the units on the bus; after 60 s the log warns
 #             if indoor_address / outdoor_address do not match and shows the line to use.
 #   v0.9.0  - First public beta.
@@ -30,17 +32,17 @@ esphome:
   min_version: 2026.5.0
   project:
     name: jotuera.immergas-magis-pro-combo-f1f2-nasa
-    version: 0.10.0
+    version: 0.11.0
 
 esp32:
   board: m5stack-atom
   framework:
     type: esp-idf
 
-# The component is downloaded from GitHub. @v0.10.0 = this release (recommended);
+# The component is downloaded from GitHub. @v0.11.0 = this release (recommended);
 # @main = always the latest development version.
 external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.10.0
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.11.0
     components: [immergas_nasa]
     refresh: 1d
 
@@ -118,6 +120,7 @@ sensor:
   - {platform: immergas_nasa, key: compressor_frequency}
   - {platform: immergas_nasa, key: order_frequency}
   - {platform: immergas_nasa, key: target_frequency}
+  - {platform: immergas_nasa, key: frequency_limit}
   - {platform: immergas_nasa, key: fan_speed_target}
   - {platform: immergas_nasa, key: fan_speed_actual}
   - {platform: immergas_nasa, key: power_consumed, id: power_consumed}
@@ -147,14 +150,15 @@ sensor:
   - {platform: immergas_nasa, key: raw_0415}
   - {platform: immergas_nasa, key: raw_4006}
   - {platform: immergas_nasa, key: raw_440a}
+  - {platform: immergas_nasa, key: raw_428d}
   - {platform: immergas_nasa, key: raw_041b}
   - {platform: immergas_nasa, key: raw_8201}
-  - {platform: immergas_nasa, key: raw_8239}
   - {platform: immergas_nasa, key: raw_823f}
   - {platform: immergas_nasa, key: raw_8243}
   - {platform: immergas_nasa, key: raw_824b}
   - {platform: immergas_nasa, key: raw_824c}
   - {platform: immergas_nasa, key: raw_82e1}
+  - {platform: immergas_nasa, key: raw_80b1}
   - {platform: immergas_nasa, key: raw_840f}
   - {platform: immergas_nasa, key: raw_8417}
   # ---------------- bus statistics
