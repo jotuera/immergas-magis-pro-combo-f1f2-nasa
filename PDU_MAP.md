@@ -224,4 +224,4 @@ Never broadcast - the component reads them at boot (+30 s) and every `poll_inter
 ## Not present on a Magis Combo
 
 Always 65535 or never sent on this install (kept out of the default config): pressures `0x8206/0x8208`, suction `0x821A`, saturation temps `0x829F/0x82A0`, EVI / double tube / DSH `0x821C/0x821E/0x8220/0x827A`, compressor 2 `0x8276`, ODU water sensors `0x82DE-0x82E0` (65036), `0x4206`, `0x423E`, FR control `0x42F1`.
-`0x42D4`, `0x42E9`, `0x4426`, `0x4427` are in the catalog but not broadcast on this install (they may be on others).
+`0x42D4`, `0x42D6`, `0x42E9`, `0x4426`, `0x4427` are in the catalog but not broadcast on a Magis Combo, and a READ returns "not available" (65535 / 0xFFFFFFFF) - the MIM board has no flow meter or heat metering (the Immergas board handles the pump and flow). They may work on other installs. On a Magis use the flow from the T-/T+ (BMS) bus (D14).
