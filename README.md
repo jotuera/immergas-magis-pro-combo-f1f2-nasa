@@ -2,6 +2,12 @@
 
 🇬🇧 English | 🇵🇱 [Polski](README.pl.md)
 
+<p align="center">
+  <img src="https://img.shields.io/github/v/tag/jotuera/immergas-magis-pro-combo-f1f2-nasa?label=version&color=blue" alt="Version">
+  <img src="https://img.shields.io/badge/platform-ESP32-41BDF5.svg" alt="ESP32">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a>
+</p>
+
 Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Samsung EHS unit, e.g. **Audax Pro V2**) and the **Samsung MIM-B19N interface board** inside the Magis exchange on the **F1/F2** bus. You get it in **Home Assistant** through an **M5Stack Atom + RS485** running ESPHome. No cloud is involved and no third-party NASA component is needed: the project ships its own component, `f1f2_nasa`.
 
 > Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo). All three use the same layout (`packages/<bus>_*.yaml`, ids and substitutions with the bus prefix `dd_` / `tt_` / `f1f2_`), so they can run together on one device.

@@ -2,6 +2,12 @@
 
 🇬🇧 [English](README.md) | 🇵🇱 Polski
 
+<p align="center">
+  <img src="https://img.shields.io/github/v/tag/jotuera/immergas-magis-pro-combo-f1f2-nasa?label=version&color=blue" alt="Wersja">
+  <img src="https://img.shields.io/badge/platform-ESP32-41BDF5.svg" alt="ESP32">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="Licencja: MIT"></a>
+</p>
+
 Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (Samsung EHS, np. **Audax Pro V2**) i **płytka Samsung MIM-B19N** w Magisie wymieniają po magistrali **F1/F2**. Dane trafiają do **Home Assistanta** przez **M5Stack Atom + RS485** z ESPHome. Bez chmury i bez cudzego komponentu NASA: projekt ma własny komponent `f1f2_nasa`.
 
 > Część rodziny [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, emulator Dominusa i paneli), **tt-bms** (T-/T+, Modbus BMS) i **f1f2-nasa** (to repo). Wszystkie trzy mają ten sam układ (`packages/<magistrala>_*.yaml`, identyfikatory i podstawienia z prefiksem `dd_` / `tt_` / `f1f2_`), więc mogą działać razem na jednym urządzeniu.
