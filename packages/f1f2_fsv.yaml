@@ -1,0 +1,105 @@
+# Immergas Magis Pro / Combo F1/F2 (Samsung NASA) - package "f1f2_fsv"
+# All 94 FSV installer settings of the Samsung side (read-only; read 30 s after boot, then every
+# f1f2_poll_interval; button 'Read FSV now'). Needs f1f2_transmit: true.
+# Part of jotuera/immergas-magis-pro-combo-f1f2-nasa (MIT). Loaded by the main YAML through `packages:`.
+# File, id and substitution names start with f1f2_ so this repo can be combined with the D+/D- and T-/T+
+# repos on one device.
+
+sensor:
+  - {platform: f1f2_nasa, fsv: 1011}
+  - {platform: f1f2_nasa, fsv: 1012}
+  - {platform: f1f2_nasa, fsv: 1021}
+  - {platform: f1f2_nasa, fsv: 1022}
+  - {platform: f1f2_nasa, fsv: 1031}
+  - {platform: f1f2_nasa, fsv: 1032}
+  - {platform: f1f2_nasa, fsv: 1041}
+  - {platform: f1f2_nasa, fsv: 1042}
+  - {platform: f1f2_nasa, fsv: 1051}
+  - {platform: f1f2_nasa, fsv: 1052}
+  - {platform: f1f2_nasa, fsv: 2011}
+  - {platform: f1f2_nasa, fsv: 2012}
+  - {platform: f1f2_nasa, fsv: 2021}
+  - {platform: f1f2_nasa, fsv: 2022}
+  - {platform: f1f2_nasa, fsv: 2031}
+  - {platform: f1f2_nasa, fsv: 2032}
+  - {platform: f1f2_nasa, fsv: 2041}
+  - {platform: f1f2_nasa, fsv: 2051}
+  - {platform: f1f2_nasa, fsv: 2052}
+  - {platform: f1f2_nasa, fsv: 2061}
+  - {platform: f1f2_nasa, fsv: 2062}
+  - {platform: f1f2_nasa, fsv: 2071}
+  - {platform: f1f2_nasa, fsv: 2072}
+  - {platform: f1f2_nasa, fsv: 2081}
+  - {platform: f1f2_nasa, fsv: 2091}
+  - {platform: f1f2_nasa, fsv: 2092}
+  - {platform: f1f2_nasa, fsv: 2093}
+  - {platform: f1f2_nasa, fsv: 3011}
+  - {platform: f1f2_nasa, fsv: 3021}
+  - {platform: f1f2_nasa, fsv: 3022}
+  - {platform: f1f2_nasa, fsv: 3023}
+  - {platform: f1f2_nasa, fsv: 3024}
+  - {platform: f1f2_nasa, fsv: 3025}
+  - {platform: f1f2_nasa, fsv: 3026}
+  - {platform: f1f2_nasa, fsv: 3031}
+  - {platform: f1f2_nasa, fsv: 3032}
+  - {platform: f1f2_nasa, fsv: 3033}
+  - {platform: f1f2_nasa, fsv: 3041}
+  - {platform: f1f2_nasa, fsv: 3042}
+  - {platform: f1f2_nasa, fsv: 3043}
+  - {platform: f1f2_nasa, fsv: 3044}
+  - {platform: f1f2_nasa, fsv: 3045}
+  - {platform: f1f2_nasa, fsv: 3046}
+  - {platform: f1f2_nasa, fsv: 3051}
+  - {platform: f1f2_nasa, fsv: 3052}
+  - {platform: f1f2_nasa, fsv: 3061}
+  - {platform: f1f2_nasa, fsv: 3071}
+  - {platform: f1f2_nasa, fsv: 3081}
+  - {platform: f1f2_nasa, fsv: 3082}
+  - {platform: f1f2_nasa, fsv: 3083}
+  - {platform: f1f2_nasa, fsv: 4011}
+  - {platform: f1f2_nasa, fsv: 4012}
+  - {platform: f1f2_nasa, fsv: 4013}
+  - {platform: f1f2_nasa, fsv: 4021}
+  - {platform: f1f2_nasa, fsv: 4022}
+  - {platform: f1f2_nasa, fsv: 4023}
+  - {platform: f1f2_nasa, fsv: 4024}
+  - {platform: f1f2_nasa, fsv: 4025}
+  - {platform: f1f2_nasa, fsv: 4031}
+  - {platform: f1f2_nasa, fsv: 4032}
+  - {platform: f1f2_nasa, fsv: 4033}
+  - {platform: f1f2_nasa, fsv: 4041}
+  - {platform: f1f2_nasa, fsv: 4042}
+  - {platform: f1f2_nasa, fsv: 4043}
+  - {platform: f1f2_nasa, fsv: 4044}
+  - {platform: f1f2_nasa, fsv: 4045}
+  - {platform: f1f2_nasa, fsv: 4046}
+  - {platform: f1f2_nasa, fsv: 4051}
+  - {platform: f1f2_nasa, fsv: 4052}
+  - {platform: f1f2_nasa, fsv: 4053}
+  - {platform: f1f2_nasa, fsv: 4061}
+  - {platform: f1f2_nasa, fsv: 5011}
+  - {platform: f1f2_nasa, fsv: 5012}
+  - {platform: f1f2_nasa, fsv: 5013}
+  - {platform: f1f2_nasa, fsv: 5014}
+  - {platform: f1f2_nasa, fsv: 5015}
+  - {platform: f1f2_nasa, fsv: 5016}
+  - {platform: f1f2_nasa, fsv: 5017}
+  - {platform: f1f2_nasa, fsv: 5018}
+  - {platform: f1f2_nasa, fsv: 5019}
+  - {platform: f1f2_nasa, fsv: 5021}
+  - {platform: f1f2_nasa, fsv: 5022}
+  - {platform: f1f2_nasa, fsv: 5023}
+  - {platform: f1f2_nasa, fsv: 5041}
+  - {platform: f1f2_nasa, fsv: 5042}
+  - {platform: f1f2_nasa, fsv: 5043}
+  - {platform: f1f2_nasa, fsv: 5051}
+  - {platform: f1f2_nasa, fsv: 5081}
+  - {platform: f1f2_nasa, fsv: 5082}
+  - {platform: f1f2_nasa, fsv: 5083}
+  - {platform: f1f2_nasa, fsv: 5091}
+  - {platform: f1f2_nasa, fsv: 5092}
+  - {platform: f1f2_nasa, fsv: 5093}
+  - {platform: f1f2_nasa, fsv: 5094}
+
+button:
+  - platform: f1f2_nasa   # read all FSV now

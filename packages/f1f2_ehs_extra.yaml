@@ -1,0 +1,34 @@
+# Immergas Magis Pro / Combo F1/F2 (Samsung NASA) - package "f1f2_ehs_extra"
+# OPTIONAL. Values a Magis Pro / Combo does NOT provide (its MIM board answers 'not available'): zone 2,
+# flow rate, produced power and energy, COP. Useful on other Samsung EHS installs. Needs f1f2_outdoor.
+# Part of jotuera/immergas-magis-pro-combo-f1f2-nasa (MIT). Loaded by the main YAML through `packages:`.
+# File, id and substitution names start with f1f2_ so this repo can be combined with the D+/D- and T-/T+
+# repos on one device.
+
+sensor:
+  - {platform: f1f2_nasa, key: zone2_room_temp}
+  - {platform: f1f2_nasa, key: zone2_target}
+  - {platform: f1f2_nasa, key: flow_rate}
+  - {platform: f1f2_nasa, key: power_produced, id: f1f2_power_produced}
+  - {platform: f1f2_nasa, key: energy_produced_total, id: f1f2_energy_produced_total}
+  - platform: template
+    id: f1f2_cop_instant
+    name: "${n_f1f2_cop_instant}"
+    icon: mdi:chart-bar
+    state_class: measurement
+    accuracy_decimals: 2
+    update_interval: 10s
+    lambda: |-
+      float in = id(f1f2_power_consumed).state, out = id(f1f2_power_produced).state;
+      if (std::isnan(in) || std::isnan(out) || in <= 0) return NAN;
+      return std::min(8.0f, std::max(0.0f, out / in));
+  - platform: template
+    id: f1f2_cop_total
+    name: "${n_f1f2_cop_total}"
+    icon: mdi:chart-bar
+    accuracy_decimals: 2
+    update_interval: 300s
+    lambda: |-
+      float in = id(f1f2_energy_consumed_total).state, out = id(f1f2_energy_produced_total).state;
+      if (std::isnan(in) || std::isnan(out) || in <= 0) return NAN;
+      return out / in;

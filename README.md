@@ -2,11 +2,11 @@
 
 🇬🇧 English | 🇵🇱 [Polski](README.pl.md)
 
-Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Samsung EHS unit, e.g. **Audax Pro V2**) and the **Samsung MIM-B19N interface board** inside the Magis exchange on the **F1/F2** bus. You get it in **Home Assistant** through an **M5Stack Atom + RS485** running ESPHome. No cloud is involved and no third-party NASA component is needed: the project ships its own component, `immergas_nasa`.
+Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Samsung EHS unit, e.g. **Audax Pro V2**) and the **Samsung MIM-B19N interface board** inside the Magis exchange on the **F1/F2** bus. You get it in **Home Assistant** through an **M5Stack Atom + RS485** running ESPHome. No cloud is involved and no third-party NASA component is needed: the project ships its own component, `f1f2_nasa`.
 
-> Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo).
+> Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo). All three use the same layout (`packages/<bus>_*.yaml`, ids and substitutions with the bus prefix `dd_` / `tt_` / `f1f2_`), so they can run together on one device.
 
-> ⚠️ **Beta (v0.11.0).** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome.
+> **v1.0.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading from v0.x: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -17,21 +17,21 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 - **Errors**: Samsung error code with a description, e.g. `E101: Indoor - outdoor communication error`.
 - **Firmware**: part numbers and build dates of the outdoor main board, its EEPROM, the inverter board and the MIM board.
 - **All 94 FSV installer settings**, read on demand. The water law, DHW limits, heater settings and so on show up as read-only sensors.
-- **Derived values**: flow ΔT, instantaneous and total COP, daily energy.
+- **Derived values**: flow ΔT, energy consumed today.
 - **Unknown PDUs** are exposed as diagnostic `RAW` entities, and an optional **bus sniffer** helps decode them (see [PDU_MAP.md](PDU_MAP.md)).
-- **Address discovery**: a `NASA Devices` entity lists every unit on the bus, and the log tells you if `indoor_address` / `outdoor_address` need changing (see [Finding the addresses](#finding-the-addresses)).
-- **Translations**: entity names, state texts and error texts are translated, and you switch language with **one line** (`language: en | pl`). Adding a language means adding one file (see [TRANSLATING.md](TRANSLATING.md)).
+- **Address discovery**: a `NASA Devices` entity lists every unit on the bus, and the log tells you if the indoor / outdoor address needs changing (see [Finding the addresses](#finding-the-addresses)).
+- **Translations**: entity names, state texts and error texts are translated; you pick the language with **one line** in the packages list (`f1f2_en` / `f1f2_pl`). Adding a language means adding one file (see [TRANSLATING.md](TRANSLATING.md)).
 
 ### Why read-only?
 
-On F1/F2 the **Immergas controller is in charge**. It computes the water target from its own heating curve (menu Termoregulation R02–R05 + offset U03) and drives the Samsung side through the MIM board. Writes to the indoor unit on F1/F2 are simply ignored. This project therefore **never writes**. With `transmit: true` it only sends **READ** requests, to fetch the FSV values that are never broadcast. Set `transmit: false` for a pure listener.
+On F1/F2 the **Immergas controller is in charge**. It computes the water target from its own heating curve (menu Termoregulation R02–R05 + offset U03) and drives the Samsung side through the MIM board. Writes to the indoor unit on F1/F2 are simply ignored. This project therefore **never writes**. It only sends **READ** requests, to fetch the FSV values that are never broadcast. Set `f1f2_transmit: "false"` for a pure listener.
 
-To control the boiler, use [dd-modbus](https://github.com/jotuera/immergas-magis-pro-combo-dd-modbus) or [tt-bms](https://github.com/jotuera/immergas-magis-pro-combo-tt-bms). The F3/F4 remote-controller bus, where writes do work, is on the roadmap.
+To control the boiler, use [dd-modbus](https://github.com/jotuera/immergas-magis-pro-combo-dd-modbus) or [tt-bms](https://github.com/jotuera/immergas-magis-pro-combo-tt-bms).
 
 ## Hardware
 
-- **M5Stack Atom Lite** (ESP32) + **Atomic RS485 Base** (auto direction), or any ESP32 with an RS485 transceiver. For a transceiver with a DE/RE pin, set `flow_control_pin`.
-- Pins in the example: **TX = GPIO19, RX = GPIO22**.
+- **M5Stack Atom Lite** (ESP32) + **Atomic RS485 Base** (auto direction), or any ESP32 with an RS485 transceiver. For a transceiver with a DE/RE pin, set `flow_control_pin` in `f1f2_core`.
+- Pins in the example: **TX = GPIO19, RX = GPIO22** (substitutions `f1f2_uart_tx_pin` / `f1f2_uart_rx_pin`).
 - Wiring: **F1 / F2** of the Magis indoor box (the MIM-B19N board terminals) → RS485 **A / B**. If you only see bad frames, swap A/B.
 - Bus: **9600 baud, 8E1**.
 - **The MIM-B19N rotary switch must be set to 1** (factory 0). At 0 the MIM stays silent and nothing can be read.
@@ -39,47 +39,52 @@ To control the boiler, use [dd-modbus](https://github.com/jotuera/immergas-magis
 ## Setup
 
 1. Copy `immergas-magis-pro-combo-f1f2-nasa.yaml` and `secrets.yaml.example` (renamed to `secrets.yaml`) to your ESPHome folder, then fill in Wi-Fi, the API key and the OTA password.
-2. Pick the language: `substitutions: language: en` or `pl`.
-3. Install. The component is fetched from this repo by `external_components`.
-4. After about 30 s the FSV values are read; after that they are re-read every `poll_interval`, or on demand with the **Read FSV Now** button.
+2. Pick the language: in the packages list keep **one** of `packages/lang/f1f2_en.yaml` or `packages/lang/f1f2_pl.yaml`.
+3. Install. The packages and the `f1f2_nasa` component are fetched from this repo.
+4. After about 30 s the FSV values are read; after that they are re-read every `f1f2_poll_interval`, or on demand with the **Read FSV Now** button.
+
+### Packages
+
+| File | Content |
+|---|---|
+| `packages/f1f2_core.yaml` | UART, the `f1f2_nasa` hub, the component download, `NASA Devices` (**required**) |
+| `packages/f1f2_indoor.yaml` | indoor unit: water temperatures, active water target, DHW, zone 1, pump, heaters, modes |
+| `packages/f1f2_outdoor.yaml` | outdoor unit: compressor, frequency limit, fan, EEV, refrigerant temperatures, power, energy, errors |
+| `packages/f1f2_info.yaml` | firmware versions, capacity class, linked indoor units |
+| `packages/f1f2_fsv.yaml` | all 94 FSV installer settings + **Read FSV Now** button |
+| `packages/f1f2_computed.yaml` | flow ΔT, energy consumed today |
+| `packages/f1f2_diagnostics.yaml` | undecoded PDUs, bus statistics, sniffer |
+| `packages/f1f2_ehs_extra.yaml` | optional: zone 2, flow rate, produced power / energy, COP — **not sent by a Magis** (its MIM answers "not available"), useful on other Samsung EHS installs |
+| `packages/lang/f1f2_en.yaml`, `f1f2_pl.yaml` | language (pick one) |
 
 ### Versions
 
-The example pins the component to a release tag:
+The example pins everything to a release tag (`ref: v1.0.0`; `f1f2_core` downloads the component with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+
+### Settings (substitutions)
+
+Put any of these under `substitutions:` in your main YAML:
 
 ```yaml
-external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v0.11.0
-    components: [immergas_nasa]
+substitutions:
+  f1f2_uart_tx_pin: GPIO19
+  f1f2_uart_rx_pin: GPIO22
+  f1f2_transmit: "true"            # "false" = listen only (no FSV values)
+  f1f2_poll_interval: 30min        # FSV re-read period
+  f1f2_indoor_address: "20.00.01"  # see "Finding the addresses"
+  f1f2_outdoor_address: "10.00.00"
+  n_f1f2_flow_delta: "My delta T"  # names of the template entities (n_f1f2_*)
 ```
 
-Change `@v0.11.0` to a newer tag to upgrade, or to `@main` to follow the development version. Only the component is fetched from GitHub; your YAML stays local.
-
-### Component options
-
-```yaml
-immergas_nasa:
-  uart_id: nasa_uart
-  language: en               # en | pl | ... (translations/<code>.yaml)
-  transmit: true             # false = listen only
-  poll_interval: 30min       # FSV re-read period
-  republish_interval: 60s    # unchanged values are re-sent to HA at most this often
-  # address: 80.FF.00        # own NASA address (JIG tester class)
-  # indoor_address: 20.00.01
-  # outdoor_address: 10.00.00
-  # read_address: B2.00.20   # destination of READ requests
-  # flow_control_pin: GPIO23
-```
-
-Entities are declared by **key** (the name, unit and decoding come from the catalog), by **FSV code**, or as a raw **PDU**:
+Your own entities use the platform `f1f2_nasa`, declared by **key** (the name, unit and decoding come from the catalog), by **FSV code**, or as a raw **PDU**:
 
 ```yaml
 sensor:
-  - platform: immergas_nasa
+  - platform: f1f2_nasa
     key: flow_temp_out                 # name from the selected language
-  - platform: immergas_nasa
+  - platform: f1f2_nasa
     fsv: 2011                          # "FSV 2011 - Heating water law - outdoor temp point 1"
-  - platform: immergas_nasa
+  - platform: f1f2_nasa
     pdu: 0x8032                        # anything else: raw value, diagnostic
     source: outdoor
     name: "NASA Outdoor PDU 8032"
@@ -87,15 +92,19 @@ sensor:
 
 You can override any field, e.g. `name:`, `filters:` or `entity_category:`. All keys are listed in [PDU_MAP.md](PDU_MAP.md).
 
+### Running on one device with the other buses
+
+All three projects use bus prefixes for every file, id and substitution, so their package lists can be put next to each other under one `packages:` with one device section (esp32, wifi, api, logger). Give each bus its own UART pins (an ESP32 has three hardware UARTs; set `logger: baud_rate: 0`).
+
 ## Finding the addresses
 
 Every unit on the NASA bus has a 3-byte address `class.channel.address`:
 
-| Address | Unit | Option |
+| Address | Unit | Substitution |
 |---|---|---|
-| `10.00.00` | outdoor unit (Samsung EHS) | `outdoor_address` |
-| `20.00.01` | indoor unit = the MIM-B19N board in the Magis | `indoor_address` |
-| `80.FF.00` | this ESP (only sends READ requests) | `address` |
+| `10.00.00` | outdoor unit (Samsung EHS) | `f1f2_outdoor_address` |
+| `20.00.01` | indoor unit = the MIM-B19N board in the Magis | `f1f2_indoor_address` |
+| `80.FF.00` | this ESP (only sends READ requests) | `address:` of `f1f2_nasa` |
 
 The defaults match a Magis Combo / Pro V2 with the MIM rotary switch at **1**. The last byte of the indoor address follows the rotary switch (rotary 1 → `20.00.01`); generic Samsung EHS hydro units often use `20.00.00`.
 
@@ -103,20 +112,20 @@ You don't have to guess. The component finds the units itself:
 
 1. Install with the defaults.
 2. Look at the **NASA Devices** entity (or the log line `Found device on the bus: ...`). It lists every unit that sends frames, e.g. `10.00.00 outdoor unit, 20.00.01 indoor unit`.
-3. After 60 s the component compares the list with your settings. If they differ it logs a warning with the exact line to use, e.g. `indoor_address is 20.00.01, but that device is not on the bus. Found 20.00.00 instead - set 'indoor_address: 20.00.00'.`
-4. Put that line under `immergas_nasa:` and install again.
+3. After 60 s the component compares the list with your settings. If they differ it logs a warning with the address it found, e.g. `indoor_address is 20.00.01, but that device is not on the bus. Found 20.00.00 instead - set 'indoor_address: 20.00.00'.`
+4. Put that address in your substitutions (`f1f2_indoor_address: "20.00.00"`) and install again.
 
 If the list stays empty, the log says so after 60 s. Check F1/F2 → A/B (swap A/B), 9600 8E1, and the MIM rotary switch (at 0 the bus is silent).
 
 ## Sniffer
 
-Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value change is then logged as `10.00.00 8238: 0 -> 30` (tag `sniff`, level INFO), every whole frame at level DEBUG (`logger: level: DEBUG`), and the last frame and change are shown in two text sensors. This is the easiest way to contribute decodings: capture a log during a defrost, a DHW run or frost, then open an issue.
+Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value change is then logged as `10.00.00 8238: 0 -> 30` (tag `f1f2_sniff`, level INFO), every whole frame at level DEBUG (`logger: level: DEBUG`), and the last frame and change are shown in two text sensors. This is the easiest way to contribute decodings: capture a log during a defrost, a DHW run or frost, then open an issue.
 
 ## Notes
 
 - **Migrating from the `samsung_nasa` (Beormund) component**: the English sensor names here match the usual names from that setup. Keep the same `esphome: name:` and Home Assistant keeps those entities and their history. Writable entities (climate, numbers, selects, switches) are not offered here.
 - Values that a Magis Combo never sends (pressures, suction, the water sensors on the outdoor unit…) are left out. See the end of [PDU_MAP.md](PDU_MAP.md).
-- The component's own address is `80.FF.00`. If your bus already has a device using it, change `address:`.
+- The component's own address is `80.FF.00`. If your bus already has a device using it, set `address:` under `f1f2_nasa:`.
 
 ## Disclaimer
 

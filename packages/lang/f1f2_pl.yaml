@@ -1,0 +1,11 @@
+# Immergas Magis Pro / Combo F1/F2 (Samsung NASA) - language file (f1f2_): Polski
+# Selects the language of the f1f2_nasa component (entity names, state texts, error texts - they live in
+# components/f1f2_nasa/translations/f1f2_pl.yaml) and names the template entities below.
+# Pick ONE f1f2_ language file in the packages list. Changing the language renames the entities.
+
+substitutions:
+  f1f2_language: pl
+  n_f1f2_flow_delta: "Różnica temperatur zasilania i powrotu"
+  n_f1f2_daily_energy: "Energia pobrana dziś"
+  n_f1f2_cop_instant: "COP chwilowy"
+  n_f1f2_cop_total: "COP całkowity"

@@ -1,0 +1,41 @@
+# Immergas Magis Pro / Combo F1/F2 (Samsung NASA) - package "f1f2_diagnostics"
+# Undecoded PDUs (RAW, diagnostic - help decoding them: PDU_MAP.md), bus statistics and the bus sniffer.
+# Part of jotuera/immergas-magis-pro-combo-f1f2-nasa (MIT). Loaded by the main YAML through `packages:`.
+# File, id and substitution names start with f1f2_ so this repo can be combined with the D+/D- and T-/T+
+# repos on one device.
+
+sensor:
+  # undecoded values
+  - {platform: f1f2_nasa, key: raw_0402}
+  - {platform: f1f2_nasa, key: raw_0411}
+  - {platform: f1f2_nasa, key: raw_0412}
+  - {platform: f1f2_nasa, key: raw_0413}
+  - {platform: f1f2_nasa, key: raw_0414}
+  - {platform: f1f2_nasa, key: raw_0415}
+  - {platform: f1f2_nasa, key: raw_4006}
+  - {platform: f1f2_nasa, key: raw_440a}
+  - {platform: f1f2_nasa, key: raw_428d}
+  - {platform: f1f2_nasa, key: raw_041b}
+  - {platform: f1f2_nasa, key: raw_8201}
+  - {platform: f1f2_nasa, key: raw_823f}
+  - {platform: f1f2_nasa, key: raw_8243}
+  - {platform: f1f2_nasa, key: raw_824b}
+  - {platform: f1f2_nasa, key: raw_824c}
+  - {platform: f1f2_nasa, key: raw_82e1}
+  - {platform: f1f2_nasa, key: raw_80b1}
+  - {platform: f1f2_nasa, key: raw_840f}
+  - {platform: f1f2_nasa, key: raw_8417}
+  # bus statistics
+  - {platform: f1f2_nasa, type: rx_frames}
+  - {platform: f1f2_nasa, type: bad_frames}
+  - {platform: f1f2_nasa, type: tx_frames}
+  - {platform: f1f2_nasa, type: timeouts}
+
+text_sensor:
+  - {platform: f1f2_nasa, key: raw_4604}
+  # sniffer output (only while the sniffer switch is on)
+  - {platform: f1f2_nasa, type: last_frame}
+  - {platform: f1f2_nasa, type: last_change}
+
+switch:
+  - platform: f1f2_nasa   # bus sniffer: logs every value change (tag "f1f2_sniff"), whole frames at DEBUG level
