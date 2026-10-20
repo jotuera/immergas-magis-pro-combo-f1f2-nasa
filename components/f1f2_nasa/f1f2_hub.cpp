@@ -132,6 +132,9 @@ void NasaHub::feed(const uint8_t *data, size_t len) {
 void NasaHub::process_byte_(uint8_t b) {
   if (this->rx_.empty() && b != NASA_START) {
     this->skipped_bytes_++;
+    if (this->sniffer_ && this->skipped_.size() < 32)
+      this->skipped_.push_back(b);
+    this->last_skip_ms_ = this->last_rx_byte_;
     return;  // hunt for a start byte
   }
   if (this->rx_.empty())
@@ -164,13 +167,19 @@ bool NasaHub::process_frame_(const uint8_t *buf, size_t len) {
   if (this->sniffer_) {
     // one line per frame: device time [ms], silence since the previous frame [ms], bytes skipped in between
     uint32_t gap = this->frame_start_ms_ - this->last_frame_end_ms_;
+    // bytes seen between the previous frame and this one: hex (max 32) and ms from the last of them to this frame
+    std::string skip = hex_bytes(this->skipped_.data(), this->skipped_.size());
+    uint32_t skip_dt = this->skipped_bytes_ ? this->frame_start_ms_ - this->last_skip_ms_ : 0;
     if (ok) {
-      ESP_LOGD("f1f2_sniff", "RX t=%u gap=%u skip=%u %s | %s", unsigned(this->frame_start_ms_), unsigned(gap),
-               unsigned(this->skipped_bytes_), p.to_string().c_str(), hex_bytes(buf, len).c_str());
+      ESP_LOGD("f1f2_sniff", "RX t=%u gap=%u skip=%u [%s] dt=%u %s | %s", unsigned(this->frame_start_ms_),
+               unsigned(gap), unsigned(this->skipped_bytes_), skip.c_str(), unsigned(skip_dt), p.to_string().c_str(),
+               hex_bytes(buf, len).c_str());
     } else {
-      ESP_LOGD("f1f2_sniff", "BAD t=%u gap=%u skip=%u len=%u | %s", unsigned(this->frame_start_ms_), unsigned(gap),
-               unsigned(this->skipped_bytes_), unsigned(len), hex_bytes(buf, len).c_str());
+      ESP_LOGD("f1f2_sniff", "BAD t=%u gap=%u skip=%u [%s] dt=%u len=%u | %s", unsigned(this->frame_start_ms_),
+               unsigned(gap), unsigned(this->skipped_bytes_), skip.c_str(), unsigned(skip_dt), unsigned(len),
+               hex_bytes(buf, len).c_str());
     }
+    this->skipped_.clear();
     this->skipped_bytes_ = 0;
     this->last_frame_end_ms_ = this->last_rx_byte_;
   }

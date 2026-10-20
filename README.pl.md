@@ -12,7 +12,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 
 > Część rodziny [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, emulator Dominusa i paneli), **tt-bms** (T-/T+, Modbus BMS) i **f1f2-nasa** (to repo). Wszystkie trzy mają ten sam układ (`packages/<magistrala>_*.yaml`, identyfikatory i podstawienia z prefiksem `dd_` / `tt_` / `f1f2_`), więc mogą działać razem na jednym urządzeniu.
 
-> **v1.1.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja z v0.x: zob. [CHANGELOG.md](CHANGELOG.md).
+> **v1.2.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja z v0.x: zob. [CHANGELOG.md](CHANGELOG.md).
 
 ## Co dostajesz
 
@@ -51,7 +51,7 @@ Do sterowania kotłem służą [dd-modbus](https://github.com/jotuera/immergas-m
 
 ### Wersje
 
-Przykład przypina wszystko do tagu wydania (`ref: v1.1.0`; `f1f2_core` pobiera komponent z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
+Przykład przypina wszystko do tagu wydania (`ref: v1.2.0`; `f1f2_core` pobiera komponent z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
 
 ### Pakiety
 

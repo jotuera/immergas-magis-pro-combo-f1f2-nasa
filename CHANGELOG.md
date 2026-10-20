@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.0
+
+- **Sniffer**: the frame log also shows the bytes seen between frames: their hex in brackets (first 32), and `dt=<ms>` from the last of them to the start of the frame. On a Magis 4-5 such bytes precede every frame.
+
 ## v1.1.0
 
 - **Sniffer timing**: with the sniffer on and `f1f2_sniff` at DEBUG, every frame is logged with the device time, the silence before it and the number of bytes skipped between frames: `RX t=<ms> gap=<ms> skip=<bytes> <decoded> | <hex>`. Frames with a wrong CRC (`BAD`) and our own READ requests (`TX t=…`) are logged too. While the sniffer is on, the main loop runs at full speed, so the times are accurate to about 1 ms. Useful for measuring the bus timing and for complete frame captures.

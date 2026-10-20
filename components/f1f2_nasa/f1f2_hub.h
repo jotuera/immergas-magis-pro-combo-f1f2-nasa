@@ -151,6 +151,8 @@ class NasaHub : public Component, public uart::UARTDevice {
   uint32_t frame_start_ms_{0};
   uint32_t last_frame_end_ms_{0};
   uint32_t skipped_bytes_{0};
+  std::vector<uint8_t> skipped_;   // first bytes skipped between frames (sniffer only)
+  uint32_t last_skip_ms_{0};
   HighFrequencyLoopRequester high_freq_;
 
   std::deque<PendingRequest> queue_;

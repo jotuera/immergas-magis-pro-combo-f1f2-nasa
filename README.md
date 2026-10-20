@@ -12,7 +12,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 
 > Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo). All three use the same layout (`packages/<bus>_*.yaml`, ids and substitutions with the bus prefix `dd_` / `tt_` / `f1f2_`), so they can run together on one device.
 
-> **v1.1.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading from v0.x: see [CHANGELOG.md](CHANGELOG.md).
+> **v1.2.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading from v0.x: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -65,7 +65,7 @@ To control the boiler, use [dd-modbus](https://github.com/jotuera/immergas-magis
 
 ### Versions
 
-The example pins everything to a release tag (`ref: v1.1.0`; `f1f2_core` downloads the component with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v1.2.0`; `f1f2_core` downloads the component with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 
@@ -125,7 +125,7 @@ If the list stays empty, the log says so after 60 s. Check F1/F2 → A/B (swap A
 
 ## Sniffer
 
-Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value change is then logged as `10.00.00 8238: 0 -> 30` (tag `f1f2_sniff`, level INFO). At level DEBUG (`logger: logs: f1f2_sniff: DEBUG`) every frame is logged too, with the device time and the silence before it, e.g. `RX t=123456 gap=12 skip=0 10.00.00 > B0.00.FF NOTIFY #42 ... | 3200...34` (also `BAD` frames with a wrong CRC and our own `TX` frames); while the sniffer is on, the main loop runs at full speed so the times are accurate to about 1 ms. The last frame and change are shown in two text sensors. This is the easiest way to contribute decodings: capture a log during a defrost, a DHW run or frost, then open an issue.
+Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value change is then logged as `10.00.00 8238: 0 -> 30` (tag `f1f2_sniff`, level INFO). At level DEBUG (`logger: logs: f1f2_sniff: DEBUG`) every frame is logged too, with the device time and the silence before it, e.g. `RX t=123456 gap=12 skip=5 [xxxxxxxxxx] dt=3 10.00.00 > B0.00.FF NOTIFY #42 ... | 3200...34` (`skip` = bytes seen between frames, their hex in brackets, `dt` = ms from the last of them to the frame) (also `BAD` frames with a wrong CRC and our own `TX` frames); while the sniffer is on, the main loop runs at full speed so the times are accurate to about 1 ms. The last frame and change are shown in two text sensors. This is the easiest way to contribute decodings: capture a log during a defrost, a DHW run or frost, then open an issue.
 
 ## Notes
 
