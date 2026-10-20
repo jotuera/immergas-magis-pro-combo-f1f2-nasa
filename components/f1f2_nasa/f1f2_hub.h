@@ -11,6 +11,7 @@
 #include "esphome/core/component.h"
 #include "esphome/core/defines.h"
 #include "esphome/core/hal.h"
+#include "esphome/core/helpers.h"
 #include "esphome/components/uart/uart.h"
 #ifdef USE_SENSOR
 #include "esphome/components/sensor/sensor.h"
@@ -95,7 +96,14 @@ class NasaHub : public Component, public uart::UARTDevice {
   void request_read(const std::vector<uint16_t> &ids);
   // Re-read everything registered with poll: true (FSV etc.).
   void poll_now();
-  void set_sniffer_enabled(bool on) { this->sniffer_ = on; }
+  void set_sniffer_enabled(bool on) {
+    this->sniffer_ = on;
+    // fast main loop while sniffing, so frame times in the log are accurate to ~1 ms
+    if (on)
+      this->high_freq_.start();
+    else
+      this->high_freq_.stop();
+  }
   bool is_sniffer_enabled() const { return this->sniffer_; }
   uint32_t get_republish_interval() const { return this->republish_interval_; }
 
@@ -139,6 +147,11 @@ class NasaHub : public Component, public uart::UARTDevice {
 
   std::vector<uint8_t> rx_;
   uint32_t last_rx_byte_{0};
+  // sniffer timing: start of the frame being received, end of the previous frame, bytes skipped between frames
+  uint32_t frame_start_ms_{0};
+  uint32_t last_frame_end_ms_{0};
+  uint32_t skipped_bytes_{0};
+  HighFrequencyLoopRequester high_freq_;
 
   std::deque<PendingRequest> queue_;
   bool in_flight_{false};

@@ -54,6 +54,8 @@ void NasaHub::setup() {
     this->flow_control_pin_->digital_write(false);
   }
   this->rx_.reserve(256);
+  if (this->sniffer_)
+    this->high_freq_.start();
 }
 
 void NasaHub::dump_config() {
@@ -128,8 +130,12 @@ void NasaHub::feed(const uint8_t *data, size_t len) {
 }
 
 void NasaHub::process_byte_(uint8_t b) {
-  if (this->rx_.empty() && b != NASA_START)
+  if (this->rx_.empty() && b != NASA_START) {
+    this->skipped_bytes_++;
     return;  // hunt for a start byte
+  }
+  if (this->rx_.empty())
+    this->frame_start_ms_ = this->last_rx_byte_;
   this->rx_.push_back(b);
   if (this->rx_.size() < 3)
     return;
@@ -154,7 +160,21 @@ void NasaHub::process_byte_(uint8_t b) {
 
 bool NasaHub::process_frame_(const uint8_t *buf, size_t len) {
   Packet p;
-  if (!p.decode(buf, len)) {
+  bool ok = p.decode(buf, len);
+  if (this->sniffer_) {
+    // one line per frame: device time [ms], silence since the previous frame [ms], bytes skipped in between
+    uint32_t gap = this->frame_start_ms_ - this->last_frame_end_ms_;
+    if (ok) {
+      ESP_LOGD("f1f2_sniff", "RX t=%u gap=%u skip=%u %s | %s", unsigned(this->frame_start_ms_), unsigned(gap),
+               unsigned(this->skipped_bytes_), p.to_string().c_str(), hex_bytes(buf, len).c_str());
+    } else {
+      ESP_LOGD("f1f2_sniff", "BAD t=%u gap=%u skip=%u len=%u | %s", unsigned(this->frame_start_ms_), unsigned(gap),
+               unsigned(this->skipped_bytes_), unsigned(len), hex_bytes(buf, len).c_str());
+    }
+    this->skipped_bytes_ = 0;
+    this->last_frame_end_ms_ = this->last_rx_byte_;
+  }
+  if (!ok) {
     this->crc_errors_++;
     ESP_LOGV(TAG, "Bad frame (%u B): %s", unsigned(len), hex_bytes(buf, len).c_str());
     return false;
@@ -204,7 +224,6 @@ void NasaHub::handle_packet_(const Packet &p) {
 }
 
 void NasaHub::sniff_(const Packet &p) {
-  ESP_LOGD("f1f2_sniff", "%s", p.to_string().c_str());
   if (p.data_type != DataType::NOTIFICATION && p.data_type != DataType::RESPONSE)
     return;
   for (const Message &m : p.messages) {
@@ -386,7 +405,8 @@ void NasaHub::send_request_(PendingRequest &req) {
   this->last_rx_byte_ = req.sent_at;  // our own frame occupies the bus as well
   this->tx_frames_++;
   if (this->sniffer_) {
-    ESP_LOGD("f1f2_sniff", "TX %s", p.to_string().c_str());
+    ESP_LOGD("f1f2_sniff", "TX t=%u %s | %s", unsigned(req.sent_at), p.to_string().c_str(),
+             hex_bytes(frame.data(), frame.size()).c_str());
   }
 }
 

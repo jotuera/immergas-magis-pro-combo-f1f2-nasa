@@ -12,7 +12,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 
 > Część rodziny [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, emulator Dominusa i paneli), **tt-bms** (T-/T+, Modbus BMS) i **f1f2-nasa** (to repo). Wszystkie trzy mają ten sam układ (`packages/<magistrala>_*.yaml`, identyfikatory i podstawienia z prefiksem `dd_` / `tt_` / `f1f2_`), więc mogą działać razem na jednym urządzeniu.
 
-> **v1.0.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja z v0.x: zob. [CHANGELOG.md](CHANGELOG.md).
+> **v1.1.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja z v0.x: zob. [CHANGELOG.md](CHANGELOG.md).
 
 ## Co dostajesz
 
@@ -51,7 +51,7 @@ Do sterowania kotłem służą [dd-modbus](https://github.com/jotuera/immergas-m
 
 ### Wersje
 
-Przykład przypina wszystko do tagu wydania (`ref: v1.0.0`; `f1f2_core` pobiera komponent z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
+Przykład przypina wszystko do tagu wydania (`ref: v1.1.0`; `f1f2_core` pobiera komponent z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
 
 ### Pakiety
 
@@ -96,7 +96,7 @@ Jeśli lista zostaje pusta, log mówi o tym po 60 s. Sprawdź podłączenie F1/F
 
 ## Sniffer
 
-Włącz przełącznik **Sniffer NASA** (diagnostyczny, po restarcie wyłączony). Każda zmiana wartości jest wtedy logowana jako `10.00.00 8238: 0 -> 30` (tag `f1f2_sniff`, poziom INFO), każda cała ramka na poziomie DEBUG (`logger: level: DEBUG`), a ostatnia ramka i zmiana pojawiają się w dwóch sensorach tekstowych. To najprostszy sposób, żeby pomóc w dekodowaniu: nagraj log podczas odszraniania, grzania CWU albo mrozu i załóż issue.
+Włącz przełącznik **Sniffer NASA** (diagnostyczny, po restarcie wyłączony). Każda zmiana wartości jest wtedy logowana jako `10.00.00 8238: 0 -> 30` (tag `f1f2_sniff`, poziom INFO), każda cała ramka na poziomie DEBUG (`logger: logs: f1f2_sniff: DEBUG`) razem z czasem z urządzenia i ciszą przed nią (`RX t=… gap=… skip=…`, także ramki `BAD` z błędnym CRC i nasze `TX`; dokładność ok. 1 ms), a ostatnia ramka i zmiana pojawiają się w dwóch sensorach tekstowych. To najprostszy sposób, żeby pomóc w dekodowaniu: nagraj log podczas odszraniania, grzania CWU albo mrozu i załóż issue.
 
 ## Uwagi
 

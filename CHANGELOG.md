@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0
+
+- **Sniffer timing**: with the sniffer on and `f1f2_sniff` at DEBUG, every frame is logged with the device time, the silence before it and the number of bytes skipped between frames: `RX t=<ms> gap=<ms> skip=<bytes> <decoded> | <hex>`. Frames with a wrong CRC (`BAD`) and our own READ requests (`TX t=…`) are logged too. While the sniffer is on, the main loop runs at full speed, so the times are accurate to about 1 ms. Useful for measuring the bus timing and for complete frame captures.
+
 ## v1.0.0
 
 One-application layout shared with [dd-modbus](https://github.com/jotuera/immergas-magis-pro-combo-dd-modbus) (`dd_`) and [tt-bms](https://github.com/jotuera/immergas-magis-pro-combo-tt-bms) (`tt_`): every file, id and substitution of this repo starts with `f1f2_`, so the three buses can later run on one device.
