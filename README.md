@@ -34,6 +34,8 @@ On F1/F2 the **Immergas controller is in charge**. It computes the water target 
 
 To control the boiler, use [dd-modbus](https://github.com/jotuera/immergas-magis-pro-combo-dd-modbus) or [tt-bms](https://github.com/jotuera/immergas-magis-pro-combo-tt-bms).
 
+Which registers the Immergas controller commands (visible/settable on the D+/D- and T-/T+ Modbus buses) and which the Samsung outdoor unit owns on its own is documented in [register_control.md](register_control.md) (controlled by Immergas) and [registers_not_modbus.md](registers_not_modbus.md) (not controlled by Modbus). Based on a cross-check of all three buses.
+
 ## Hardware
 
 - **M5Stack Atom Lite** (ESP32) + **Atomic RS485 Base** (auto direction), or any ESP32 with an RS485 transceiver. For a transceiver with a DE/RE pin, set `flow_control_pin` in `f1f2_core`.

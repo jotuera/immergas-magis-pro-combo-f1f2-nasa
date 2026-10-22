@@ -34,6 +34,8 @@ Na F1/F2 **rządzi sterownik Immergasa**. Sam liczy zadaną temperaturę wody ze
 
 Do sterowania kotłem służą [dd-modbus](https://github.com/jotuera/immergas-magis-pro-combo-dd-modbus) i [tt-bms](https://github.com/jotuera/immergas-magis-pro-combo-tt-bms).
 
+Które rejestry steruje sterownik Immergasa (widoczne/ustawialne na magistralach Modbus D+/D- i T-/T+), a które są własne jednostki zewnętrznej Samsunga, opisują [register_control.pl.md](register_control.pl.md) (sterowane przez Immergasa) i [registers_not_modbus.pl.md](registers_not_modbus.pl.md) (niesterowane przez Modbus). Na podstawie audytu krzyżowego trzech magistral.
+
 ## Sprzęt
 
 - **M5Stack Atom Lite** (ESP32) + **Atomic RS485 Base** (automatyczny kierunek) albo dowolny ESP32 z transceiverem RS485. Przy transceiverze z pinem DE/RE ustaw `flow_control_pin` w `f1f2_core`.
