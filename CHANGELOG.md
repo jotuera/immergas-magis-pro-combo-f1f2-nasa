@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.0
+
+- **Ids for derived values**: `outdoor_current` (0x8217) and `mains_voltage` (0x82ED) now carry ids (`f1f2_outdoor_current`, `f1f2_mains_voltage`), so you can build your own template sensors from them (e.g. electrical power = current × voltage). No entities change.
+
 ## v1.2.0
 
 - **Sniffer**: the frame log also shows the bytes seen between frames: their hex in brackets (first 32), and `dt=<ms>` from the last of them to the start of the frame. On a Magis 4-5 such bytes precede every frame.

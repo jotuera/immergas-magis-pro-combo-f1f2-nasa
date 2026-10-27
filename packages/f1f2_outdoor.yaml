@@ -16,9 +16,9 @@ sensor:
   - {platform: f1f2_nasa, key: power_consumed, id: f1f2_power_consumed}
   - {platform: f1f2_nasa, key: outdoor_power}
   - {platform: f1f2_nasa, key: energy_consumed_total, id: f1f2_energy_consumed_total}
-  - {platform: f1f2_nasa, key: outdoor_current}
+  - {platform: f1f2_nasa, key: outdoor_current, id: f1f2_outdoor_current}
   - {platform: f1f2_nasa, key: heat_pump_voltage}
-  - {platform: f1f2_nasa, key: mains_voltage}
+  - {platform: f1f2_nasa, key: mains_voltage, id: f1f2_mains_voltage}
   - {platform: f1f2_nasa, key: dc_link_voltage}
   - {platform: f1f2_nasa, key: discharge_temp}
   - {platform: f1f2_nasa, key: target_discharge_temp}

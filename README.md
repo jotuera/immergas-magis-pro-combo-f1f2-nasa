@@ -10,9 +10,9 @@
 
 Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Samsung EHS unit, e.g. **Audax Pro V2**) and the **Samsung MIM-B19N interface board** inside the Magis exchange on the **F1/F2** bus. You get it in **Home Assistant** through an **M5Stack Atom + RS485** running ESPHome. No cloud is involved and no third-party NASA component is needed: the project ships its own component, `f1f2_nasa`.
 
-> Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo). All three use the same layout (`packages/<bus>_*.yaml`, ids and substitutions with the bus prefix `dd_` / `tt_` / `f1f2_`), so they can run together on one device.
+> Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo). All three use the same layout (`packages/<bus>_*.yaml`, ids and substitutions with the bus prefix `dd_` / `tt_` / `f1f2_`), so they can run together on one device. A separate repo, **[f1f2-nasa-bridge](https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa-bridge)**, is a verified read+write NASA tool (parallel tap + gated inject, `allow_write` off by default) used for bus experiments; **this read-only project never writes and does not use it**.
 
-> **v1.2.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading from v0.x: see [CHANGELOG.md](CHANGELOG.md).
+> **v1.3.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading from v0.x: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
