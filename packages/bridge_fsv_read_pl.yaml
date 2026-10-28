@@ -1,0 +1,536 @@
+# Immergas Magis Pro / Combo F1/F2 bridge - package bridge_fsv_read (pl). Generated - do not edit by hand.
+# All 94 FSV installer settings as READ-ONLY sensors (opt-in). Values via id(nasa).fsv_value.
+sensor:
+  - platform: template
+    name: "FSV 1011 - Maks. temp. wody wyj. (chłodzenie)"
+    lambda: "return id(nasa).fsv_value(0x424A);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 1012 - Min. temp. wody wyj. (chłodzenie)"
+    lambda: "return id(nasa).fsv_value(0x424B);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 1021 - Maks. temp. pomieszczenia (chłodzenie)"
+    lambda: "return id(nasa).fsv_value(0x424C);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 1022 - Min. temp. pomieszczenia (chłodzenie)"
+    lambda: "return id(nasa).fsv_value(0x424D);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 1031 - Maks. temp. wody wyj. (ogrzewanie)"
+    lambda: "return id(nasa).fsv_value(0x424E);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 1032 - Min. temp. wody wyj. (ogrzewanie)"
+    lambda: "return id(nasa).fsv_value(0x424F);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 1041 - Maks. temp. pomieszczenia (ogrzewanie)"
+    lambda: "return id(nasa).fsv_value(0x4250);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 1042 - Min. temp. pomieszczenia (ogrzewanie)"
+    lambda: "return id(nasa).fsv_value(0x4251);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 1051 - Maks. temp. zbiornika CWU"
+    lambda: "return id(nasa).fsv_value(0x4252);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 1052 - Min. temp. zbiornika CWU"
+    lambda: "return id(nasa).fsv_value(0x4253);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2011 - Krzywa grzania - temp. zewn. pkt 1"
+    lambda: "return id(nasa).fsv_value(0x4254);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2012 - Krzywa grzania - temp. zewn. pkt 2"
+    lambda: "return id(nasa).fsv_value(0x4255);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2021 - Krzywa grzania WL1 - woda wyj. pkt 1"
+    lambda: "return id(nasa).fsv_value(0x4256);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2022 - Krzywa grzania WL1 - woda wyj. pkt 2"
+    lambda: "return id(nasa).fsv_value(0x4257);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2031 - Krzywa grzania WL2 - woda wyj. pkt 1"
+    lambda: "return id(nasa).fsv_value(0x4258);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2032 - Krzywa grzania WL2 - woda wyj. pkt 2"
+    lambda: "return id(nasa).fsv_value(0x4259);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2041 - Typ krzywej grzania"
+    lambda: "return id(nasa).fsv_value(0x4093);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 2051 - Krzywa chłodzenia - temp. zewn. pkt 1"
+    lambda: "return id(nasa).fsv_value(0x425A);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2052 - Krzywa chłodzenia - temp. zewn. pkt 2"
+    lambda: "return id(nasa).fsv_value(0x425B);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2061 - Krzywa chłodzenia WL1 - woda wyj. pkt 1"
+    lambda: "return id(nasa).fsv_value(0x425C);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2062 - Krzywa chłodzenia WL1 - woda wyj. pkt 2"
+    lambda: "return id(nasa).fsv_value(0x425D);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2071 - Krzywa chłodzenia WL2 - woda wyj. pkt 1"
+    lambda: "return id(nasa).fsv_value(0x425E);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2072 - Krzywa chłodzenia WL2 - woda wyj. pkt 2"
+    lambda: "return id(nasa).fsv_value(0x425F);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 2081 - Typ krzywej chłodzenia"
+    lambda: "return id(nasa).fsv_value(0x4094);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 2091 - Termostat zewnętrzny #1 (podłoga)"
+    lambda: "return id(nasa).fsv_value(0x4095);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 2092 - Termostat zewnętrzny #2 (klimakonwektor)"
+    lambda: "return id(nasa).fsv_value(0x4096);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 2093 - Sterowanie temp. pokoju z pilota"
+    lambda: "return id(nasa).fsv_value(0x4127);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 3011 - Zbiornik CWU - zastosowanie"
+    lambda: "return id(nasa).fsv_value(0x4097);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 3021 - CWU - maks. temp. (pompa ciepła)"
+    lambda: "return id(nasa).fsv_value(0x4260);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 3022 - CWU - różnica wyłączenia pompy"
+    lambda: "return id(nasa).fsv_value(0x4261);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 3023 - CWU - różnica włączenia pompy"
+    lambda: "return id(nasa).fsv_value(0x4262);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 3024 - Min. czas ogrzewania przestrzeni"
+    lambda: "return id(nasa).fsv_value(0x4263);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "min"
+  - platform: template
+    name: "FSV 3025 - Maks. czas dostarczania CWU"
+    lambda: "return id(nasa).fsv_value(0x4264);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "min"
+  - platform: template
+    name: "FSV 3026 - Maks. czas ogrzewania przestrzeni"
+    lambda: "return id(nasa).fsv_value(0x4265);"
+    update_interval: 5s
+    accuracy_decimals: 2
+    unit_of_measurement: "h"
+  - platform: template
+    name: "FSV 3031 - Grzałka dodatkowa - zastosowanie"
+    lambda: "return id(nasa).fsv_value(0x4098);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 3032 - Grzałka dodatkowa - opóźnienie"
+    lambda: "return id(nasa).fsv_value(0x4266);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "min"
+  - platform: template
+    name: "FSV 3033 - Grzałka dodatkowa - przeregulowanie"
+    lambda: "return id(nasa).fsv_value(0x4267);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 3041 - Dezynfekcja"
+    lambda: "return id(nasa).fsv_value(0x4099);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 3042 - Dezynfekcja - dzień tygodnia"
+    lambda: "return id(nasa).fsv_value(0x409A);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 3043 - Dezynfekcja - godzina rozpoczęcia"
+    lambda: "return id(nasa).fsv_value(0x4269);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "h"
+  - platform: template
+    name: "FSV 3044 - Dezynfekcja - temp. docelowa"
+    lambda: "return id(nasa).fsv_value(0x426A);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 3045 - Dezynfekcja - czas trwania"
+    lambda: "return id(nasa).fsv_value(0x426B);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "min"
+  - platform: template
+    name: "FSV 3046 - Dezynfekcja - maks. czas"
+    lambda: "return id(nasa).fsv_value(0x42CE);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "h"
+  - platform: template
+    name: "FSV 3051 - Timer wymuszonego CWU"
+    lambda: "return id(nasa).fsv_value(0x409B);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 3052 - Wymuszone CWU - czas trwania"
+    lambda: "return id(nasa).fsv_value(0x426C);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "min"
+  - platform: template
+    name: "FSV 3061 - Panel słoneczny / termostat CWU"
+    lambda: "return id(nasa).fsv_value(0x409C);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 3071 - Kierunek zaworu CWU"
+    lambda: "return id(nasa).fsv_value(0x409D);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 3081 - Grzałka dodatkowa - moc stopień 1"
+    lambda: "return id(nasa).fsv_value(0x42ED);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "kW"
+  - platform: template
+    name: "FSV 3082 - Grzałka dodatkowa - moc stopień 2"
+    lambda: "return id(nasa).fsv_value(0x42EE);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "kW"
+  - platform: template
+    name: "FSV 3083 - Grzałka zbiornika (BSH) - moc"
+    lambda: "return id(nasa).fsv_value(0x42EF);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "kW"
+  - platform: template
+    name: "FSV 4011 - Priorytet ogrzewanie / CWU"
+    lambda: "return id(nasa).fsv_value(0x409E);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4012 - Temp. zewn. dla priorytetu"
+    lambda: "return id(nasa).fsv_value(0x426D);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 4013 - Temp. zewn. wyłączenia ogrzewania"
+    lambda: "return id(nasa).fsv_value(0x426E);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 4021 - Grzałka zapasowa - zastosowanie"
+    lambda: "return id(nasa).fsv_value(0x409F);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4022 - Priorytet grzałki zapasowej/dodatkowej"
+    lambda: "return id(nasa).fsv_value(0x40A0);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4023 - Kompensacja niskiej temp. zewn."
+    lambda: "return id(nasa).fsv_value(0x40A1);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4024 - Temp. progowa grzałki zapasowej"
+    lambda: "return id(nasa).fsv_value(0x4270);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 4025 - Temp. rezerwy przy odszranianiu"
+    lambda: "return id(nasa).fsv_value(0x4271);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 4031 - Bojler zapasowy - zastosowanie"
+    lambda: "return id(nasa).fsv_value(0x40A2);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4032 - Priorytet bojlera zapasowego"
+    lambda: "return id(nasa).fsv_value(0x40A3);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4033 - Temp. progowa bojlera zapasowego"
+    lambda: "return id(nasa).fsv_value(0x4272);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 4041 - Zawór mieszający - zastosowanie"
+    lambda: "return id(nasa).fsv_value(0x40C0);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4042 - Zawór miesz. - docelowa ΔT (ogrzewanie)"
+    lambda: "return id(nasa).fsv_value(0x4286);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 4043 - Zawór miesz. - docelowa ΔT (chłodzenie)"
+    lambda: "return id(nasa).fsv_value(0x4287);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 4044 - Zawór miesz. - współczynnik kontroli"
+    lambda: "return id(nasa).fsv_value(0x40C1);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4045 - Zawór miesz. - interwał kontroli"
+    lambda: "return id(nasa).fsv_value(0x4288);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "min"
+  - platform: template
+    name: "FSV 4046 - Zawór miesz. - czas przejścia"
+    lambda: "return id(nasa).fsv_value(0x4289);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "s"
+  - platform: template
+    name: "FSV 4051 - Pompa inwerterowa - zastosowanie"
+    lambda: "return id(nasa).fsv_value(0x40C2);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4052 - Pompa inwerterowa - docelowa ΔT"
+    lambda: "return id(nasa).fsv_value(0x428A);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 4053 - Pompa inwerterowa - współczynnik kontroli"
+    lambda: "return id(nasa).fsv_value(0x40C3);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 4061 - Sterowanie strefami"
+    lambda: "return id(nasa).fsv_value(0x411A);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 5011 - Tryb wyjazdowy - woda wyj. chłodzenie"
+    lambda: "return id(nasa).fsv_value(0x4273);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5012 - Tryb wyjazdowy - pokój chłodzenie"
+    lambda: "return id(nasa).fsv_value(0x4274);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5013 - Tryb wyjazdowy - woda wyj. ogrzewanie"
+    lambda: "return id(nasa).fsv_value(0x4275);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5014 - Tryb wyjazdowy - pokój ogrzewanie"
+    lambda: "return id(nasa).fsv_value(0x4276);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5015 - Tryb wyjazdowy - auto chłodz. WL1"
+    lambda: "return id(nasa).fsv_value(0x4277);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5016 - Tryb wyjazdowy - auto chłodz. WL2"
+    lambda: "return id(nasa).fsv_value(0x4278);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5017 - Tryb wyjazdowy - auto grzanie WL1"
+    lambda: "return id(nasa).fsv_value(0x4279);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5018 - Tryb wyjazdowy - auto grzanie WL2"
+    lambda: "return id(nasa).fsv_value(0x427A);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5019 - Tryb wyjazdowy - cel zbiornika CWU"
+    lambda: "return id(nasa).fsv_value(0x427B);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5021 - CWU oszczędzanie - różnica temp."
+    lambda: "return id(nasa).fsv_value(0x427C);"
+    update_interval: 5s
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5022 - Tryb oszczędzania CWU"
+    lambda: "return id(nasa).fsv_value(0x4128);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 5023 - CWU oszcz. - różnica thermo-off"
+    lambda: "return id(nasa).fsv_value(0x42F0);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5041 - Kontrola szczytu mocy - zastosowanie"
+    lambda: "return id(nasa).fsv_value(0x40A4);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 5042 - Szczyt mocy - wymuszone wyłączenia"
+    lambda: "return id(nasa).fsv_value(0x40A5);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 5043 - Szczyt mocy - napięcie wejściowe"
+    lambda: "return id(nasa).fsv_value(0x40A6);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 5051 - Sterowanie współczynnikiem częstotliwości"
+    lambda: "return id(nasa).fsv_value(0x40A7);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 5081 - Sterowanie PV"
+    lambda: "return id(nasa).fsv_value(0x411B);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 5082 - PV - przesunięcie chłodzenia"
+    lambda: "return id(nasa).fsv_value(0x42DB);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5083 - PV - przesunięcie grzania"
+    lambda: "return id(nasa).fsv_value(0x42DC);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5091 - Sterowanie Smart Grid"
+    lambda: "return id(nasa).fsv_value(0x411C);"
+    update_interval: 5s
+    accuracy_decimals: 0
+  - platform: template
+    name: "FSV 5092 - Smart Grid - przesunięcie grzania"
+    lambda: "return id(nasa).fsv_value(0x42DD);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5093 - Smart Grid - przesunięcie CWU"
+    lambda: "return id(nasa).fsv_value(0x42DE);"
+    update_interval: 5s
+    accuracy_decimals: 0
+    unit_of_measurement: "°C"
+  - platform: template
+    name: "FSV 5094 - Smart Grid - tryb CWU"
+    lambda: "return id(nasa).fsv_value(0x411D);"
+    update_interval: 5s
+    accuracy_decimals: 0

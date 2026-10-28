@@ -1,0 +1,25 @@
+# Immergas Magis Pro / Combo F1/F2 (Samsung NASA) bridge - plik jezykowy (bridge_): polski
+# Nazywa encje tego projektu. Wybierz JEDEN plik bridge_ w liscie packages.
+# Zmiana jezyka zmienia nazwy encji (HA tworzy nowe) - wybierz raz.
+# Nie uzywaj "/" w nazwach encji (ESPHome rezerwuje go dla URL); uzyj "-", "lub" albo ",".
+
+substitutions:
+  # Sensory odczytu (bridge_core)
+  n_bridge_hz_limit: "Limit Hz ODU (0x8239)"
+  n_bridge_fsv: "FSV 1031 maks. temp. zasilania grzania (0x424E)"
+  n_bridge_setpoint: "Zadana temp. wody Immergas (0x4247)"
+  n_bridge_flow: "Temp. wody zasilania (0x4238)"
+  n_bridge_comp_freq: "Czestotliwosc sprezarki (0x8238)"
+  n_bridge_fr_ratio: "Współczynnik FR - wartość (0x42F1)"
+  # Encje sterowania (bridge_control, opcjonalne)
+  n_bridge_arm: "Uzbroj zapis (sterowanie ODU)"
+  n_bridge_fr_enable: "FR - ogranicz sprężarkę (0x40A7)"
+  n_bridge_read_fr: "Odczytaj FR control"
+  n_bridge_set_fr: "Wspolczynnik FR"
+  n_bridge_outing: "Tryb wyjazdowy (aktywacja)"
+  n_bridge_silence: "Tryb cichy Samsung (0x4046)"
+  # Diagnostyka (bridge_diagnostics)
+  n_bridge_read_all: "Odczytaj wszystkie FSV"
+  n_bridge_emulate_panel: "Emuluj panel MWR-WW10N"
+  # Status (bridge_status)
+  n_bridge_error_code: "Kod błędu (Samsung EHS)"

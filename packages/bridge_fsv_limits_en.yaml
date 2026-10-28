@@ -1,0 +1,137 @@
+# Immergas Magis Pro / Combo F1/F2 bridge - package bridge_fsv_limits (en). Generated - do not edit by hand.
+# FSV subsystem: Temperature limits (code 1xxx). Editable installer settings (Configuration).
+# On/off -> switch; multi-value -> select (labels from the Samsung EHS manual); temps/durations ->
+# number. Values read from the bus (lambda); writes gated by 'Arm write'. On a Magis many FSV writes
+# are overwritten - see FINDINGS. Load alongside the other bridge_fsv_* subsystem packages as needed.
+# number:
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - temperature limit: ignored by Immergas (own setpoint; 1031/1032 tests confirmed) ===
+#   - platform: template
+#     name: "FSV 1011 - Water out max (cooling)"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x424A);"
+#     update_interval: 2s
+#     min_value: 18
+#     max_value: 25
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x424A, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - temperature limit: ignored by Immergas (own setpoint; 1031/1032 tests confirmed) ===
+#   - platform: template
+#     name: "FSV 1012 - Water out min (cooling)"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x424B);"
+#     update_interval: 2s
+#     min_value: 5
+#     max_value: 18
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x424B, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - temperature limit: ignored by Immergas (own setpoint) ===
+#   - platform: template
+#     name: "FSV 1021 - Room temp max (cooling)"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x424C);"
+#     update_interval: 2s
+#     min_value: 28
+#     max_value: 30
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x424C, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - temperature limit: ignored by Immergas (own setpoint) ===
+#   - platform: template
+#     name: "FSV 1022 - Room temp min (cooling)"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x424D);"
+#     update_interval: 2s
+#     min_value: 18
+#     max_value: 28
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x424D, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - water-out max overwritten by Immergas (setpoint wins) ===
+#   - platform: template
+#     name: "FSV 1031 - Water out max (heating)"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x424E);"
+#     update_interval: 2s
+#     min_value: 37
+#     max_value: 55
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x424E, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - water-out min heating: ignored - 1032=37 did not raise the setpoint (stayed 24 below the Samsung min) ===
+#   - platform: template
+#     name: "FSV 1032 - Water out min (heating)"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x424F);"
+#     update_interval: 2s
+#     min_value: 15
+#     max_value: 37
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x424F, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - temperature limit: ignored by Immergas (own setpoint) ===
+#   - platform: template
+#     name: "FSV 1041 - Room temp max (heating)"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4250);"
+#     update_interval: 2s
+#     min_value: 18
+#     max_value: 30
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4250, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - temperature limit: ignored by Immergas (own setpoint) ===
+#   - platform: template
+#     name: "FSV 1042 - Room temp min (heating)"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4251);"
+#     update_interval: 2s
+#     min_value: 16
+#     max_value: 18
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4251, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - DHW tank limit: ignored (Immergas owns setpoints; Samsung blind to tank 0x4237=0) ===
+#   - platform: template
+#     name: "FSV 1051 - DHW tank max"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4252);"
+#     update_interval: 2s
+#     min_value: 50
+#     max_value: 70
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4252, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - DHW tank limit: ignored (Immergas owns setpoints; Samsung blind to tank 0x4237=0) ===
+#   - platform: template
+#     name: "FSV 1052 - DHW tank min"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4253);"
+#     update_interval: 2s
+#     min_value: 30
+#     max_value: 40
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4253, x);"
+#

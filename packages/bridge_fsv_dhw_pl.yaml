@@ -1,0 +1,340 @@
+# Immergas Magis Pro / Combo F1/F2 bridge - package bridge_fsv_dhw (pl). Generated - do not edit by hand.
+# FSV subsystem: CWU i dezynfekcja (code 3xxx). Editable installer settings (Configuration).
+# On/off -> switch; multi-value -> select (labels from the Samsung EHS manual); temps/durations ->
+# number. Values read from the bus (lambda); writes gated by 'Arm write'. On a Magis many FSV writes
+# are overwritten - see FINDINGS. Load alongside the other bridge_fsv_* subsystem packages as needed.
+# switch:
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - CWU: bezczynny - CWU to domena Immergasa (Samsung nie widzi zbiornika) ===
+#   - platform: template
+#     name: "FSV 3011 - Zbiornik CWU - zastosowanie"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x4097);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x4097, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x4097, 0);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - grzalka dodatkowa: bezczynna - grzalki planowane do jednostki wewnetrznej Immergasa, nie Samsunga (przetestowac tylko jesli pojda na strone Samsung/MIM) ===
+#   - platform: template
+#     name: "FSV 3031 - Grzałka dodatkowa - zastosowanie"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x4098);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x4098, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x4098, 0);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - dezynfekcja: bezczynna - Samsung nie widzi zbiornika; robi ja Immergas P15 ===
+#   - platform: template
+#     name: "FSV 3041 - Dezynfekcja"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x4099);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x4099, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x4099, 0);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - wymuszone CWU: bezczynny - CWU to domena Immergasa ===
+#   - platform: template
+#     name: "FSV 3051 - Timer wymuszonego CWU"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x409B);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x409B, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x409B, 0);"
+# select:
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - grupa dezynfekcji (bezczynna, patrz 3041) ===
+#   - platform: template
+#     name: "FSV 3042 - Dezynfekcja - dzień tygodnia"
+#     entity_category: diagnostic
+#     options:
+#       - "Niedziela"
+#       - "Poniedziałek"
+#       - "Wtorek"
+#       - "Środa"
+#       - "Czwartek"
+#       - "Piątek"
+#       - "Sobota"
+#       - "Wszystkie dni"
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x409A);
+#       if (isnan(v)) return {};
+#       int iv = (int) v;
+#       if (iv == 0) return std::string("Niedziela");
+#       if (iv == 1) return std::string("Poniedziałek");
+#       if (iv == 2) return std::string("Wtorek");
+#       if (iv == 3) return std::string("Środa");
+#       if (iv == 4) return std::string("Czwartek");
+#       if (iv == 5) return std::string("Piątek");
+#       if (iv == 6) return std::string("Sobota");
+#       if (iv == 7) return std::string("Wszystkie dni");
+#       return {};
+#     set_action:
+#       - lambda: |-
+#           if (x == "Niedziela") id(nasa).fsv_write(0x409A, 0);
+#           else if (x == "Poniedziałek") id(nasa).fsv_write(0x409A, 1);
+#           else if (x == "Wtorek") id(nasa).fsv_write(0x409A, 2);
+#           else if (x == "Środa") id(nasa).fsv_write(0x409A, 3);
+#           else if (x == "Czwartek") id(nasa).fsv_write(0x409A, 4);
+#           else if (x == "Piątek") id(nasa).fsv_write(0x409A, 5);
+#           else if (x == "Sobota") id(nasa).fsv_write(0x409A, 6);
+#           else if (x == "Wszystkie dni") id(nasa).fsv_write(0x409A, 7);
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - panel sloneczny/termostat CWU: bezczynny - CWU to domena Immergasa ===
+#   - platform: template
+#     name: "FSV 3061 - Panel słoneczny / termostat CWU"
+#     entity_category: diagnostic
+#     options:
+#       - "brak"
+#       - "panel słoneczny"
+#       - "termostat CWU"
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x409C);
+#       if (isnan(v)) return {};
+#       int iv = (int) v;
+#       if (iv == 0) return std::string("brak");
+#       if (iv == 1) return std::string("panel słoneczny");
+#       if (iv == 2) return std::string("termostat CWU");
+#       return {};
+#     set_action:
+#       - lambda: |-
+#           if (x == "brak") id(nasa).fsv_write(0x409C, 0);
+#           else if (x == "panel słoneczny") id(nasa).fsv_write(0x409C, 1);
+#           else if (x == "termostat CWU") id(nasa).fsv_write(0x409C, 2);
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - kierunek zaworu CWU: bezczynny - zawor po stronie Immergasa ===
+#   - platform: template
+#     name: "FSV 3071 - Kierunek zaworu CWU"
+#     entity_category: diagnostic
+#     options:
+#       - "pomieszczenie"
+#       - "zbiornik"
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x409D);
+#       if (isnan(v)) return {};
+#       int iv = (int) v;
+#       if (iv == 0) return std::string("pomieszczenie");
+#       if (iv == 1) return std::string("zbiornik");
+#       return {};
+#     set_action:
+#       - lambda: |-
+#           if (x == "pomieszczenie") id(nasa).fsv_write(0x409D, 0);
+#           else if (x == "zbiornik") id(nasa).fsv_write(0x409D, 1);
+# number:
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - CWU maks. temp. pompy: zapis trzyma ale bezczynny - Samsung nie widzi zbiornika ===
+#   - platform: template
+#     name: "FSV 3021 - CWU - maks. temp. (pompa ciepła)"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4260);"
+#     update_interval: 2s
+#     min_value: 45
+#     max_value: 50
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4260, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - CWU: bezczynny - CWU to domena Immergasa (Samsung nie widzi zbiornika) ===
+#   - platform: template
+#     name: "FSV 3022 - CWU - różnica wyłączenia pompy"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4261);"
+#     update_interval: 2s
+#     min_value: 2
+#     max_value: 10
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4261, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - CWU: bezczynny - CWU to domena Immergasa (Samsung nie widzi zbiornika) ===
+#   - platform: template
+#     name: "FSV 3023 - CWU - różnica włączenia pompy"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4262);"
+#     update_interval: 2s
+#     min_value: 5
+#     max_value: 20
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4262, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - timer CWU/grzanie: bezczynny - CWU to domena Immergasa ===
+#   - platform: template
+#     name: "FSV 3024 - Min. czas ogrzewania przestrzeni"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x4263);"
+#     update_interval: 2s
+#     min_value: 1
+#     max_value: 20
+#     step: 1
+#     unit_of_measurement: "min"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4263, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - CWU: bezczynny - CWU to domena Immergasa (Samsung nie widzi zbiornika) ===
+#   - platform: template
+#     name: "FSV 3025 - Maks. czas dostarczania CWU"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x4264);"
+#     update_interval: 2s
+#     min_value: 5
+#     max_value: 95
+#     step: 5
+#     unit_of_measurement: "min"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4264, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - timer CWU/grzanie: bezczynny - CWU to domena Immergasa ===
+#   - platform: template
+#     name: "FSV 3026 - Maks. czas ogrzewania przestrzeni"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x4265);"
+#     update_interval: 2s
+#     min_value: 0.5
+#     max_value: 10
+#     step: 0.5
+#     unit_of_measurement: "h"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4265, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - grzalka dodatkowa: bezczynna - grzalki planowane do jednostki wewnetrznej Immergasa, nie Samsunga (przetestowac tylko jesli pojda na strone Samsung/MIM) ===
+#   - platform: template
+#     name: "FSV 3032 - Grzałka dodatkowa - opóźnienie"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x4266);"
+#     update_interval: 2s
+#     min_value: 20
+#     max_value: 95
+#     step: 5
+#     unit_of_measurement: "min"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4266, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - grzalka dodatkowa: bezczynna - grzalki planowane do jednostki wewnetrznej Immergasa, nie Samsunga (przetestowac tylko jesli pojda na strone Samsung/MIM) ===
+#   - platform: template
+#     name: "FSV 3033 - Grzałka dodatkowa - przeregulowanie"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4267);"
+#     update_interval: 2s
+#     min_value: 0
+#     max_value: 4
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4267, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - grupa dezynfekcji (bezczynna, patrz 3041) ===
+#   - platform: template
+#     name: "FSV 3043 - Dezynfekcja - godzina rozpoczęcia"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x4269);"
+#     update_interval: 2s
+#     min_value: 0
+#     max_value: 23
+#     step: 1
+#     unit_of_measurement: "h"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4269, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - grupa dezynfekcji (bezczynna, patrz 3041) ===
+#   - platform: template
+#     name: "FSV 3044 - Dezynfekcja - temp. docelowa"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x426A);"
+#     update_interval: 2s
+#     min_value: 40
+#     max_value: 70
+#     step: 5
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x426A, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - grupa dezynfekcji (bezczynna, patrz 3041) ===
+#   - platform: template
+#     name: "FSV 3045 - Dezynfekcja - czas trwania"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x426B);"
+#     update_interval: 2s
+#     min_value: 5
+#     max_value: 60
+#     step: 5
+#     unit_of_measurement: "min"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x426B, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - grupa dezynfekcji (bezczynna, patrz 3041) ===
+#   - platform: template
+#     name: "FSV 3046 - Dezynfekcja - maks. czas"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x42CE);"
+#     update_interval: 2s
+#     min_value: 0
+#     max_value: 24
+#     step: 1
+#     unit_of_measurement: "h"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x42CE, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - wymuszone CWU: bezczynny - CWU to domena Immergasa ===
+#   - platform: template
+#     name: "FSV 3052 - Wymuszone CWU - czas trwania"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x426C);"
+#     update_interval: 2s
+#     min_value: 30
+#     max_value: 300
+#     step: 10
+#     unit_of_measurement: "min"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x426C, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - moc grzalki: bezczynna - grzalki po stronie Immergasa (przetestowac tylko jesli Samsung/MIM) ===
+#   - platform: template
+#     name: "FSV 3081 - Grzałka dodatkowa - moc stopień 1"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x42ED);"
+#     update_interval: 2s
+#     min_value: 1
+#     max_value: 6
+#     step: 1
+#     unit_of_measurement: "kW"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x42ED, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - moc grzalki: bezczynna - grzalki po stronie Immergasa (przetestowac tylko jesli Samsung/MIM) ===
+#   - platform: template
+#     name: "FSV 3082 - Grzałka dodatkowa - moc stopień 2"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x42EE);"
+#     update_interval: 2s
+#     min_value: 1
+#     max_value: 6
+#     step: 1
+#     unit_of_measurement: "kW"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x42EE, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - moc grzalki zbiornika (BSH): bezczynna - grzalki po stronie Immergasa (przetestowac tylko jesli Samsung/MIM) ===
+#   - platform: template
+#     name: "FSV 3083 - Grzałka zbiornika (BSH) - moc"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x42EF);"
+#     update_interval: 2s
+#     min_value: 1
+#     max_value: 6
+#     step: 1
+#     unit_of_measurement: "kW"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x42EF, x);"
+#

@@ -1,0 +1,306 @@
+# Immergas Magis Pro / Combo F1/F2 bridge - package bridge_fsv_modes (en). Generated - do not edit by hand.
+# FSV subsystem: Special modes (outing, derating, PV, Smart Grid) (code 5xxx). Editable installer settings (Configuration).
+# On/off -> switch; multi-value -> select (labels from the Samsung EHS manual); temps/durations ->
+# number. Values read from the bus (lambda); writes gated by 'Arm write'. On a Magis many FSV writes
+# are overwritten - see FINDINGS. Load alongside the other bridge_fsv_* subsystem packages as needed.
+# switch:
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - DHW saving: inert - Samsung blind to tank (0x4237=0), DHW is Immergas's domain ===
+#   - platform: template
+#     name: "FSV 5022 - DHW saving mode"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x4128);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x4128, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x4128, 0);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - peak-power control: write holds but inert (needs external peak contact) ===
+#   - platform: template
+#     name: "FSV 5041 - Power peak control"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x40A4);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x40A4, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x40A4, 0);"
+  # === MOVED TO Controls (bridge_control) - FR control enable - WORKS (caps compressor ~50%), now in Controls/bridge_control ===
+#   - platform: template
+#     name: "FSV 5051 - Frequency ratio control"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x40A7);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x40A7, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x40A7, 0);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - PV control: write holds but inert (needs external PV contact) ===
+#   - platform: template
+#     name: "FSV 5081 - PV control"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x411B);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x411B, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x411B, 0);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - Smart Grid: write holds but inert (needs external SG contact) ===
+#   - platform: template
+#     name: "FSV 5091 - Smart Grid control"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x411C);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x411C, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x411C, 0);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - Smart Grid DHW mode: inert - needs external SG contact (parent 5091 inert) ===
+#   - platform: template
+#     name: "FSV 5094 - Smart Grid - DHW mode"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x411D);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x411D, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x411D, 0);"
+# select:
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - peak-power forced-off parts: inert - needs external peak contact (parent 5041 inert) ===
+#   - platform: template
+#     name: "FSV 5042 - Power peak - forced off parts"
+#     entity_category: diagnostic
+#     options:
+#       - "All thermal off"
+#       - "Additional heater only"
+#       - "Backup heater only"
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x40A5);
+#       if (isnan(v)) return {};
+#       int iv = (int) v;
+#       if (iv == 0) return std::string("All thermal off");
+#       if (iv == 1) return std::string("Additional heater only");
+#       if (iv == 2) return std::string("Backup heater only");
+#       return {};
+#     set_action:
+#       - lambda: |-
+#           if (x == "All thermal off") id(nasa).fsv_write(0x40A5, 0);
+#           else if (x == "Additional heater only") id(nasa).fsv_write(0x40A5, 1);
+#           else if (x == "Backup heater only") id(nasa).fsv_write(0x40A5, 2);
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - peak-power input voltage: inert - needs external peak contact (parent 5041 inert) ===
+#   - platform: template
+#     name: "FSV 5043 - Power peak - input voltage"
+#     entity_category: diagnostic
+#     options:
+#       - "low"
+#       - "high"
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x40A6);
+#       if (isnan(v)) return {};
+#       int iv = (int) v;
+#       if (iv == 0) return std::string("low");
+#       if (iv == 1) return std::string("high");
+#       return {};
+#     set_action:
+#       - lambda: |-
+#           if (x == "low") id(nasa).fsv_write(0x40A6, 0);
+#           else if (x == "high") id(nasa).fsv_write(0x40A6, 1);
+number:
+  - platform: template
+    name: "FSV 5011 - Outing - cooling water out"
+    entity_category: config
+    mode: slider
+    lambda: "return id(nasa).fsv_value(0x4273);"
+    update_interval: 2s
+    min_value: 5
+    max_value: 25
+    step: 1
+    unit_of_measurement: "°C"
+    set_action:
+      - lambda: "id(nasa).fsv_write(0x4273, x);"
+  - platform: template
+    name: "FSV 5012 - Outing - cooling room"
+    entity_category: config
+    mode: slider
+    lambda: "return id(nasa).fsv_value(0x4274);"
+    update_interval: 2s
+    min_value: 18
+    max_value: 30
+    step: 1
+    unit_of_measurement: "°C"
+    set_action:
+      - lambda: "id(nasa).fsv_write(0x4274, x);"
+  - platform: template
+    name: "FSV 5013 - Outing - heating water out"
+    entity_category: config
+    mode: slider
+    lambda: "return id(nasa).fsv_value(0x4275);"
+    update_interval: 2s
+    min_value: 15
+    max_value: 55
+    step: 1
+    unit_of_measurement: "°C"
+    set_action:
+      - lambda: "id(nasa).fsv_write(0x4275, x);"
+  - platform: template
+    name: "FSV 5014 - Outing - heating room"
+    entity_category: config
+    mode: slider
+    lambda: "return id(nasa).fsv_value(0x4276);"
+    update_interval: 2s
+    min_value: 16
+    max_value: 30
+    step: 1
+    unit_of_measurement: "°C"
+    set_action:
+      - lambda: "id(nasa).fsv_write(0x4276, x);"
+  - platform: template
+    name: "FSV 5015 - Outing - auto cooling WL1 water"
+    entity_category: config
+    mode: slider
+    lambda: "return id(nasa).fsv_value(0x4277);"
+    update_interval: 2s
+    min_value: 5
+    max_value: 25
+    step: 1
+    unit_of_measurement: "°C"
+    set_action:
+      - lambda: "id(nasa).fsv_write(0x4277, x);"
+  - platform: template
+    name: "FSV 5016 - Outing - auto cooling WL2 water"
+    entity_category: config
+    mode: slider
+    lambda: "return id(nasa).fsv_value(0x4278);"
+    update_interval: 2s
+    min_value: 5
+    max_value: 25
+    step: 1
+    unit_of_measurement: "°C"
+    set_action:
+      - lambda: "id(nasa).fsv_write(0x4278, x);"
+  - platform: template
+    name: "FSV 5017 - Outing - auto heating WL1 water"
+    entity_category: config
+    mode: slider
+    lambda: "return id(nasa).fsv_value(0x4279);"
+    update_interval: 2s
+    min_value: 15
+    max_value: 55
+    step: 1
+    unit_of_measurement: "°C"
+    set_action:
+      - lambda: "id(nasa).fsv_write(0x4279, x);"
+  - platform: template
+    name: "FSV 5018 - Outing - auto heating WL2 water"
+    entity_category: config
+    mode: slider
+    lambda: "return id(nasa).fsv_value(0x427A);"
+    update_interval: 2s
+    min_value: 15
+    max_value: 55
+    step: 1
+    unit_of_measurement: "°C"
+    set_action:
+      - lambda: "id(nasa).fsv_write(0x427A, x);"
+  - platform: template
+    name: "FSV 5019 - Outing - DHW tank target"
+    entity_category: config
+    mode: slider
+    lambda: "return id(nasa).fsv_value(0x427B);"
+    update_interval: 2s
+    min_value: 30
+    max_value: 70
+    step: 1
+    unit_of_measurement: "°C"
+    set_action:
+      - lambda: "id(nasa).fsv_write(0x427B, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - DHW saving temp difference: inert - CWU is Immergas's domain (parent 5022 inert, Samsung blind to tank) ===
+#   - platform: template
+#     name: "FSV 5021 - DHW saving temp difference"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x427C);"
+#     update_interval: 2s
+#     min_value: 0
+#     max_value: 40
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x427C, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - DHW saving thermo-off difference: inert - CWU is Immergas's domain (parent 5022 inert) ===
+#   - platform: template
+#     name: "FSV 5023 - DHW saving thermo-off difference"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x42F0);"
+#     update_interval: 2s
+#     min_value: 0
+#     max_value: 20
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x42F0, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - PV cooling shift: inert - needs external PV contact (parent 5081 inert) ===
+#   - platform: template
+#     name: "FSV 5082 - PV control - cooling shift"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x42DB);"
+#     update_interval: 2s
+#     min_value: 0
+#     max_value: 20
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x42DB, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - PV heating shift: inert - needs external PV contact (parent 5081 inert) ===
+#   - platform: template
+#     name: "FSV 5083 - PV control - heating shift"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x42DC);"
+#     update_interval: 2s
+#     min_value: 0
+#     max_value: 20
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x42DC, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - Smart Grid heating shift: inert - needs external SG contact (parent 5091 inert) ===
+#   - platform: template
+#     name: "FSV 5092 - Smart Grid - heating shift"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x42DD);"
+#     update_interval: 2s
+#     min_value: 0
+#     max_value: 20
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x42DD, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - Smart Grid DHW shift: inert - needs external SG contact (parent 5091 inert) ===
+#   - platform: template
+#     name: "FSV 5093 - Smart Grid - DHW shift"
+#     entity_category: diagnostic
+#     mode: box
+#     lambda: "return id(nasa).fsv_value(0x42DE);"
+#     update_interval: 2s
+#     min_value: 0
+#     max_value: 20
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x42DE, x);"
+#

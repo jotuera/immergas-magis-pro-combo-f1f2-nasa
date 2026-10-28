@@ -1,0 +1,249 @@
+# Immergas Magis Pro / Combo F1/F2 bridge - package bridge_fsv_waterlaw (pl). Generated - do not edit by hand.
+# FSV subsystem: Krzywa grzewcza / chłodzenia (water law) (code 2xxx). Editable installer settings (Configuration).
+# On/off -> switch; multi-value -> select (labels from the Samsung EHS manual); temps/durations ->
+# number. Values read from the bus (lambda); writes gated by 'Arm write'. On a Magis many FSV writes
+# are overwritten - see FINDINGS. Load alongside the other bridge_fsv_* subsystem packages as needed.
+# switch:
+  # === NOT FITTED ON THIS INSTALL (write holds, hardware absent) - termostat zewnetrzny #1 (podloga): brak termostatu wpietego do Samsunga (pokoj robi Immergas/Salus) - bezczynny ===
+#   - platform: template
+#     name: "FSV 2091 - Termostat zewnętrzny #1 (podłoga)"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x4095);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x4095, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x4095, 0);"
+  # === NOT FITTED ON THIS INSTALL (write holds, hardware absent) - termostat zewnetrzny #2 (klimakonwektor): brak termostatu wpietego do Samsunga (pokoj robi Immergas/Salus) - bezczynny ===
+#   - platform: template
+#     name: "FSV 2092 - Termostat zewnętrzny #2 (klimakonwektor)"
+#     entity_category: diagnostic
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x4096);
+#       if (isnan(v)) return {};
+#       return v > 0.5;
+#     turn_on_action:
+#       - lambda: "id(nasa).fsv_write(0x4096, 1);"
+#     turn_off_action:
+#       - lambda: "id(nasa).fsv_write(0x4096, 0);"
+# select:
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - wybor typu krzywej: ignorowany - WL1->WL2 bez wplywu na zadana ===
+#   - platform: template
+#     name: "FSV 2041 - Typ krzywej grzania"
+#     entity_category: diagnostic
+#     options:
+#       - "WL1"
+#       - "WL2"
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x4093);
+#       if (isnan(v)) return {};
+#       int iv = (int) v;
+#       if (iv == 1) return std::string("WL1");
+#       if (iv == 2) return std::string("WL2");
+#       return {};
+#     set_action:
+#       - lambda: |-
+#           if (x == "WL1") id(nasa).fsv_write(0x4093, 1);
+#           else if (x == "WL2") id(nasa).fsv_write(0x4093, 2);
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - wybor typu krzywej chlodzenia: ignorowany (ten sam mechanizm) ===
+#   - platform: template
+#     name: "FSV 2081 - Typ krzywej chłodzenia"
+#     entity_category: diagnostic
+#     options:
+#       - "WL1"
+#       - "WL2"
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x4094);
+#       if (isnan(v)) return {};
+#       int iv = (int) v;
+#       if (iv == 1) return std::string("WL1");
+#       if (iv == 2) return std::string("WL2");
+#       return {};
+#     set_action:
+#       - lambda: |-
+#           if (x == "WL1") id(nasa).fsv_write(0x4094, 1);
+#           else if (x == "WL2") id(nasa).fsv_write(0x4094, 2);
+  # === NOT FITTED ON THIS INSTALL (write holds, hardware absent) - sterowanie temp. pokoju z pilota Samsunga: brak pilota Samsunga (panel emulowany, pokoj robi Immergas) - bezczynny ===
+#   - platform: template
+#     name: "FSV 2093 - Sterowanie temp. pokoju z pilota"
+#     entity_category: diagnostic
+#     options:
+#       - "Tylko otoczenie"
+#       - "Krzywa + thermo-off -> pompa wył."
+#       - "Krzywa + thermo-off -> pompa wł."
+#       - "Krzywa + thermo-off -> pompa 30%"
+#     lambda: |-
+#       float v = id(nasa).fsv_value(0x4127);
+#       if (isnan(v)) return {};
+#       int iv = (int) v;
+#       if (iv == 1) return std::string("Tylko otoczenie");
+#       if (iv == 2) return std::string("Krzywa + thermo-off -> pompa wył.");
+#       if (iv == 3) return std::string("Krzywa + thermo-off -> pompa wł.");
+#       if (iv == 4) return std::string("Krzywa + thermo-off -> pompa 30%");
+#       return {};
+#     set_action:
+#       - lambda: |-
+#           if (x == "Tylko otoczenie") id(nasa).fsv_write(0x4127, 1);
+#           else if (x == "Krzywa + thermo-off -> pompa wył.") id(nasa).fsv_write(0x4127, 2);
+#           else if (x == "Krzywa + thermo-off -> pompa wł.") id(nasa).fsv_write(0x4127, 3);
+#           else if (x == "Krzywa + thermo-off -> pompa 30%") id(nasa).fsv_write(0x4127, 4);
+# number:
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa grzania: cala krzywa ignorowana przez Immergas (test WL2 potwierdzil) ===
+#   - platform: template
+#     name: "FSV 2011 - Krzywa grzania - temp. zewn. pkt 1"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4254);"
+#     update_interval: 2s
+#     min_value: -20
+#     max_value: 5
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4254, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa grzania: cala krzywa ignorowana przez Immergas (test WL2 potwierdzil) ===
+#   - platform: template
+#     name: "FSV 2012 - Krzywa grzania - temp. zewn. pkt 2"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4255);"
+#     update_interval: 2s
+#     min_value: 10
+#     max_value: 20
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4255, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa grzewcza WL1 ignorowana przez Immergas (wlasny setpoint) ===
+#   - platform: template
+#     name: "FSV 2021 - Krzywa grzania WL1 - woda wyj. pkt 1"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4256);"
+#     update_interval: 2s
+#     min_value: 17
+#     max_value: 55
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4256, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa grzewcza WL1 ignorowana przez Immergas (wlasny setpoint) ===
+#   - platform: template
+#     name: "FSV 2022 - Krzywa grzania WL1 - woda wyj. pkt 2"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4257);"
+#     update_interval: 2s
+#     min_value: 17
+#     max_value: 55
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4257, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa grzania WL2: ignorowana przez Immergas ===
+#   - platform: template
+#     name: "FSV 2031 - Krzywa grzania WL2 - woda wyj. pkt 1"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4258);"
+#     update_interval: 2s
+#     min_value: 17
+#     max_value: 55
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4258, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa grzania WL2: ignorowana przez Immergas ===
+#   - platform: template
+#     name: "FSV 2032 - Krzywa grzania WL2 - woda wyj. pkt 2"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x4259);"
+#     update_interval: 2s
+#     min_value: 17
+#     max_value: 55
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x4259, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa chlodzenia: ignorowana (Immergas liczy zadana, ten sam mechanizm) ===
+#   - platform: template
+#     name: "FSV 2051 - Krzywa chłodzenia - temp. zewn. pkt 1"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x425A);"
+#     update_interval: 2s
+#     min_value: 25
+#     max_value: 35
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x425A, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa chlodzenia: ignorowana (Immergas liczy zadana, ten sam mechanizm) ===
+#   - platform: template
+#     name: "FSV 2052 - Krzywa chłodzenia - temp. zewn. pkt 2"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x425B);"
+#     update_interval: 2s
+#     min_value: 35
+#     max_value: 45
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x425B, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa chlodzenia WL1: ignorowana (ten sam mechanizm) ===
+#   - platform: template
+#     name: "FSV 2061 - Krzywa chłodzenia WL1 - woda wyj. pkt 1"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x425C);"
+#     update_interval: 2s
+#     min_value: 5
+#     max_value: 25
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x425C, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa chlodzenia WL1: ignorowana (ten sam mechanizm) ===
+#   - platform: template
+#     name: "FSV 2062 - Krzywa chłodzenia WL1 - woda wyj. pkt 2"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x425D);"
+#     update_interval: 2s
+#     min_value: 5
+#     max_value: 25
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x425D, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa chlodzenia WL2: ignorowana (ten sam mechanizm) ===
+#   - platform: template
+#     name: "FSV 2071 - Krzywa chłodzenia WL2 - woda wyj. pkt 1"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x425E);"
+#     update_interval: 2s
+#     min_value: 5
+#     max_value: 25
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x425E, x);"
+  # === CONFIRMED NOT WORKING ON A MAGIS (tested) - krzywa chlodzenia WL2: ignorowana (ten sam mechanizm) ===
+#   - platform: template
+#     name: "FSV 2072 - Krzywa chłodzenia WL2 - woda wyj. pkt 2"
+#     entity_category: diagnostic
+#     mode: slider
+#     lambda: "return id(nasa).fsv_value(0x425F);"
+#     update_interval: 2s
+#     min_value: 5
+#     max_value: 25
+#     step: 1
+#     unit_of_measurement: "°C"
+#     set_action:
+#       - lambda: "id(nasa).fsv_write(0x425F, x);"
+#

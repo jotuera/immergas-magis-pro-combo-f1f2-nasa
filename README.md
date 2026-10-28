@@ -10,9 +10,11 @@
 
 Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Samsung EHS unit, e.g. **Audax Pro V2**) and the **Samsung MIM-B19N interface board** inside the Magis exchange on the **F1/F2** bus. You get it in **Home Assistant** through an **M5Stack Atom + RS485** running ESPHome. No cloud is involved and no third-party NASA component is needed: the project ships its own component, `f1f2_nasa`.
 
-> Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo). All three use the same layout (`packages/<bus>_*.yaml`, ids and substitutions with the bus prefix `dd_` / `tt_` / `f1f2_`), so they can run together on one device. A separate repo, **[f1f2-nasa-bridge](https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa-bridge)**, is a verified read+write NASA tool (parallel tap + gated inject, `allow_write` off by default) used for bus experiments; **this read-only project never writes and does not use it**.
+> Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo). All use the same layout (`packages/<bus>_*.yaml`, ids and substitutions with the bus prefix `dd_` / `tt_` / `f1f2_` / `bridge_`), so they can run together on one device.
+>
+> This repo ships **two components**: **`f1f2_nasa`** — the read-only reader described below (the default), and **`nasa_bridge`** — an **optional, gated tap + inject control path** that can set a few things on the heat pump (see [Control](#control-optional-readwrite)). The control path is **off unless you add its packages and arm it**; its standalone upstream is [f1f2-nasa-bridge](https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa-bridge).
 
-> **v1.3.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading from v0.x: see [CHANGELOG.md](CHANGELOG.md).
+> **v2.0.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -28,11 +30,11 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 - **Address discovery**: a `NASA Devices` entity lists every unit on the bus, and the log tells you if the indoor / outdoor address needs changing (see [Finding the addresses](#finding-the-addresses)).
 - **Translations**: entity names, state texts and error texts are translated; you pick the language with **one line** in the packages list (`f1f2_en` / `f1f2_pl`). Adding a language means adding one file (see [TRANSLATING.md](TRANSLATING.md)).
 
-### Why read-only?
+### Read-only by default
 
-On F1/F2 the **Immergas controller is in charge**. It computes the water target from its own heating curve (menu Termoregulation R02–R05 + offset U03) and drives the Samsung side through the MIM board. Writes to the indoor unit on F1/F2 are simply ignored. This project therefore **never writes**. It only sends **READ** requests, to fetch the FSV values that are never broadcast. Set `f1f2_transmit: "false"` for a pure listener.
+On F1/F2 the **Immergas controller is in charge**. It computes the water target from its own heating curve (menu Termoregulation R02–R05 + offset U03) and drives the Samsung side through the MIM board. The `f1f2_nasa` reader therefore **only reads**: it sends **READ** requests to fetch the FSV values that are never broadcast, and nothing else. Set `f1f2_transmit: "false"` for a pure listener (no READs either).
 
-To control the boiler, use [dd-modbus](https://github.com/jotuera/immergas-magis-pro-combo-dd-modbus) or [tt-bms](https://github.com/jotuera/immergas-magis-pro-combo-tt-bms).
+A few things on the Samsung side *can* be set — see [Control](#control-optional-readwrite) — but most writes are ignored or overridden by Immergas, which keeps the control loop. To control the boiler itself, use [dd-modbus](https://github.com/jotuera/immergas-magis-pro-combo-dd-modbus) or [tt-bms](https://github.com/jotuera/immergas-magis-pro-combo-tt-bms).
 
 Which registers the Immergas controller commands (visible/settable on the D+/D- and T-/T+ Modbus buses) and which the Samsung outdoor unit owns on its own is documented in [register_control.md](register_control.md) (controlled by Immergas) and [registers_not_modbus.md](registers_not_modbus.md) (not controlled by Modbus). Based on a cross-check of all three buses.
 
@@ -63,11 +65,21 @@ Which registers the Immergas controller commands (visible/settable on the D+/D- 
 | `packages/f1f2_computed.yaml` | flow ΔT, energy consumed today |
 | `packages/f1f2_diagnostics.yaml` | undecoded PDUs, bus statistics, sniffer |
 | `packages/f1f2_ehs_extra.yaml` | optional: zone 2, flow rate, produced power / energy, COP — **not sent by a Magis** (its MIM answers "not available"), useful on other Samsung EHS installs |
-| `packages/lang/f1f2_en.yaml`, `f1f2_pl.yaml` | language (pick one) |
+| `packages/lang/f1f2_en.yaml`, `f1f2_pl.yaml` | language of the reader (pick one) |
+
+The **control path** (component `nasa_bridge`) adds these — all optional, see [Control](#control-optional-readwrite):
+
+| File | Content |
+|---|---|
+| `packages/bridge_core.yaml` | tap UART + the `nasa_bridge` hub (tap + gated inject); read-only on its own |
+| `packages/bridge_control.yaml` | **writes**: Arm gate + Outing mode + FR compressor limit |
+| `packages/bridge_status_en.yaml`, `bridge_status_pl.yaml` | active Samsung error code with a description (read-only) |
+| `packages/bridge_fsv_*.yaml`, `bridge_panel_*.yaml`, `bridge_diagnostics.yaml` | the bridge's own FSV reads / panel / diagnostics (for a control-only device) |
+| `packages/lang/bridge_en.yaml`, `bridge_pl.yaml` | language of the control entities (pick one) |
 
 ### Versions
 
-The example pins everything to a release tag (`ref: v1.2.0`; `f1f2_core` downloads the component with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v2.0.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 
@@ -129,6 +141,21 @@ If the list stays empty, the log says so after 60 s. Check F1/F2 → A/B (swap A
 
 Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value change is then logged as `10.00.00 8238: 0 -> 30` (tag `f1f2_sniff`, level INFO). At level DEBUG (`logger: logs: f1f2_sniff: DEBUG`) every frame is logged too, with the device time and the silence before it, e.g. `RX t=123456 gap=12 skip=5 [xxxxxxxxxx] dt=3 10.00.00 > B0.00.FF NOTIFY #42 ... | 3200...34` (`skip` = bytes seen between frames, their hex in brackets, `dt` = ms from the last of them to the frame) (also `BAD` frames with a wrong CRC and our own `TX` frames); while the sniffer is on, the main loop runs at full speed so the times are accurate to about 1 ms. The last frame and change are shown in two text sensors. This is the easiest way to contribute decodings: capture a log during a defrost, a DHW run or frost, then open an issue.
 
+## Control (optional, read+write)
+
+> **Read this first.** On a Magis the Immergas controller owns the loop: in testing almost every write was overridden or rejected. Two levers do work, and one read-only status is useful. The honest, per-register results are in [FINDINGS.md](FINDINGS.md) and [FSV_MAP.md](FSV_MAP.md). This is a research tool for your own unit, at your own risk — not a general control solution.
+
+The `nasa_bridge` component (from `packages/bridge_core.yaml`) is a **parallel tap** on the same F1/F2 bus: it reads like the reader, and can inject a single whitelisted NASA frame in a bus-silence window — **but only when armed**. What it exposes:
+
+- **Arm write** (`switch`) — the master gate. Nothing is ever transmitted to the pump until this is ON (`allow_write`). Off after every reboot.
+- **Outing mode** (`0x406D`) — activates Samsung away mode; the one lever that can take over the heating target (FSV 5011–5019 set its temperatures). On a Magis it may still be overridden by Immergas.
+- **FR – limit compressor** (`0x40A7`) — **confirmed working**: caps the compressor at the built-in ~50 % ratio (verified 35 Hz → 30 Hz under load). An eco / quiet lever; it only bites while the compressor runs above ~32 Hz. The custom ratio value (`0x42F1`) is rejected by a Magis, so you get the fixed default.
+- **Error code** (`bridge_status_*`, read-only) — the active Samsung EHS error, decoded (see [ERROR_CODES.md](ERROR_CODES.md)).
+
+**Safety model** (in the component, not just the config): a WRITE leaves the device only if `allow_write` is ON **and** the message is on a short whitelist (FR enable/ratio, outing, silence, and FSV flagged writable). The compressor, EEV, protection and **water-flow** registers can never be written, and the FR ratio is hard-capped at 100 % so it can only derate. READs are never gated. With `bridge_control.yaml` absent, no write controls are created at all.
+
+**One device, reader + control.** The reader (`f1f2_nasa`, listening) and the bridge (`nasa_bridge`) are on the *same* F1/F2 bus, so — unlike the other family buses — they **share one UART**: declare one `uart`, give both hubs the same `uart_id`, keep the reader at `f1f2_transmit: "false"` and let only the bridge transmit, and set `auto_poll` on exactly one side. See `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
+
 ## Notes
 
 - **Migrating from the `samsung_nasa` (Beormund) component**: the English sensor names here match the usual names from that setup. Keep the same `esphome: name:` and Home Assistant keeps those entities and their history. Writable entities (climate, numbers, selects, switches) are not offered here.
@@ -137,7 +164,7 @@ Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value 
 
 ## Disclaimer
 
-This is an independent hobby project, not affiliated with Samsung or Immergas. You use it at your own risk. The default configuration only listens and sends READ requests; it does not change any setting of your heat pump.
+This is an independent hobby project, not affiliated with Samsung or Immergas. You use it at your own risk. The default (reader) configuration only listens and sends READ requests; it does not change any setting of your heat pump. The optional control path ([Control](#control-optional-readwrite)) can write a few whitelisted settings, but only after you add its packages and turn on the **Arm write** switch — review the safety model and [FINDINGS.md](FINDINGS.md) before using it.
 
 ## License
 

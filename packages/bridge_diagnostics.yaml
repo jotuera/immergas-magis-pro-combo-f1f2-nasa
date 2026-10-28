@@ -1,0 +1,34 @@
+# Immergas Magis Pro / Combo F1/F2 bridge - package "bridge_diagnostics"
+# Background auto-poll toggle ("Emulate panel") for the live FSV entities.
+#
+# DISABLED after the slim-down: the "Read all FSV" button (below) and the CSV dump (GET /fsv.csv, in the
+# component) are commented out - with only the outing targets left exposed, a one-click read of the whole
+# 94-code catalog and a full-catalog CSV are no longer useful. The background auto-poll below keeps the live
+# entities fresh. To restore: uncomment the button here AND the /fsv.csv handler registration in nasa_bridge.cpp.
+
+# "Read all FSV" button - DISABLED (see above). Uncomment to restore.
+# button:
+#   # In the Controls section (no entity_category) so it sits with the other actions.
+#   - platform: template
+#     name: ${n_bridge_read_all}
+#     icon: mdi:download-network
+#     on_press:
+#       - lambda: "id(nasa).read_all();"
+
+# "Emulate MWR-WW10N panel": toggles the background auto-poll. Like the Samsung wired remote, when ON the
+# bridge keeps reading the FSV catalog from the bus in the idle windows, so every entity refreshes live (one
+# read per silence window, self-paced). When OFF the entities hold their last value until you press "Read all
+# FSV". This is a benign READ loop - it never writes, so it needs no arming. State reflects the component.
+switch:
+  - platform: template
+    name: ${n_bridge_emulate_panel}
+    icon: mdi:remote
+    # DISABLED: do not call any action on boot - otherwise the default RESTORE_DEFAULT_OFF would fire
+    # turn_off_action at startup and switch auto-poll off, overriding the hub's auto_poll setting. The
+    # lambda reports the component's real state, so the switch shows ON whenever auto-poll is running.
+    restore_mode: DISABLED
+    lambda: "return id(nasa).is_auto_poll();"
+    turn_on_action:
+      - lambda: "id(nasa).set_auto_poll(true);"
+    turn_off_action:
+      - lambda: "id(nasa).set_auto_poll(false);"

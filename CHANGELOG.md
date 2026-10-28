@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.0.0
+
+The repo now ships **two components**. `f1f2_nasa` stays the read-only reader (the default, unchanged); a second component **`nasa_bridge`** adds an **optional, gated control path** (parallel tap + inject). The reader's entities and names are unchanged, so existing installs keep their history.
+
+- **Control path merged in** (component `nasa_bridge`, packages `bridge_core` / `bridge_control` / `bridge_status_*` / `bridge_fsv_*` / `bridge_panel_*` / `bridge_diagnostics`, language `lang/bridge_*`). Working levers on a Magis: **Outing mode** (`0x406D`) and **FR – limit compressor** (`0x40A7`, confirmed 35→30 Hz); plus a read-only **Samsung error code**. Safety: writes need the **Arm write** gate (`allow_write`, off by default) **and** a short whitelist; compressor / EEV / protection / flow can never be written; the FR ratio is capped at 100 % (derate only). See README "Control", `FINDINGS.md` and `FSV_MAP.md`.
+- **One device, reader + control**: both sit on the same F1/F2 bus and **share one UART** (only the bridge transmits). Example: `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
+
+**Upgrading from v1.x:** change `ref:` to `v2.0.0`. A reader-only install needs nothing else; the control path is only created if you add its packages.
+
 ## v1.3.0
 
 - **Ids for derived values**: `outdoor_current` (0x8217) and `mains_voltage` (0x82ED) now carry ids (`f1f2_outdoor_current`, `f1f2_mains_voltage`), so you can build your own template sensors from them (e.g. electrical power = current × voltage). No entities change.

@@ -1,0 +1,41 @@
+# Immergas Magis Pro / Combo F1/F2 (Samsung NASA) bridge - package "bridge_status" (English)
+# Live readout of the active Samsung EHS error code from the bus, with the manual's description (ERROR_CODES.md).
+# READ-ONLY - never writes, needs no arming. Pick ONE: bridge_status_pl | bridge_status_en.
+#
+# Code source: 0x0202 VAR_AD_ERROR_CODE1 (Hydro/indoor - the E9xx/E6xx shown on the wired remote) and
+# 0x8235 VAR_OUT_ERROR_CODE (outdoor unit). Raw value = the number after "E"; 0 = no fault. Both codes are
+# polled in the background (extra_poll_ in the component), so this works while "Emulate panel" (auto-poll) is ON.
+
+text_sensor:
+  - platform: template
+    name: ${n_bridge_error_code}
+    icon: mdi:alert-circle
+    update_interval: 10s
+    lambda: |-
+      float h = id(nasa).read_value(0x0202);  // Hydro / indoor
+      float o = id(nasa).read_value(0x8235);  // ODU
+      if (isnan(h) && isnan(o)) return std::string("—");
+      int code = 0; const char *src = "";
+      if (!isnan(h) && h > 0) { code = (int) h; }
+      else if (!isnan(o) && o > 0) { code = (int) o; src = " (ODU)"; }
+      if (code == 0) return std::string("OK — no fault");
+      const char *d;
+      switch (code) {
+        case 122: d = "EVA inlet sensor short/open"; break;
+        case 123: d = "EVA outlet sensor short/open"; break;
+        case 601: d = "communication error remote <-> Hydro unit"; break;
+        case 604: d = "monitoring error remote <-> Hydro unit"; break;
+        case 653: d = "wired-remote temperature sensor short/open"; break;
+        case 654: d = "remote data error (EEPROM memory)"; break;
+        case 901: d = "water inlet sensor short/open"; break;
+        case 902: d = "plate heat-exchanger outlet sensor short/open"; break;
+        case 903: d = "water outlet sensor short/open (backup heater)"; break;
+        case 904: d = "water-tank sensor short/open"; break;
+        case 911: d = "flow switch OFF — insufficient water flow"; break;
+        case 912: d = "flow switch ON while pump off"; break;
+        case 916: d = "mixing-valve sensor short/open (FSV 4041=1)"; break;
+        default:  d = "unknown code — see ERROR_CODES.md"; break;
+      }
+      char buf[96];
+      snprintf(buf, sizeof(buf), "E%d%s — %s", code, src, d);
+      return std::string(buf);

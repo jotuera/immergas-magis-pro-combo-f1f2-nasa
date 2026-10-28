@@ -1,0 +1,25 @@
+# Immergas Magis Pro / Combo F1/F2 (Samsung NASA) bridge - language file (bridge_): English
+# Names the entities of this project. Pick ONE bridge_ language file in the packages list.
+# Changing the language renames the entities, so Home Assistant creates new ones - pick it once.
+# Do not use "/" in entity names (ESPHome reserves it for URLs); use "-", "or" or "," instead.
+
+substitutions:
+  # Readback sensors (bridge_core)
+  n_bridge_hz_limit: "ODU Hz limit (0x8239)"
+  n_bridge_fsv: "FSV 1031 water-out max heating (0x424E)"
+  n_bridge_setpoint: "Immergas water setpoint (0x4247)"
+  n_bridge_flow: "Supply - flow water temp (0x4238)"
+  n_bridge_comp_freq: "Compressor frequency (0x8238)"
+  n_bridge_fr_ratio: "FR ratio (0x42F1)"
+  # Control entities (bridge_control, optional)
+  n_bridge_arm: "Arm write (ODU control)"
+  n_bridge_fr_enable: "FR - limit compressor (0x40A7)"
+  n_bridge_read_fr: "Read FR control"
+  n_bridge_set_fr: "FR ratio"
+  n_bridge_outing: "Outing mode (activate)"
+  n_bridge_silence: "Samsung quiet mode (0x4046)"
+  # Diagnostics (bridge_diagnostics)
+  n_bridge_read_all: "Read all FSV"
+  n_bridge_emulate_panel: "Emulate MWR-WW10N panel"
+  # Status (bridge_status)
+  n_bridge_error_code: "Error code (Samsung EHS)"
