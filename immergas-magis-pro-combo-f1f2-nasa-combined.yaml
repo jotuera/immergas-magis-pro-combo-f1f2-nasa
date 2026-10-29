@@ -54,7 +54,7 @@ web_server:
 packages:
   f1f2_nasa:
     url: https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa
-    ref: v2.1.1
+    ref: v2.2.0
     refresh: 1d
     files:
       - packages/f1f2_core.yaml          # UART + the f1f2_nasa hub (ONE component) + component download
@@ -62,22 +62,9 @@ packages:
       - packages/f1f2_outdoor.yaml
       - packages/f1f2_info.yaml
       # - packages/f1f2_fsv.yaml         # all 94 installer FSV as read-only sensors - commented out (clutter).
-      #                                    Only the 9 that drive the working lever are exposed below; the rest
-      #                                    are documented in FSV_MAP.md. Uncomment for the full installer set.
+      #                                    The rest are documented in FSV_MAP.md. Uncomment for the full set.
       - packages/f1f2_computed.yaml
       - packages/f1f2_diagnostics.yaml
       - packages/f1f2_control.yaml        # WRITE levers: Arm + Outing (0x406D) + FR (0x40A7). Remove for read-only.
+      - packages/f1f2_outing_targets.yaml # Outing targets FSV 5011-5019 as editable sliders. Remove for read-only.
       - packages/lang/f1f2_pl.yaml        # language (pick en or pl)
-
-# The only installer settings worth exposing here: the Outing-mode targets (FSV 5011-5019), which set what
-# the Outing switch applies. FR 5051 is the FR switch (0x40A7) in Control, not a read-only sensor.
-sensor:
-  - {platform: f1f2_nasa, fsv: 5011}
-  - {platform: f1f2_nasa, fsv: 5012}
-  - {platform: f1f2_nasa, fsv: 5013}
-  - {platform: f1f2_nasa, fsv: 5014}
-  - {platform: f1f2_nasa, fsv: 5015}
-  - {platform: f1f2_nasa, fsv: 5016}
-  - {platform: f1f2_nasa, fsv: 5017}
-  - {platform: f1f2_nasa, fsv: 5018}
-  - {platform: f1f2_nasa, fsv: 5019}

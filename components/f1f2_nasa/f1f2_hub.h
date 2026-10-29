@@ -117,6 +117,11 @@ class NasaHub : public Component, public uart::UARTDevice {
   // Convenience levers (both ENUM, 1 byte): away/outing activation and FR compressor-limit enable.
   void outing_set(bool on) { this->write_message(0x406D, on ? 1 : 0); }
   void fr_set_enable(bool on) { this->write_message(0x40A7, on ? 1 : 0); }
+  // Mark a message id writable. Only ids registered this way (e.g. by an editable `number` entity you
+  // declared) plus the two fixed levers can be written; everything else is refused in write_message.
+  // A hard-blocked id (see is_write_whitelisted_) is logged and NOT added - it can never be made writable
+  // this way, however it is declared.
+  void register_writable(uint16_t id);
   // Last raw value seen on the bus for a message id (NaN if never seen). Used by the control switches
   // to show the real state (so a revert by the Immergas controller is visible).
   float read_value(uint16_t id) const;
@@ -186,6 +191,7 @@ class NasaHub : public Component, public uart::UARTDevice {
   // control writes
   std::deque<WriteOp> write_queue_;
   bool allow_write_{false};
+  std::vector<uint16_t> writable_;           // ids made writable by declared number entities
   std::map<uint16_t, uint32_t> last_value_;  // last raw value per message id (for write readback)
 
   std::map<uint32_t, uint32_t> sniff_last_;  // (source<<16 | id) -> last value

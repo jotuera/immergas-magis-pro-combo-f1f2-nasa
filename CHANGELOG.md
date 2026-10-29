@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.2.0
+
+- **Editable FSV** via a new `number` platform: `- platform: f1f2_nasa` with `fsv:` (or `pdu:`) under `number:` creates a slider that reads the value and, on change, **writes it back** to the indoor unit. Writing goes through the same gate (`allow_write` / Arm) and is allowed only for ids you expose this way (plus the two fixed levers); everything else stays refused.
+- New package **`packages/f1f2_outing_targets.yaml`**: the 9 Outing-mode targets (FSV 5011–5019) as ready-made sliders.
+- **Hard-coded OFF-LIMITS list** in the hub: compressor frequency, EEV position, flow sensor / flow-protection chain, 4-way / hot-gas valve, defrost, base heater and the 2-/3-way valve (see FINDINGS.md) can now never be made writable through `number:`, even by mistake — `register_writable()` refuses and logs them, independently of what any `number:` entity declares. Closes a gap where the "never writable" claim for those registers depended only on the shipped packages not exposing them, not on the component enforcing it.
+
 ## v2.1.1
 
 - **Fixed the combined example** (`immergas-magis-pro-combo-f1f2-nasa-combined.yaml`): it now uses a **single** `f1f2_nasa` component with the `f1f2_control` package (the earlier version wrongly put two NASA components on one shared UART, which cannot work — ESPHome UART reads are destructive). The full `f1f2_fsv` package is commented out; only the 9 Outing-mode settings (FSV 5011–5019) that drive the working lever are exposed. README "one device" guidance corrected to match.

@@ -431,11 +431,58 @@ void NasaHub::send_request_(PendingRequest &req) {
 
 // ---------------------------------------------------------------- control writes
 
+// OFF-LIMITS, hard-coded: no `number:` entity, however declared, can ever make these writable, no matter
+// what register_writable() is told. Mirrors FINDINGS.md "OFF-LIMITS - never write these" - keep both in
+// sync if that list changes.
+//   - compressor frequency 0x8236-0x8239, EEV position 0x8229 (outdoor) / 0x4217 (indoor): direct hardware risk.
+//   - flow sensor 0x42E9 and its protection chain 0x42E8 / 0x4102 / 0x803B: a fake flow can fool the
+//     Samsung flow-check into running the compressor dry.
+//   - 4-way valve 0x801A, hot-gas valve 0x8017, defrost 0x402E / 0x8061, base heater 0x80AF, 2-/3-way
+//     valve 0x408A / 0x4067: ODU/Immergas actuators, not Samsung-only control levers.
+static bool is_hard_blocked_(uint16_t id) {
+  switch (id) {
+    case 0x8236:
+    case 0x8237:
+    case 0x8238:
+    case 0x8239:
+    case 0x8229:
+    case 0x4217:
+    case 0x42E9:
+    case 0x42E8:
+    case 0x4102:
+    case 0x803B:
+    case 0x801A:
+    case 0x8017:
+    case 0x402E:
+    case 0x8061:
+    case 0x80AF:
+    case 0x408A:
+    case 0x4067:
+      return true;
+    default:
+      return false;
+  }
+}
+
 bool NasaHub::is_write_whitelisted_(uint16_t id) const {
-  // Only these control the pump through this component. Everything else (compressor, EEV, protection,
-  // water flow, water-law, setpoints...) is deliberately NOT writable here.
-  return id == 0x406D ||  // ENUM_IN_OUTING_MODE - away/outing activation
-         id == 0x40A7;    // FSV 5051 FR control enable - compressor frequency limit
+  // Hard block first: register_writable() cannot override this.
+  if (is_hard_blocked_(id))
+    return false;
+  // The two fixed control levers, plus any id explicitly exposed as an editable `number`. Everything else
+  // (water-law, setpoints...) is deliberately NOT writable.
+  if (id == 0x406D || id == 0x40A7)  // outing activation, FR compressor-limit enable
+    return true;
+  return std::find(this->writable_.begin(), this->writable_.end(), id) != this->writable_.end();
+}
+
+void NasaHub::register_writable(uint16_t id) {
+  if (is_hard_blocked_(id)) {
+    ESP_LOGE(TAG, "0x%04X is on the OFF-LIMITS list (see FINDINGS.md) and will never be made writable, "
+                  "even though a number: entity declared it",
+             id);
+    return;
+  }
+  this->writable_.push_back(id);
 }
 
 void NasaHub::write_message(uint16_t id, uint32_t value) {

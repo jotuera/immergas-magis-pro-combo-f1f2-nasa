@@ -14,7 +14,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 >
 > To repo zawiera **dwa komponenty**: **`f1f2_nasa`** — opisany niżej czytnik tylko do odczytu (domyślny), oraz **`nasa_bridge`** — **opcjonalną, bramkowaną ścieżkę tap + inject**, która potrafi ustawić kilka rzeczy w pompie (zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)). Sterowanie jest **wyłączone, dopóki nie dodasz jego pakietów i go nie uzbroisz**; jego samodzielny upstream to [f1f2-nasa-bridge](https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa-bridge).
 
-> **v2.0.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
+> **v2.2.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
 
 ## Co dostajesz
 
@@ -55,7 +55,7 @@ Które rejestry steruje sterownik Immergasa (widoczne/ustawialne na magistralach
 
 ### Wersje
 
-Przykład przypina wszystko do tagu wydania (`ref: v2.0.0`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
+Przykład przypina wszystko do tagu wydania (`ref: v2.2.0`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
 
 ### Pakiety
 
@@ -71,7 +71,14 @@ Przykład przypina wszystko do tagu wydania (`ref: v2.0.0`; rdzenie pobierają k
 | `packages/f1f2_ehs_extra.yaml` | opcjonalnie: strefa 2, przepływ, moc i energia wyprodukowana, COP — **Magis ich nie wysyła** (MIM odpowiada „brak danych”), przydatne w innych instalacjach Samsung EHS |
 | `packages/lang/f1f2_en.yaml`, `f1f2_pl.yaml` | język czytnika (wybierz jeden) |
 
-Ścieżka **sterowania** (komponent `nasa_bridge`) dokłada poniższe — wszystkie opcjonalne, zob. [Sterowanie](#sterowanie-opcjonalne-readwrite):
+**Sterowanie natywne** (jeden komponent, zalecane — zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)); wymaga `f1f2_transmit: "true"`:
+
+| Plik | Zawartość |
+|---|---|
+| `packages/f1f2_control.yaml` | **zapisy**: bramka Uzbrój + Tryb wyjazdowy (`0x406D`) + FR ograniczenie sprężarki (`0x40A7`) |
+| `packages/f1f2_outing_targets.yaml` | 9 nastaw trybu wyjazdowego (FSV 5011–5019) jako **edytowalne suwaki** (`number`) |
+
+Ścieżka **osobnego węzła** (osobny komponent `nasa_bridge`) dokłada zamiast tego poniższe — nie łącz z natywną na jednym UART:
 
 | Plik | Zawartość |
 |---|---|

@@ -14,7 +14,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 >
 > This repo ships **two components**: **`f1f2_nasa`** — the read-only reader described below (the default), and **`nasa_bridge`** — an **optional, gated tap + inject control path** that can set a few things on the heat pump (see [Control](#control-optional-readwrite)). The control path is **off unless you add its packages and arm it**; its standalone upstream is [f1f2-nasa-bridge](https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa-bridge).
 
-> **v2.0.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
+> **v2.2.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -67,7 +67,14 @@ Which registers the Immergas controller commands (visible/settable on the D+/D- 
 | `packages/f1f2_ehs_extra.yaml` | optional: zone 2, flow rate, produced power / energy, COP — **not sent by a Magis** (its MIM answers "not available"), useful on other Samsung EHS installs |
 | `packages/lang/f1f2_en.yaml`, `f1f2_pl.yaml` | language of the reader (pick one) |
 
-The **control path** (component `nasa_bridge`) adds these — all optional, see [Control](#control-optional-readwrite):
+**Native control** (single component, recommended — see [Control](#control-optional-readwrite)); needs `f1f2_transmit: "true"`:
+
+| File | Content |
+|---|---|
+| `packages/f1f2_control.yaml` | **writes**: Arm gate + Outing mode (`0x406D`) + FR compressor limit (`0x40A7`) |
+| `packages/f1f2_outing_targets.yaml` | the 9 Outing-mode targets (FSV 5011–5019) as **editable sliders** (`number`) |
+
+The **dedicated-node path** (separate component `nasa_bridge`) adds these instead — do not mix with the native path on one UART:
 
 | File | Content |
 |---|---|
@@ -79,7 +86,7 @@ The **control path** (component `nasa_bridge`) adds these — all optional, see 
 
 ### Versions
 
-The example pins everything to a release tag (`ref: v2.0.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v2.2.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 
