@@ -14,7 +14,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 >
 > This repo ships **two components**: **`f1f2_nasa`** — the read-only reader described below (the default), and **`nasa_bridge`** — an **optional, gated tap + inject control path** that can set a few things on the heat pump (see [Control](#control-optional-readwrite)). The control path is **off unless you add its packages and arm it**; its standalone upstream is [f1f2-nasa-bridge](https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa-bridge).
 
-> **v2.2.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
+> **v2.2.1.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -64,7 +64,7 @@ Which registers the Immergas controller commands (visible/settable on the D+/D- 
 | `packages/f1f2_fsv.yaml` | all 94 FSV installer settings + **Read FSV Now** button |
 | `packages/f1f2_computed.yaml` | flow ΔT, energy consumed today |
 | `packages/f1f2_diagnostics.yaml` | undecoded PDUs, bus statistics, sniffer |
-| `packages/f1f2_ehs_extra.yaml` | optional: zone 2, flow rate, produced power / energy, COP — **not sent by a Magis** (its MIM answers "not available"), useful on other Samsung EHS installs |
+| `packages/f1f2_ehs_extra.yaml` | optional: zone 2 (temps + power), flow rate, produced power / energy, COP, PV control, Smart Grid — **not on a Magis** (always OFF / not available), useful on other Samsung EHS installs |
 | `packages/lang/f1f2_en.yaml`, `f1f2_pl.yaml` | language of the reader (pick one) |
 
 **Native control** (single component, recommended — see [Control](#control-optional-readwrite)); needs `f1f2_transmit: "true"`:
@@ -86,7 +86,7 @@ The **dedicated-node path** (separate component `nasa_bridge`) adds these instea
 
 ### Versions
 
-The example pins everything to a release tag (`ref: v2.2.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v2.2.1`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 

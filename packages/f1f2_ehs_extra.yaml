@@ -1,6 +1,7 @@
 # Immergas Magis Pro / Combo F1/F2 (Samsung NASA) - package "f1f2_ehs_extra"
-# OPTIONAL. Values a Magis Pro / Combo does NOT provide (its MIM board answers 'not available'): zone 2,
-# flow rate, produced power and energy, COP. Useful on other Samsung EHS installs. Needs f1f2_outdoor.
+# OPTIONAL. Values and features a Magis Pro / Combo does NOT provide: zone 2 (temps + power), flow rate,
+# produced power and energy, COP, PV control, Smart Grid. On a Magis these stay OFF / not available.
+# Useful on other Samsung EHS installs. Needs f1f2_outdoor.
 # Part of jotuera/immergas-magis-pro-combo-f1f2-nasa (MIT). Loaded by the main YAML through `packages:`.
 # File, id and substitution names start with f1f2_ so this repo can be combined with the D+/D- and T-/T+
 # repos on one device.
@@ -32,3 +33,8 @@ sensor:
       float in = id(f1f2_energy_consumed_total).state, out = id(f1f2_energy_produced_total).state;
       if (std::isnan(in) || std::isnan(out) || in <= 0) return NAN;
       return out / in;
+
+binary_sensor:
+  - {platform: f1f2_nasa, key: zone2_power}   # Magis: no zone 2 on NASA
+  - {platform: f1f2_nasa, key: pv_control}    # Magis: no PV control
+  - {platform: f1f2_nasa, key: smart_grid}    # Magis: no Smart Grid

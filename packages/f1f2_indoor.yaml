@@ -33,9 +33,7 @@ binary_sensor:
   - {platform: f1f2_nasa, key: defrost}
   - {platform: f1f2_nasa, key: dhw_power}
   - {platform: f1f2_nasa, key: zone1_power}
-  - {platform: f1f2_nasa, key: zone2_power}
-  - {platform: f1f2_nasa, key: pv_control}
-  - {platform: f1f2_nasa, key: smart_grid}
+  # zone2_power / pv_control / smart_grid moved to the optional f1f2_ehs_extra (a Magis has none of them).
 
 text_sensor:
   - {platform: f1f2_nasa, key: dhw_mode}

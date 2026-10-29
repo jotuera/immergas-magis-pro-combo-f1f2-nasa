@@ -14,7 +14,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 >
 > To repo zawiera **dwa komponenty**: **`f1f2_nasa`** — opisany niżej czytnik tylko do odczytu (domyślny), oraz **`nasa_bridge`** — **opcjonalną, bramkowaną ścieżkę tap + inject**, która potrafi ustawić kilka rzeczy w pompie (zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)). Sterowanie jest **wyłączone, dopóki nie dodasz jego pakietów i go nie uzbroisz**; jego samodzielny upstream to [f1f2-nasa-bridge](https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa-bridge).
 
-> **v2.2.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
+> **v2.2.1.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
 
 ## Co dostajesz
 
@@ -55,7 +55,7 @@ Które rejestry steruje sterownik Immergasa (widoczne/ustawialne na magistralach
 
 ### Wersje
 
-Przykład przypina wszystko do tagu wydania (`ref: v2.2.0`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
+Przykład przypina wszystko do tagu wydania (`ref: v2.2.1`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
 
 ### Pakiety
 
@@ -68,7 +68,7 @@ Przykład przypina wszystko do tagu wydania (`ref: v2.2.0`; rdzenie pobierają k
 | `packages/f1f2_fsv.yaml` | 94 parametry FSV + przycisk **Odczytaj FSV teraz** |
 | `packages/f1f2_computed.yaml` | ΔT obiegu, energia pobrana dziś |
 | `packages/f1f2_diagnostics.yaml` | nieznane PDU, statystyki magistrali, sniffer |
-| `packages/f1f2_ehs_extra.yaml` | opcjonalnie: strefa 2, przepływ, moc i energia wyprodukowana, COP — **Magis ich nie wysyła** (MIM odpowiada „brak danych”), przydatne w innych instalacjach Samsung EHS |
+| `packages/f1f2_ehs_extra.yaml` | opcjonalnie: strefa 2 (temp. + moc), przepływ, moc i energia wyprodukowana, COP, Sterowanie PV, Smart Grid — **Magis ich nie ma** (zawsze OFF / brak danych), przydatne w innych instalacjach Samsung EHS |
 | `packages/lang/f1f2_en.yaml`, `f1f2_pl.yaml` | język czytnika (wybierz jeden) |
 
 **Sterowanie natywne** (jeden komponent, zalecane — zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)); wymaga `f1f2_transmit: "true"`:

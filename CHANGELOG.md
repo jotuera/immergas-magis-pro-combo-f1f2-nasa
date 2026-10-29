@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.2.1
+
+- **Curation**: `zone2_power`, `pv_control` and `smart_grid` (features a Magis does not have — always OFF) moved from the default `f1f2_indoor` to the optional `f1f2_ehs_extra`, so the default entity list is cleaner. They stay available for other Samsung EHS installs by adding `f1f2_ehs_extra`.
+
 ## v2.2.0
 
 - **Editable FSV** via a new `number` platform: `- platform: f1f2_nasa` with `fsv:` (or `pdu:`) under `number:` creates a slider that reads the value and, on change, **writes it back** to the indoor unit. Writing goes through the same gate (`allow_write` / Arm) and is allowed only for ids you expose this way (plus the two fixed levers); everything else stays refused.
