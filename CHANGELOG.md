@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.3.0
+
+- **Removed the `nasa_bridge` component and all `bridge_*` packages.** Control is native in `f1f2_nasa` (one component reads and writes on one UART — two NASA components cannot share a UART), so the separate tap+inject path was redundant. Use `f1f2_control` (Arm + Outing + FR) and `f1f2_outing_targets` (editable FSV sliders). Nothing to change for a reader-only or a native-control install; only configs that pulled `bridge_*` packages need updating.
+
 ## v2.2.1
 
 - **Curation**: `zone2_power`, `pv_control` and `smart_grid` (features a Magis does not have — always OFF) moved from the default `f1f2_indoor` to the optional `f1f2_ehs_extra`, so the default entity list is cleaner. They stay available for other Samsung EHS installs by adding `f1f2_ehs_extra`.

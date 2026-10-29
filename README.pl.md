@@ -10,11 +10,11 @@
 
 Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (Samsung EHS, np. **Audax Pro V2**) i **płytka Samsung MIM-B19N** w Magisie wymieniają po magistrali **F1/F2**. Dane trafiają do **Home Assistanta** przez **M5Stack Atom + RS485** z ESPHome. Bez chmury i bez cudzego komponentu NASA: projekt ma własny komponent `f1f2_nasa`.
 
-> Część rodziny [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, emulator Dominusa i paneli), **tt-bms** (T-/T+, Modbus BMS) i **f1f2-nasa** (to repo). Wszystkie mają ten sam układ (`packages/<magistrala>_*.yaml`, identyfikatory i podstawienia z prefiksem `dd_` / `tt_` / `f1f2_` / `bridge_`), więc mogą działać razem na jednym urządzeniu.
+> Część rodziny [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, emulator Dominusa i paneli), **tt-bms** (T-/T+, Modbus BMS) i **f1f2-nasa** (to repo). Wszystkie mają ten sam układ (`packages/<magistrala>_*.yaml`, identyfikatory i podstawienia z prefiksem `dd_` / `tt_` / `f1f2_`), więc mogą działać razem na jednym urządzeniu.
 >
-> To repo zawiera **dwa komponenty**: **`f1f2_nasa`** — opisany niżej czytnik tylko do odczytu (domyślny), oraz **`nasa_bridge`** — **opcjonalną, bramkowaną ścieżkę tap + inject**, która potrafi ustawić kilka rzeczy w pompie (zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)). Sterowanie jest **wyłączone, dopóki nie dodasz jego pakietów i go nie uzbroisz**; jego samodzielny upstream to [f1f2-nasa-bridge](https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa-bridge).
+> Komponent `f1f2_nasa` domyślnie **czyta** magistralę, a po dodaniu pakietów sterowania i uzbrojeniu potrafi też **zapisać** kilka rejestrów z whitelisty (zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)).
 
-> **v2.2.1.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
+> **v2.3.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
 
 ## Co dostajesz
 
@@ -55,7 +55,7 @@ Które rejestry steruje sterownik Immergasa (widoczne/ustawialne na magistralach
 
 ### Wersje
 
-Przykład przypina wszystko do tagu wydania (`ref: v2.2.1`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
+Przykład przypina wszystko do tagu wydania (`ref: v2.3.0`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
 
 ### Pakiety
 
@@ -71,22 +71,12 @@ Przykład przypina wszystko do tagu wydania (`ref: v2.2.1`; rdzenie pobierają k
 | `packages/f1f2_ehs_extra.yaml` | opcjonalnie: strefa 2 (temp. + moc), przepływ, moc i energia wyprodukowana, COP, Sterowanie PV, Smart Grid — **Magis ich nie ma** (zawsze OFF / brak danych), przydatne w innych instalacjach Samsung EHS |
 | `packages/lang/f1f2_en.yaml`, `f1f2_pl.yaml` | język czytnika (wybierz jeden) |
 
-**Sterowanie natywne** (jeden komponent, zalecane — zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)); wymaga `f1f2_transmit: "true"`:
+**Sterowanie** (opcjonalne — zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)); wymaga `f1f2_transmit: "true"`:
 
 | Plik | Zawartość |
 |---|---|
 | `packages/f1f2_control.yaml` | **zapisy**: bramka Uzbrój + Tryb wyjazdowy (`0x406D`) + FR ograniczenie sprężarki (`0x40A7`) |
 | `packages/f1f2_outing_targets.yaml` | 9 nastaw trybu wyjazdowego (FSV 5011–5019) jako **edytowalne suwaki** (`number`) |
-
-Ścieżka **osobnego węzła** (osobny komponent `nasa_bridge`) dokłada zamiast tego poniższe — nie łącz z natywną na jednym UART:
-
-| Plik | Zawartość |
-|---|---|
-| `packages/bridge_core.yaml` | UART tapu + hub `nasa_bridge` (tap + bramkowany inject); sam w sobie tylko do odczytu |
-| `packages/bridge_control.yaml` | **zapisy**: bramka Uzbrój + Tryb wyjazdowy + FR ograniczenie sprężarki |
-| `packages/bridge_status_en.yaml`, `bridge_status_pl.yaml` | aktywny kod błędu Samsung z opisem (tylko odczyt) |
-| `packages/bridge_fsv_*.yaml`, `bridge_panel_*.yaml`, `bridge_diagnostics.yaml` | własne odczyty FSV / panel / diagnostyka mostu (dla urządzenia tylko sterującego) |
-| `packages/lang/bridge_en.yaml`, `bridge_pl.yaml` | język encji sterowania (wybierz jeden) |
 
 Ustawienia (podstawienia `f1f2_*`, np. piny, adresy, `f1f2_transmit`, `f1f2_poll_interval`, nazwy `n_f1f2_*`) i sposoby deklarowania własnych encji (`platform: f1f2_nasa` po `key`, kodzie `fsv` albo surowym `pdu`) opisuje [README.md](README.md#settings-substitutions). Pełna lista kluczy jest w [PDU_MAP.md](PDU_MAP.md).
 
@@ -123,21 +113,17 @@ Włącz przełącznik **Sniffer NASA** (diagnostyczny, po restarcie wyłączony)
 
 > **Przeczytaj najpierw.** Na Magisie pętlę trzyma Immergas: w testach prawie każdy zapis był nadpisany lub odrzucony. Działają dwie dźwignie i jeden status tylko do odczytu. Uczciwe wyniki per rejestr są w [FINDINGS.pl.md](FINDINGS.pl.md) i [FSV_MAP.pl.md](FSV_MAP.pl.md). To narzędzie badawcze do własnej jednostki, na własną odpowiedzialność — nie ogólne rozwiązanie sterujące.
 
-**Dwie drogi sterowania, wybierz jedną** (nigdy nie uruchamiaj dwóch komponentów NASA na jednym UART — odczyt UART w ESPHome jest niszczący, podkradałyby sobie bajty):
-
-- **Natywnie w `f1f2_nasa`** (zalecane, jedno urządzenie): dodaj **`packages/f1f2_control.yaml`** do zwykłego configu czytnika i ustaw `f1f2_transmit: "true"`. Jeden komponent bogato czyta *i* zapisuje dwie dźwignie poniżej. Najprostszy sposób na odczyt + sterowanie na jednym urządzeniu.
-- **Osobny węzeł `nasa_bridge`** (opisany niżej): oddzielne urządzenie/komponent tylko do sterowania, gdy czytnik trzymasz osobno.
-
-Komponent `nasa_bridge` (z `packages/bridge_core.yaml`) to **równoległy tap** na tej samej magistrali F1/F2: czyta jak czytnik i potrafi wstrzyknąć jedną ramkę NASA z whitelisty w oknie ciszy — **ale tylko po uzbrojeniu**. Co wystawia:
+Sterowanie jest **natywne** w `f1f2_nasa`: dodaj **`packages/f1f2_control.yaml`** do zwykłego configu czytnika i ustaw `f1f2_transmit: "true"`. Jeden hub bogato czyta *i* zapisuje, na jednym UART. Co dostajesz:
 
 - **Uzbrój zapis** (`switch`) — główna bramka. Nic nie wychodzi do pompy, dopóki nie jest ON (`allow_write`). Po restarcie wyłączona.
 - **Tryb wyjazdowy** (`0x406D`) — aktywuje tryb away Samsunga; jedyna dźwignia, która potrafi przejąć zadaną grzania (FSV 5011–5019 ustawiają jej temperatury). Na Magisie Immergas może ją nadpisać.
 - **FR – ogranicz sprężarkę** (`0x40A7`) — **potwierdzone, że działa**: ścina sprężarkę do fabrycznego ok. 50% ratio (zmierzone 35 Hz → 30 Hz pod obciążeniem). Dźwignia eco / cicha; działa tylko gdy sprężarka pracuje powyżej ~32 Hz. Własna wartość ratio (`0x42F1`) jest przez Magis odrzucana, więc dostajesz stały fabryczny poziom.
-- **Kod błędu** (`bridge_status_*`, tylko odczyt) — aktywny błąd Samsung EHS, zdekodowany (zob. [ERROR_CODES.pl.md](ERROR_CODES.pl.md)).
+- **Edytowalne FSV** — dodaj **`packages/f1f2_outing_targets.yaml`** po 9 nastaw trybu wyjazdowego (FSV 5011–5019) jako suwaki, albo zadeklaruj własne `number:` z `platform: f1f2_nasa` i `fsv:` (zob. „Ustawienia").
+- Aktywny **kod błędu** Samsung jest już w czytniku (`system_error`, z `f1f2_outdoor`); opisy w [ERROR_CODES.pl.md](ERROR_CODES.pl.md).
 
-**Model bezpieczeństwa** (w komponencie, nie tylko w configu): WRITE wychodzi tylko gdy `allow_write` jest ON **oraz** komunikat jest na krótkiej whiteliście (FR enable/ratio, outing, silence, FSV oznaczone jako zapisywalne). Sprężarki, EEV, ochron i rejestru **przepływu** nie da się zapisać nigdy, a ratio FR jest twardo ograniczone do 100%, więc może tylko dławić. READ nigdy nie jest bramkowany. Bez `bridge_control.yaml` nie powstają żadne encje zapisu.
+**Model bezpieczeństwa** (w komponencie, nie tylko w configu): WRITE wychodzi tylko gdy `allow_write` jest ON **oraz** komunikat jest na whiteliście — dwie stałe dźwignie plus to, co jawnie wystawisz jako edytowalny `number`. Dodatkowo **twarda blokada** (`is_hard_blocked_`) odrzuca rejestry sprężarki, EEV, ochrony i **przepływu** niezależnie od wszystkiego, nawet przy błędnym `number:` na takim rejestrze; ratio FR jest twardo ograniczone do 100%, więc może tylko dławić. READ nigdy nie jest bramkowany. Bez `f1f2_control.yaml` nie powstają żadne encje zapisu.
 
-**Jedno urządzenie, czytnik + sterowanie.** Użyj **ścieżki natywnej**: jeden komponent `f1f2_nasa` z pakietem `f1f2_control` i `f1f2_transmit: "true"`. Jeden hub czyta i zapisuje na jednym UART. **Nie** dawaj drugiego komponentu NASA (`nasa_bridge`) na ten sam UART — odczyt UART w ESPHome jest niszczący, dwa komponenty podkradałyby sobie bajty, nic by się nie dekodowało, a urządzenie może wpaść w boot-loop. Zob. `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
+Jedno urządzenie robi jedno i drugie — zob. `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
 
 ## Uwagi
 

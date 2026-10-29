@@ -109,7 +109,7 @@ Pełna mapa **wszystkich 94 ustawień instalatora FSV** z magistrali Samsung NAS
 | 5041 | 0x40A4 | Kontrola szczytu mocy - zastosowanie | 5xxx Tryby specjalne (wyjazd, derating, PV, Smart Grid) | — | 0 / 1 | 🔇 Wyłączona — nieczynna | kontrola szczytu mocy: zapis trzyma ale bezczynny (brak styku szczytu) |
 | 5042 | 0x40A5 | Szczyt mocy - wymuszone wyłączenia | 5xxx Tryby specjalne (wyjazd, derating, PV, Smart Grid) | — | Wszystko wyłączone / Tylko grzałka dodatkowa / Tylko grzałka zapasowa | 🔇 Wyłączona — nieczynna | szczyt mocy wymuszone wylaczenia: bezczynny - wymaga zewnetrznego styku szczytu (rodzic 5041 bezczynny) |
 | 5043 | 0x40A6 | Szczyt mocy - napięcie wejściowe | 5xxx Tryby specjalne (wyjazd, derating, PV, Smart Grid) | — | niskie / wysokie | 🔇 Wyłączona — nieczynna | szczyt mocy napiecie wejsciowe: bezczynny - wymaga zewnetrznego styku szczytu (rodzic 5041 bezczynny) |
-| 5051 | 0x40A7 | Sterowanie współczynnikiem częstotliwości | 5xxx Tryby specjalne (wyjazd, derating, PV, Smart Grid) | — | 0 / 1 | → Sterowanie (działa) | FR control enable - DZIALA (capuje sprezarke ~50%), teraz w Sterowaniu/bridge_control |
+| 5051 | 0x40A7 | Sterowanie współczynnikiem częstotliwości | 5xxx Tryby specjalne (wyjazd, derating, PV, Smart Grid) | — | 0 / 1 | → Sterowanie (działa) | FR control enable - DZIALA (capuje sprezarke ~50%), przełącznik FR w f1f2_control |
 | 5081 | 0x411B | Sterowanie PV | 5xxx Tryby specjalne (wyjazd, derating, PV, Smart Grid) | — | 0 / 1 | 🔇 Wyłączona — nieczynna | sterowanie PV: zapis trzyma ale bezczynny (brak styku PV) |
 | 5082 | 0x42DB | PV - przesunięcie chłodzenia | 5xxx Tryby specjalne (wyjazd, derating, PV, Smart Grid) | °C | 0…20 (krok 1) | 🔇 Wyłączona — nieczynna | PV przesuniecie chlodzenia: bezczynny - wymaga zewnetrznego styku PV (rodzic 5081 bezczynny) |
 | 5083 | 0x42DC | PV - przesunięcie grzania | 5xxx Tryby specjalne (wyjazd, derating, PV, Smart Grid) | °C | 0…20 (krok 1) | 🔇 Wyłączona — nieczynna | PV przesuniecie grzania: bezczynny - wymaga zewnetrznego styku PV (rodzic 5081 bezczynny) |
@@ -120,4 +120,4 @@ Pełna mapa **wszystkich 94 ustawień instalatora FSV** z magistrali Samsung NAS
 
 ---
 
-*Wygenerowane z katalogu FSV projektu. „Wyłączona” = encja zakomentowana w pakiecie `bridge_fsv_*` (zachowana, nie usunięta). Dźwignie działające (outing, FR) żyją w `bridge_control`, poza rodziną FSV.*
+*Wygenerowane z katalogu FSV projektu (`components/f1f2_nasa/f1f2_fsv_catalog.yaml`). Dźwignie działające (outing, FR) żyją w `f1f2_control`, poza rodziną FSV; edytowalne FSV używają platformy `number` (zob. `f1f2_outing_targets`).*

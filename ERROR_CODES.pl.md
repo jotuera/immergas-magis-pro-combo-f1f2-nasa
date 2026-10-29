@@ -50,4 +50,4 @@ ciepła (Tw1/Tw2), **E903** wylot wody / grzałka zapasowa (Tw3), **E904** zbior
 ---
 
 Angielska wersja: [ERROR_CODES.md](ERROR_CODES.md). Mapowanie FSV (np. #4041) — patrz katalog
-`components/nasa_bridge/bridge_fsv_catalog.yaml` oraz pakiety edycji FSV.
+`components/f1f2_nasa/f1f2_fsv_catalog.yaml` oraz [FSV_MAP.pl.md](FSV_MAP.pl.md).

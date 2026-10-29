@@ -109,7 +109,7 @@ A full map of **all 94 FSV installer settings** on the Samsung NASA bus (F1/F2) 
 | 5041 | 0x40A4 | Power peak control | 5xxx Special modes (outing, derating, PV, Smart Grid) | — | 0 / 1 | 🔇 Disabled — inert | peak-power control: write holds but inert (needs external peak contact) |
 | 5042 | 0x40A5 | Power peak - forced off parts | 5xxx Special modes (outing, derating, PV, Smart Grid) | — | All thermal off / Additional heater only / Backup heater only | 🔇 Disabled — inert | peak-power forced-off parts: inert - needs external peak contact (parent 5041 inert) |
 | 5043 | 0x40A6 | Power peak - input voltage | 5xxx Special modes (outing, derating, PV, Smart Grid) | — | low / high | 🔇 Disabled — inert | peak-power input voltage: inert - needs external peak contact (parent 5041 inert) |
-| 5051 | 0x40A7 | Frequency ratio control | 5xxx Special modes (outing, derating, PV, Smart Grid) | — | 0 / 1 | → Controls (works) | FR control enable - WORKS (caps compressor ~50%), now in Controls/bridge_control |
+| 5051 | 0x40A7 | Frequency ratio control | 5xxx Special modes (outing, derating, PV, Smart Grid) | — | 0 / 1 | → Controls (works) | FR control enable - WORKS (caps compressor ~50%), the FR switch in f1f2_control |
 | 5081 | 0x411B | PV control | 5xxx Special modes (outing, derating, PV, Smart Grid) | — | 0 / 1 | 🔇 Disabled — inert | PV control: write holds but inert (needs external PV contact) |
 | 5082 | 0x42DB | PV control - cooling shift | 5xxx Special modes (outing, derating, PV, Smart Grid) | °C | 0…20 (step 1) | 🔇 Disabled — inert | PV cooling shift: inert - needs external PV contact (parent 5081 inert) |
 | 5083 | 0x42DC | PV control - heating shift | 5xxx Special modes (outing, derating, PV, Smart Grid) | °C | 0…20 (step 1) | 🔇 Disabled — inert | PV heating shift: inert - needs external PV contact (parent 5081 inert) |
@@ -120,4 +120,4 @@ A full map of **all 94 FSV installer settings** on the Samsung NASA bus (F1/F2) 
 
 ---
 
-*Generated from the project's FSV catalog. "Disabled" = the entity is commented out in its `bridge_fsv_*` package (kept, not deleted). The working levers (outing, FR) live in `bridge_control`, outside the FSV family.*
+*Generated from the project's FSV catalog (`components/f1f2_nasa/f1f2_fsv_catalog.yaml`). The working levers (outing, FR) live in `f1f2_control`, outside the FSV family; editable FSV use the `number` platform (see `f1f2_outing_targets`).*

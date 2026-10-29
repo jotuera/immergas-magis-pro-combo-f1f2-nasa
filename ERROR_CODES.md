@@ -49,4 +49,4 @@ Sensor locations (from the manual diagram): **E901** water inlet, **E902** plate
 ---
 
 Polish version: [ERROR_CODES.pl.md](ERROR_CODES.pl.md). For FSV mapping (e.g. #4041) see
-`components/nasa_bridge/bridge_fsv_catalog.yaml` and the FSV-edit packages.
+`components/f1f2_nasa/f1f2_fsv_catalog.yaml` and [FSV_MAP.md](FSV_MAP.md).

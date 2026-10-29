@@ -10,11 +10,11 @@
 
 Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Samsung EHS unit, e.g. **Audax Pro V2**) and the **Samsung MIM-B19N interface board** inside the Magis exchange on the **F1/F2** bus. You get it in **Home Assistant** through an **M5Stack Atom + RS485** running ESPHome. No cloud is involved and no third-party NASA component is needed: the project ships its own component, `f1f2_nasa`.
 
-> Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo). All use the same layout (`packages/<bus>_*.yaml`, ids and substitutions with the bus prefix `dd_` / `tt_` / `f1f2_` / `bridge_`), so they can run together on one device.
+> Part of the family [`jotuera/immergas-magis-pro-combo-*`](https://github.com/jotuera?tab=repositories): **dd-modbus** (D+/D-, Dominus/panel emulator), **tt-bms** (T-/T+, BMS Modbus) and **f1f2-nasa** (this repo). All use the same layout (`packages/<bus>_*.yaml`, ids and substitutions with the bus prefix `dd_` / `tt_` / `f1f2_`), so they can run together on one device.
 >
-> This repo ships **two components**: **`f1f2_nasa`** — the read-only reader described below (the default), and **`nasa_bridge`** — an **optional, gated tap + inject control path** that can set a few things on the heat pump (see [Control](#control-optional-readwrite)). The control path is **off unless you add its packages and arm it**; its standalone upstream is [f1f2-nasa-bridge](https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa-bridge).
+> The `f1f2_nasa` component **reads** the bus by default, and can also **write** a few whitelisted settings once you add the control packages and arm it (see [Control](#control-optional-readwrite)).
 
-> **v2.2.1.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
+> **v2.3.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -67,26 +67,16 @@ Which registers the Immergas controller commands (visible/settable on the D+/D- 
 | `packages/f1f2_ehs_extra.yaml` | optional: zone 2 (temps + power), flow rate, produced power / energy, COP, PV control, Smart Grid — **not on a Magis** (always OFF / not available), useful on other Samsung EHS installs |
 | `packages/lang/f1f2_en.yaml`, `f1f2_pl.yaml` | language of the reader (pick one) |
 
-**Native control** (single component, recommended — see [Control](#control-optional-readwrite)); needs `f1f2_transmit: "true"`:
+**Control** (optional, see [Control](#control-optional-readwrite)); needs `f1f2_transmit: "true"`:
 
 | File | Content |
 |---|---|
 | `packages/f1f2_control.yaml` | **writes**: Arm gate + Outing mode (`0x406D`) + FR compressor limit (`0x40A7`) |
 | `packages/f1f2_outing_targets.yaml` | the 9 Outing-mode targets (FSV 5011–5019) as **editable sliders** (`number`) |
 
-The **dedicated-node path** (separate component `nasa_bridge`) adds these instead — do not mix with the native path on one UART:
-
-| File | Content |
-|---|---|
-| `packages/bridge_core.yaml` | tap UART + the `nasa_bridge` hub (tap + gated inject); read-only on its own |
-| `packages/bridge_control.yaml` | **writes**: Arm gate + Outing mode + FR compressor limit |
-| `packages/bridge_status_en.yaml`, `bridge_status_pl.yaml` | active Samsung error code with a description (read-only) |
-| `packages/bridge_fsv_*.yaml`, `bridge_panel_*.yaml`, `bridge_diagnostics.yaml` | the bridge's own FSV reads / panel / diagnostics (for a control-only device) |
-| `packages/lang/bridge_en.yaml`, `bridge_pl.yaml` | language of the control entities (pick one) |
-
 ### Versions
 
-The example pins everything to a release tag (`ref: v2.2.1`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v2.3.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 
@@ -152,21 +142,17 @@ Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value 
 
 > **Read this first.** On a Magis the Immergas controller owns the loop: in testing almost every write was overridden or rejected. Two levers do work, and one read-only status is useful. The honest, per-register results are in [FINDINGS.md](FINDINGS.md) and [FSV_MAP.md](FSV_MAP.md). This is a research tool for your own unit, at your own risk — not a general control solution.
 
-**Two ways to control, pick one** (never run both NASA components on one shared UART — ESPHome UART reads are destructive and the two would steal each other's bytes):
-
-- **Native in `f1f2_nasa`** (recommended, single device): add **`packages/f1f2_control.yaml`** to the normal reader config and set `f1f2_transmit: "true"`. One component reads richly *and* writes the two levers below. This is the simplest way to get read + control on one device.
-- **Dedicated `nasa_bridge` node** (described below): a separate control-only device/component, useful if you keep the reader on its own device.
-
-The `nasa_bridge` component (from `packages/bridge_core.yaml`) is a **parallel tap** on the same F1/F2 bus: it reads like the reader, and can inject a single whitelisted NASA frame in a bus-silence window — **but only when armed**. What it exposes:
+Control is **native** in `f1f2_nasa`: add **`packages/f1f2_control.yaml`** to the normal reader config and set `f1f2_transmit: "true"`. The one hub reads richly *and* writes, on one UART. What you get:
 
 - **Arm write** (`switch`) — the master gate. Nothing is ever transmitted to the pump until this is ON (`allow_write`). Off after every reboot.
 - **Outing mode** (`0x406D`) — activates Samsung away mode; the one lever that can take over the heating target (FSV 5011–5019 set its temperatures). On a Magis it may still be overridden by Immergas.
 - **FR – limit compressor** (`0x40A7`) — **confirmed working**: caps the compressor at the built-in ~50 % ratio (verified 35 Hz → 30 Hz under load). An eco / quiet lever; it only bites while the compressor runs above ~32 Hz. The custom ratio value (`0x42F1`) is rejected by a Magis, so you get the fixed default.
-- **Error code** (`bridge_status_*`, read-only) — the active Samsung EHS error, decoded (see [ERROR_CODES.md](ERROR_CODES.md)).
+- **Editable FSV** — add **`packages/f1f2_outing_targets.yaml`** for the 9 Outing-mode targets (FSV 5011–5019) as sliders, or declare your own `number:` with `platform: f1f2_nasa` and `fsv:` (see "Settings").
+- The active Samsung **error code** is already in the reader (`system_error`, from `f1f2_outdoor`); descriptions in [ERROR_CODES.md](ERROR_CODES.md).
 
-**Safety model** (in the component, not just the config): a WRITE leaves the device only if `allow_write` is ON **and** the message is on a short whitelist (FR enable/ratio, outing, silence, and FSV flagged writable). The compressor, EEV, protection and **water-flow** registers can never be written, and the FR ratio is hard-capped at 100 % so it can only derate. READs are never gated. With `bridge_control.yaml` absent, no write controls are created at all.
+**Safety model** (in the component, not just the config): a WRITE leaves the device only if `allow_write` is ON **and** the message is whitelisted — the two fixed levers, plus any id you expose as an editable `number`. On top of that a **hard block** (`is_hard_blocked_`) refuses the compressor, EEV, protection and **water-flow** registers no matter what, even a mistaken `number:` on one of them; the FR ratio is hard-capped at 100 % so it can only derate. READs are never gated. With `f1f2_control.yaml` absent, no write controls are created at all.
 
-**One device, reader + control.** Use the **native path**: one `f1f2_nasa` component with the `f1f2_control` package and `f1f2_transmit: "true"`. One hub reads and writes on one UART. **Do not** put a second NASA component (`nasa_bridge`) on the same UART — ESPHome UART reads are destructive, the two would steal each other's bytes, nothing would decode, and the device can boot-loop. See `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
+One device does both — see `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
 
 ## Notes
 
