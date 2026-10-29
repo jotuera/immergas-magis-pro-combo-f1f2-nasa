@@ -17,7 +17,7 @@
 switch:
   # 1. NASA connection - master bus-access fuse. Off = pure passive listener (no TX at all).
   - platform: template
-    name: ${n_f1f2_emulate_nasa}
+    name: "${f1f2_name_prefix}${n_f1f2_emulate_nasa}"
     icon: mdi:lan-connect
     optimistic: true
     restore_mode: RESTORE_DEFAULT_ON
@@ -28,7 +28,7 @@ switch:
 
   # 2. Emulate EHS panel - active readback / polling of FSV + control registers. Off = only passive sensors.
   - platform: template
-    name: ${n_f1f2_emulate_panel}
+    name: "${f1f2_name_prefix}${n_f1f2_emulate_panel}"
     icon: mdi:remote
     optimistic: true
     restore_mode: RESTORE_DEFAULT_ON
@@ -39,7 +39,7 @@ switch:
 
   # 3. Active ODU control - the write arm. A WRITE needs this ON plus NASA connection + Emulate EHS panel.
   - platform: template
-    name: ${n_f1f2_arm}
+    name: "${f1f2_name_prefix}${n_f1f2_arm}"
     icon: mdi:lock-open-alert
     optimistic: true
     restore_mode: ALWAYS_OFF
@@ -53,7 +53,7 @@ switch:
   # Immergas controller contests it: the injected state flickers against the value Immergas broadcasts, so the
   # switch reads its state from the bus (read_value), never optimistically, and a revert is visible.
   - platform: template
-    name: ${n_f1f2_outing}
+    name: "${f1f2_name_prefix}${n_f1f2_outing}"
     icon: mdi:bag-suitcase
     lambda: |-
       if (!id(f1f2_hub).get_bus_enabled() || !id(f1f2_hub).get_panel_emulation()) return {};  // unavailable unless NASA conn + EHS panel on
@@ -72,7 +72,7 @@ switch:
   # there is nothing to cut and it looks like "no effect"; the ramp-back after turning OFF is delayed
   # (~1 min), so do A/B tests patiently; the custom ratio value 0x42F1 is rejected (you get the fixed ~50 %).
   - platform: template
-    name: ${n_f1f2_fr_enable}
+    name: "${f1f2_name_prefix}${n_f1f2_fr_enable}"
     icon: mdi:speedometer-slow
     lambda: |-
       if (!id(f1f2_hub).get_bus_enabled() || !id(f1f2_hub).get_panel_emulation()) return {};  // unavailable unless NASA conn + EHS panel on

@@ -7,35 +7,35 @@
 sensor:
   - {platform: f1f2_nasa, key: flow_temp_out, id: f1f2_flow_temp_out}
   - {platform: f1f2_nasa, key: flow_temp_return, id: f1f2_flow_temp_return}
-  - {platform: f1f2_nasa, key: water_outlet_target}
-  - {platform: f1f2_nasa, key: dhw_temperature}
-  - {platform: f1f2_nasa, key: dhw_target}
-  - {platform: f1f2_nasa, key: zone1_room_temp}
-  - {platform: f1f2_nasa, key: zone1_target}
-  - {platform: f1f2_nasa, key: eva_in_temp}
-  - {platform: f1f2_nasa, key: water_out_tw2}
-  - {platform: f1f2_nasa, key: outdoor_temp_copy}
-  - {platform: f1f2_nasa, key: heater_out_temp}
-  - {platform: f1f2_nasa, key: mixing_valve_temp}
-  - {platform: f1f2_nasa, key: capacity_request}
-  - {platform: f1f2_nasa, key: capacity_absolute}
-  - {platform: f1f2_nasa, key: indoor_eev}
-  - {platform: f1f2_nasa, key: two_way_valve}
+  - {platform: f1f2_nasa, key: water_outlet_target, id: f1f2_water_outlet_target}
+  - {platform: f1f2_nasa, key: dhw_temperature, id: f1f2_dhw_temperature}
+  - {platform: f1f2_nasa, key: dhw_target, id: f1f2_dhw_target}
+  - {platform: f1f2_nasa, key: zone1_room_temp, id: f1f2_zone1_room_temp}
+  - {platform: f1f2_nasa, key: zone1_target, id: f1f2_zone1_target}
+  - {platform: f1f2_nasa, key: eva_in_temp, id: f1f2_eva_in_temp}
+  - {platform: f1f2_nasa, key: water_out_tw2, id: f1f2_water_out_tw2}
+  - {platform: f1f2_nasa, key: outdoor_temp_copy, id: f1f2_outdoor_temp_copy}
+  - {platform: f1f2_nasa, key: heater_out_temp, id: f1f2_heater_out_temp}
+  - {platform: f1f2_nasa, key: mixing_valve_temp, id: f1f2_mixing_valve_temp}
+  - {platform: f1f2_nasa, key: capacity_request, id: f1f2_capacity_request}
+  - {platform: f1f2_nasa, key: capacity_absolute, id: f1f2_capacity_absolute}
+  - {platform: f1f2_nasa, key: indoor_eev, id: f1f2_indoor_eev}
+  - {platform: f1f2_nasa, key: two_way_valve, id: f1f2_two_way_valve}
   # operation_mode (0x4001) and three_way_valve (0x4067) are exposed as decoded text_sensors below
   # (operation_mode_text / three_way_valve_text) - the raw duplicates were removed.
-  - {platform: f1f2_nasa, key: control_reference}
-  - {platform: f1f2_nasa, key: status_bits_440e}
+  - {platform: f1f2_nasa, key: control_reference, id: f1f2_control_reference}
+  - {platform: f1f2_nasa, key: status_bits_440e, id: f1f2_status_bits_440e}
 
 binary_sensor:
-  - {platform: f1f2_nasa, key: water_pump}
-  - {platform: f1f2_nasa, key: backup_heater}
-  - {platform: f1f2_nasa, key: booster_heater}
-  - {platform: f1f2_nasa, key: defrost}
-  - {platform: f1f2_nasa, key: dhw_power}
-  - {platform: f1f2_nasa, key: zone1_power}
+  - {platform: f1f2_nasa, key: water_pump, id: f1f2_water_pump}
+  - {platform: f1f2_nasa, key: backup_heater, id: f1f2_backup_heater}
+  - {platform: f1f2_nasa, key: booster_heater, id: f1f2_booster_heater}
+  - {platform: f1f2_nasa, key: defrost, id: f1f2_defrost}
+  - {platform: f1f2_nasa, key: dhw_power, id: f1f2_dhw_power}
+  - {platform: f1f2_nasa, key: zone1_power, id: f1f2_zone1_power}
   # zone2_power / pv_control / smart_grid moved to the optional f1f2_ehs_extra (a Magis has none of them).
 
 text_sensor:
-  - {platform: f1f2_nasa, key: dhw_mode}
-  - {platform: f1f2_nasa, key: operation_mode_text}
-  - {platform: f1f2_nasa, key: three_way_valve_text}
+  - {platform: f1f2_nasa, key: dhw_mode, id: f1f2_dhw_mode}
+  - {platform: f1f2_nasa, key: operation_mode_text, id: f1f2_operation_mode_text}
+  - {platform: f1f2_nasa, key: three_way_valve_text, id: f1f2_three_way_valve_text}

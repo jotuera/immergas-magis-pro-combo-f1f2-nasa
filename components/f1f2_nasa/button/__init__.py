@@ -2,7 +2,7 @@ import esphome.codegen as cg
 from esphome.components import button
 import esphome.config_validation as cv
 
-from .. import CONF_F1F2_NASA_ID, CONF_TYPE, DOMAIN, HUB_ID_SCHEMA, f1f2_nasa_ns, tr
+from .. import CONF_F1F2_NASA_ID, CONF_TYPE, DOMAIN, HUB_ID_SCHEMA, auto_name, f1f2_nasa_ns, tr
 
 DEPENDENCIES = [DOMAIN]
 
@@ -11,7 +11,7 @@ NasaPollButton = f1f2_nasa_ns.class_("NasaPollButton", button.Button)
 
 def _fill(config):
     config = dict(config)
-    config.setdefault("name", tr()["buttons"]["poll"])
+    config.setdefault("name", auto_name(tr()["buttons"]["poll"]))
     config.setdefault("entity_category", "config")
     config.setdefault("icon", "mdi:download")
     return config

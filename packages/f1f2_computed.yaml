@@ -11,7 +11,7 @@ time:
 sensor:
   - platform: template
     id: f1f2_flow_delta
-    name: "${n_f1f2_flow_delta}"
+    name: "${f1f2_name_prefix}${n_f1f2_flow_delta}"
     unit_of_measurement: "°C"
     device_class: temperature
     state_class: measurement
@@ -21,7 +21,7 @@ sensor:
       return id(f1f2_flow_temp_out).state - id(f1f2_flow_temp_return).state;
   - platform: total_daily_energy
     id: f1f2_daily_energy
-    name: "${n_f1f2_daily_energy}"
+    name: "${f1f2_name_prefix}${n_f1f2_daily_energy}"
     power_id: f1f2_power_consumed
     unit_of_measurement: kWh
     state_class: total_increasing

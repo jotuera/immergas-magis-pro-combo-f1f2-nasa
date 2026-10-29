@@ -20,6 +20,7 @@ from .. import (
     FSV,
     HUB_ID_SCHEMA,
     SOURCE_SCHEMA,
+    auto_name,
     fill_from_catalog,
     fsv_name,
     f1f2_nasa_ns,
@@ -56,7 +57,7 @@ def _extra(config):
         d["accuracy_decimals"] = 1 if e.get("dec") == "temp" or e.get("mul", 1) < 1 else 0
     elif CONF_TYPE in config:
         t = str(config[CONF_TYPE])
-        d["name"] = tr()["sensors"].get(t, t)
+        d["name"] = auto_name(tr()["sensors"].get(t, t))
         d["entity_category"] = "diagnostic"
         d["accuracy_decimals"] = 0
         d["icon"] = "mdi:counter"

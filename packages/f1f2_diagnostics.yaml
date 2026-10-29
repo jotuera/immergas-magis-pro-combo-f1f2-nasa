@@ -6,25 +6,25 @@
 
 sensor:
   # undecoded values
-  - {platform: f1f2_nasa, key: raw_0402}
-  - {platform: f1f2_nasa, key: raw_0411}
-  - {platform: f1f2_nasa, key: raw_0412}
-  - {platform: f1f2_nasa, key: raw_0413}
-  - {platform: f1f2_nasa, key: raw_0414}
-  - {platform: f1f2_nasa, key: raw_0415}
-  - {platform: f1f2_nasa, key: raw_4006}
-  - {platform: f1f2_nasa, key: raw_440a}
-  - {platform: f1f2_nasa, key: raw_428d}
-  - {platform: f1f2_nasa, key: raw_041b}
-  - {platform: f1f2_nasa, key: raw_8201}
-  - {platform: f1f2_nasa, key: raw_823f}
-  - {platform: f1f2_nasa, key: raw_8243}
-  - {platform: f1f2_nasa, key: raw_824b}
-  - {platform: f1f2_nasa, key: raw_824c}
-  - {platform: f1f2_nasa, key: raw_82e1}
-  - {platform: f1f2_nasa, key: raw_80b1}
-  - {platform: f1f2_nasa, key: raw_840f}
-  - {platform: f1f2_nasa, key: raw_8417}
+  - {platform: f1f2_nasa, key: raw_0402, id: f1f2_raw_0402}
+  - {platform: f1f2_nasa, key: raw_0411, id: f1f2_raw_0411}
+  - {platform: f1f2_nasa, key: raw_0412, id: f1f2_raw_0412}
+  - {platform: f1f2_nasa, key: raw_0413, id: f1f2_raw_0413}
+  - {platform: f1f2_nasa, key: raw_0414, id: f1f2_raw_0414}
+  - {platform: f1f2_nasa, key: raw_0415, id: f1f2_raw_0415}
+  - {platform: f1f2_nasa, key: raw_4006, id: f1f2_raw_4006}
+  - {platform: f1f2_nasa, key: raw_440a, id: f1f2_raw_440a}
+  - {platform: f1f2_nasa, key: raw_428d, id: f1f2_raw_428d}
+  - {platform: f1f2_nasa, key: raw_041b, id: f1f2_raw_041b}
+  - {platform: f1f2_nasa, key: raw_8201, id: f1f2_raw_8201}
+  - {platform: f1f2_nasa, key: raw_823f, id: f1f2_raw_823f}
+  - {platform: f1f2_nasa, key: raw_8243, id: f1f2_raw_8243}
+  - {platform: f1f2_nasa, key: raw_824b, id: f1f2_raw_824b}
+  - {platform: f1f2_nasa, key: raw_824c, id: f1f2_raw_824c}
+  - {platform: f1f2_nasa, key: raw_82e1, id: f1f2_raw_82e1}
+  - {platform: f1f2_nasa, key: raw_80b1, id: f1f2_raw_80b1}
+  - {platform: f1f2_nasa, key: raw_840f, id: f1f2_raw_840f}
+  - {platform: f1f2_nasa, key: raw_8417, id: f1f2_raw_8417}
   # bus statistics
   - {platform: f1f2_nasa, type: rx_frames}
   - {platform: f1f2_nasa, type: bad_frames}
@@ -32,7 +32,7 @@ sensor:
   - {platform: f1f2_nasa, type: timeouts}
 
 text_sensor:
-  - {platform: f1f2_nasa, key: raw_4604}
+  - {platform: f1f2_nasa, key: raw_4604, id: f1f2_raw_4604}
   # sniffer output (only while the sniffer switch is on)
   - {platform: f1f2_nasa, type: last_frame}
   - {platform: f1f2_nasa, type: last_change}

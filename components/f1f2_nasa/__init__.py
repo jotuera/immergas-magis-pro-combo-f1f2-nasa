@@ -22,6 +22,7 @@ MULTI_CONF = False
 DOMAIN = "f1f2_nasa"
 CONF_F1F2_NASA_ID = "f1f2_nasa_id"
 CONF_LANGUAGE = "language"
+CONF_NAME_PREFIX = "name_prefix"
 CONF_ADDRESS = "address"
 CONF_INDOOR_ADDRESS = "indoor_address"
 CONF_OUTDOOR_ADDRESS = "outdoor_address"
@@ -102,9 +103,22 @@ def tr():
     return translation(current_language())
 
 
+def name_prefix():
+    """Hub `name_prefix:` (e.g. "Immergas FF - " on a device shared with other buses), read like the language."""
+    raw = (CORE.raw_config or {}).get(DOMAIN) or {}
+    if isinstance(raw, list):
+        raw = raw[0] if raw else {}
+    return str(raw.get(CONF_NAME_PREFIX) or "")
+
+
+def auto_name(text):
+    """Entity name filled from the catalog / translation, with the hub name prefix."""
+    return f"{name_prefix()}{text}"
+
+
 def fsv_name(code):
     t = tr()
-    return t["fsv_format"].format(code=code, name=t["fsv"].get(code, ""))
+    return auto_name(t["fsv_format"].format(code=code, name=t["fsv"].get(code, "")))
 
 
 def preset(entry):
@@ -157,6 +171,7 @@ CONFIG_SCHEMA = (
         {
             cv.GenerateID(): cv.declare_id(NasaHub),
             cv.Optional(CONF_LANGUAGE, default="en"): cv.one_of(*LANGUAGES, lower=True),
+            cv.Optional(CONF_NAME_PREFIX, default=""): cv.string,
             cv.Optional(CONF_ADDRESS, default="80.FF.00"): nasa_address,
             cv.Optional(CONF_INDOOR_ADDRESS, default="20.00.01"): nasa_address,
             cv.Optional(CONF_OUTDOOR_ADDRESS, default="10.00.00"): nasa_address,
@@ -223,7 +238,7 @@ def fill_from_catalog(section, extra=None):
                     f"Unknown key '{key}'. Known: {', '.join(sorted(entries))}", [CONF_KEY]
                 )
             entry = entries[key]
-            defaults["name"] = tr().get(section, {}).get(key, key)
+            defaults["name"] = auto_name(tr().get(section, {}).get(key, key))
             mapping = {
                 "unit": "unit_of_measurement",
                 "dc": "device_class",

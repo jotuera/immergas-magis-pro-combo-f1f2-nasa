@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.6.0
+
+- **Name prefix** for combining with dd-modbus / tt-bms on one device: hub option `name_prefix:` (component) and
+  substitution `f1f2_name_prefix` (packages, default empty). It is put in front of every entity name - catalog,
+  FSV, hub-statistics, sniffer/poll and the template entities. Empty (default) = names exactly as in v2.5.x.
+- Every `key:` / `fsv:` entity in the packages now has an `id:` (`f1f2_<key>`, `f1f2_fsv_<code>`, sliders
+  `f1f2_fsv_<code>_number`), so a main YAML can change one with `!extend` (e.g. `internal: true`).
+  Entity names and Home Assistant unique ids are unchanged.
+
 ## v2.5.2
 
 - **NASA connection off now really disconnects**: the hub drains the bus but no longer dispatches received frames, so **every** entity — numeric sensors, binary sensors, text sensors and the control entities — goes **unavailable** (sensors via `invalidate_state()` / `has_state=false`), so the device looks offline from the bus, as a master fuse should. Turning it back on repopulates from the bus.

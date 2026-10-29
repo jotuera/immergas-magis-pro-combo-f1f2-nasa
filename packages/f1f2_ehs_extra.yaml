@@ -7,14 +7,14 @@
 # repos on one device.
 
 sensor:
-  - {platform: f1f2_nasa, key: zone2_room_temp}
-  - {platform: f1f2_nasa, key: zone2_target}
-  - {platform: f1f2_nasa, key: flow_rate}
+  - {platform: f1f2_nasa, key: zone2_room_temp, id: f1f2_zone2_room_temp}
+  - {platform: f1f2_nasa, key: zone2_target, id: f1f2_zone2_target}
+  - {platform: f1f2_nasa, key: flow_rate, id: f1f2_flow_rate}
   - {platform: f1f2_nasa, key: power_produced, id: f1f2_power_produced}
   - {platform: f1f2_nasa, key: energy_produced_total, id: f1f2_energy_produced_total}
   - platform: template
     id: f1f2_cop_instant
-    name: "${n_f1f2_cop_instant}"
+    name: "${f1f2_name_prefix}${n_f1f2_cop_instant}"
     icon: mdi:chart-bar
     state_class: measurement
     accuracy_decimals: 2
@@ -25,7 +25,7 @@ sensor:
       return std::min(8.0f, std::max(0.0f, out / in));
   - platform: template
     id: f1f2_cop_total
-    name: "${n_f1f2_cop_total}"
+    name: "${f1f2_name_prefix}${n_f1f2_cop_total}"
     icon: mdi:chart-bar
     accuracy_decimals: 2
     update_interval: 300s
@@ -35,6 +35,6 @@ sensor:
       return out / in;
 
 binary_sensor:
-  - {platform: f1f2_nasa, key: zone2_power}   # Magis: no zone 2 on NASA
-  - {platform: f1f2_nasa, key: pv_control}    # Magis: no PV control
-  - {platform: f1f2_nasa, key: smart_grid}    # Magis: no Smart Grid
+  - {platform: f1f2_nasa, key: zone2_power, id: f1f2_zone2_power}   # Magis: no zone 2 on NASA
+  - {platform: f1f2_nasa, key: pv_control, id: f1f2_pv_control}    # Magis: no PV control
+  - {platform: f1f2_nasa, key: smart_grid, id: f1f2_smart_grid}    # Magis: no Smart Grid

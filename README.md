@@ -14,7 +14,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 >
 > The `f1f2_nasa` component **reads** the bus by default, and can also **write** a few whitelisted settings once you add the control packages and arm it (see [Control](#control-optional-readwrite)).
 
-> **v2.5.2.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
+> **v2.6.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -76,7 +76,7 @@ Which registers the Immergas controller commands (visible/settable on the D+/D- 
 
 ### Versions
 
-The example pins everything to a release tag (`ref: v2.5.2`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v2.6.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 
@@ -111,7 +111,7 @@ You can override any field, e.g. `name:`, `filters:` or `entity_category:`. All 
 
 ### Running on one device with the other buses
 
-All three projects use bus prefixes for every file, id and substitution, so their package lists can be put next to each other under one `packages:` with one device section (esp32, wifi, api, logger). Give each bus its own UART pins (an ESP32 has three hardware UARTs; set `logger: baud_rate: 0`).
+All three projects use bus prefixes for every file, id and substitution, so their package lists can be put next to each other under one `packages:` with one device section (esp32, wifi, api, logger). Give each bus its own UART pins (an ESP32 has three hardware UARTs; set `logger: baud_rate: 0`). To tell the buses apart in Home Assistant, set `f1f2_name_prefix` (e.g. `"Immergas FF - "`); every `key:` / `fsv:` entity has an id (`f1f2_<key>`), so the main YAML can hide one with `- id: !extend f1f2_<key>` + `internal: true`.
 
 ## Finding the addresses
 

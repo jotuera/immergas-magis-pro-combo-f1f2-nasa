@@ -6,11 +6,11 @@
 # repos on one device.
 
 sensor:
-  - {platform: f1f2_nasa, key: unit_capacity}
-  - {platform: f1f2_nasa, key: linked_indoor_units}
+  - {platform: f1f2_nasa, key: unit_capacity, id: f1f2_unit_capacity}
+  - {platform: f1f2_nasa, key: linked_indoor_units, id: f1f2_linked_indoor_units}
 
 text_sensor:
-  - {platform: f1f2_nasa, key: firmware_outdoor}
-  - {platform: f1f2_nasa, key: firmware_outdoor_eeprom}
-  - {platform: f1f2_nasa, key: firmware_inverter}
-  - {platform: f1f2_nasa, key: firmware_indoor}
+  - {platform: f1f2_nasa, key: firmware_outdoor, id: f1f2_firmware_outdoor}
+  - {platform: f1f2_nasa, key: firmware_outdoor_eeprom, id: f1f2_firmware_outdoor_eeprom}
+  - {platform: f1f2_nasa, key: firmware_inverter, id: f1f2_firmware_inverter}
+  - {platform: f1f2_nasa, key: firmware_indoor, id: f1f2_firmware_indoor}

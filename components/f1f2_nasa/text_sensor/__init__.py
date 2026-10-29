@@ -14,6 +14,7 @@ from .. import (
     DOMAIN,
     HUB_ID_SCHEMA,
     SOURCE_SCHEMA,
+    auto_name,
     fill_from_catalog,
     f1f2_nasa_ns,
     resolve_source,
@@ -37,7 +38,7 @@ HUB_TYPES = {
 def _extra(config):
     if CONF_TYPE in config:
         t = str(config[CONF_TYPE])
-        return {"name": tr()["text_sensors"].get(t, t), "entity_category": "diagnostic"}
+        return {"name": auto_name(tr()["text_sensors"].get(t, t)), "entity_category": "diagnostic"}
     if CONF_PDU in config:
         return {"entity_category": "diagnostic"}  # undecoded raw value
     return {}

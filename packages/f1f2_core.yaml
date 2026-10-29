@@ -5,7 +5,7 @@
 # repos on one device.
 
 substitutions:
-  f1f2_project_version: "2.5.2"
+  f1f2_project_version: "2.6.0"
   # RS485 pins (M5Stack Atom + Atomic RS485 Base). Override in your main YAML if your wiring differs.
   f1f2_uart_tx_pin: GPIO19
   f1f2_uart_rx_pin: GPIO22
@@ -13,6 +13,9 @@ substitutions:
   f1f2_poll_interval: 30min        # how often the FSV values are re-read
   f1f2_indoor_address: "20.00.01"  # see README "Finding the addresses"
   f1f2_outdoor_address: "10.00.00"
+  # Text put in front of every entity name. Empty = names as before. On a device shared with other Immergas
+  # buses, e.g. f1f2_name_prefix: "Immergas FF - " -> "Immergas FF - Flow temperature".
+  f1f2_name_prefix: ""
 
 esphome:
   project:
@@ -20,9 +23,9 @@ esphome:
     version: "${f1f2_project_version}"
 
 # The f1f2_nasa component (Samsung NASA protocol), downloaded from GitHub.
-# @v2.5.2 = this release; @main = latest development version.
+# @v2.6.0 = this release; @main = latest development version.
 external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v2.5.2
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v2.6.0
     components: [f1f2_nasa]
     refresh: 1d
 
@@ -40,6 +43,7 @@ f1f2_nasa:
   id: f1f2_hub
   uart_id: f1f2_uart
   language: ${f1f2_language}
+  name_prefix: "${f1f2_name_prefix}"
   transmit: ${f1f2_transmit}
   poll_interval: ${f1f2_poll_interval}
   indoor_address: ${f1f2_indoor_address}

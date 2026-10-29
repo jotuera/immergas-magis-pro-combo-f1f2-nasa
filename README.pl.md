@@ -14,7 +14,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 >
 > Komponent `f1f2_nasa` domyślnie **czyta** magistralę, a po dodaniu pakietów sterowania i uzbrojeniu potrafi też **zapisać** kilka rejestrów z whitelisty (zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)).
 
-> **v2.5.2.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
+> **v2.6.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
 
 ## Co dostajesz
 
@@ -55,7 +55,7 @@ Które rejestry steruje sterownik Immergasa (widoczne/ustawialne na magistralach
 
 ### Wersje
 
-Przykład przypina wszystko do tagu wydania (`ref: v2.5.2`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
+Przykład przypina wszystko do tagu wydania (`ref: v2.6.0`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
 
 ### Pakiety
 
@@ -82,7 +82,7 @@ Ustawienia (podstawienia `f1f2_*`, np. piny, adresy, `f1f2_transmit`, `f1f2_poll
 
 ### Jedno urządzenie na kilka magistral
 
-Wszystkie trzy projekty mają prefiksy magistrali w nazwach plików, identyfikatorów i podstawień, więc ich listy pakietów można postawić obok siebie pod jednym `packages:` z jedną sekcją urządzenia (esp32, wifi, api, logger). Każda magistrala potrzebuje własnych pinów UART (ESP32 ma trzy sprzętowe UART-y; ustaw `logger: baud_rate: 0`).
+Wszystkie trzy projekty mają prefiksy magistrali w nazwach plików, identyfikatorów i podstawień, więc ich listy pakietów można postawić obok siebie pod jednym `packages:` z jedną sekcją urządzenia (esp32, wifi, api, logger). Każda magistrala potrzebuje własnych pinów UART (ESP32 ma trzy sprzętowe UART-y; ustaw `logger: baud_rate: 0`). Żeby odróżnić magistrale w Home Assistant, ustaw `f1f2_name_prefix` (np. `"Immergas FF - "`); każda encja `key:` / `fsv:` ma id (`f1f2_<key>`), więc plik główny może ją ukryć przez `- id: !extend f1f2_<key>` + `internal: true`.
 
 ## Jak ustalić adresy
 
