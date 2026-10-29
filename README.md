@@ -145,6 +145,11 @@ Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value 
 
 > **Read this first.** On a Magis the Immergas controller owns the loop: in testing almost every write was overridden or rejected. Two levers do work, and one read-only status is useful. The honest, per-register results are in [FINDINGS.md](FINDINGS.md) and [FSV_MAP.md](FSV_MAP.md). This is a research tool for your own unit, at your own risk — not a general control solution.
 
+**Two ways to control, pick one** (never run both NASA components on one shared UART — ESPHome UART reads are destructive and the two would steal each other's bytes):
+
+- **Native in `f1f2_nasa`** (recommended, single device): add **`packages/f1f2_control.yaml`** to the normal reader config and set `f1f2_transmit: "true"`. One component reads richly *and* writes the two levers below. This is the simplest way to get read + control on one device.
+- **Dedicated `nasa_bridge` node** (described below): a separate control-only device/component, useful if you keep the reader on its own device.
+
 The `nasa_bridge` component (from `packages/bridge_core.yaml`) is a **parallel tap** on the same F1/F2 bus: it reads like the reader, and can inject a single whitelisted NASA frame in a bus-silence window — **but only when armed**. What it exposes:
 
 - **Arm write** (`switch`) — the master gate. Nothing is ever transmitted to the pump until this is ON (`allow_write`). Off after every reboot.

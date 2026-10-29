@@ -107,6 +107,20 @@ class NasaHub : public Component, public uart::UARTDevice {
   bool is_sniffer_enabled() const { return this->sniffer_; }
   uint32_t get_republish_interval() const { return this->republish_interval_; }
 
+  // --- control writes (optional; off until armed) ---
+  // Master write gate. No control WRITE ever leaves the device unless this is true.
+  void set_allow_write(bool on) { this->allow_write_ = on; }
+  bool get_allow_write() const { return this->allow_write_; }
+  // Queue a whitelisted control WRITE to the indoor unit. Gated by allow_write AND a short whitelist;
+  // a non-whitelisted id is refused in code, so the compressor/EEV/protection/flow can never be written.
+  void write_message(uint16_t id, uint32_t value);
+  // Convenience levers (both ENUM, 1 byte): away/outing activation and FR compressor-limit enable.
+  void outing_set(bool on) { this->write_message(0x406D, on ? 1 : 0); }
+  void fr_set_enable(bool on) { this->write_message(0x40A7, on ? 1 : 0); }
+  // Last raw value seen on the bus for a message id (NaN if never seen). Used by the control switches
+  // to show the real state (so a revert by the Immergas controller is visible).
+  float read_value(uint16_t id) const;
+
   // Feed raw bytes as if received from the bus (tests / replay).
   void feed(const uint8_t *data, size_t len);
 
@@ -119,11 +133,18 @@ class NasaHub : public Component, public uart::UARTDevice {
     uint32_t sent_at{0};
   };
 
+  struct WriteOp {
+    uint16_t id{0};
+    uint32_t value{0};
+  };
+
   void process_byte_(uint8_t b);
   bool process_frame_(const uint8_t *buf, size_t len);
   void handle_packet_(const Packet &p);
   void try_transmit_();
   void send_request_(PendingRequest &req);
+  void send_write_(const WriteOp &op);
+  bool is_write_whitelisted_(uint16_t id) const;
   uint8_t next_packet_number_();
   void publish_stats_();
   void sniff_(const Packet &p);
@@ -161,6 +182,11 @@ class NasaHub : public Component, public uart::UARTDevice {
   uint8_t packet_number_{0};
   uint32_t last_poll_{0};
   bool first_poll_done_{false};
+
+  // control writes
+  std::deque<WriteOp> write_queue_;
+  bool allow_write_{false};
+  std::map<uint16_t, uint32_t> last_value_;  // last raw value per message id (for write readback)
 
   std::map<uint32_t, uint32_t> sniff_last_;  // (source<<16 | id) -> last value
 

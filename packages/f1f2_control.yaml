@@ -1,0 +1,58 @@
+# Immergas Magis Pro / Combo F1/F2 (Samsung NASA) - package "f1f2_control"  -- OPTIONAL, WRITES TO THE PUMP
+# ============================================================================================================
+#  DO NOT add this package unless you accept the risk. It creates the controls that let the f1f2_nasa hub
+#  INJECT NASA write frames to the heat pump. Even then:
+#   * nothing is transmitted until you turn ON the "Arm write" switch (the allow_write gate), AND
+#   * only the whitelisted messages can ever be written (outing 0x406D and FR enable 0x40A7); the
+#     compressor / EEV / protection / water-flow / setpoint registers are refused in the component.
+#
+#  On a Magis the Immergas controller owns the loop: most writes are overridden. The two levers that work:
+#  OUTING can take over the heating target; FR caps the compressor (~50 % ratio, eco/quiet). See README
+#  "Control" and FINDINGS.md. Requires f1f2_core with f1f2_transmit: "true".
+# ============================================================================================================
+
+switch:
+  # ARM: the master write gate. Nothing is transmitted to the pump until this is ON. (Reads are benign.)
+  - platform: template
+    name: ${n_f1f2_arm}
+    icon: mdi:lock-open-alert
+    optimistic: true
+    restore_mode: ALWAYS_OFF
+    turn_on_action:
+      - lambda: "id(f1f2_hub).set_allow_write(true);"
+    turn_off_action:
+      - lambda: "id(f1f2_hub).set_allow_write(false);"
+
+  # Outing / away mode activation (ENUM_IN_OUTING_MODE 0x406D). FSV 5011-5019 set its target temperatures;
+  # this switch flips the mode. Needs "Arm write" ON. It DOES take over the heating target (0x4247), but the
+  # Immergas controller contests it: the injected state flickers against the value Immergas broadcasts, so the
+  # switch reads its state from the bus (read_value), never optimistically, and a revert is visible.
+  - platform: template
+    name: ${n_f1f2_outing}
+    icon: mdi:bag-suitcase
+    lambda: |-
+      float v = id(f1f2_hub).read_value(0x406D);
+      if (isnan(v)) return {};
+      return v > 0.5;
+    turn_on_action:
+      - lambda: "id(f1f2_hub).outing_set(true);"
+    turn_off_action:
+      - lambda: "id(f1f2_hub).outing_set(false);"
+
+  # FR control enable (FSV 5051 / NASA 0x40A7). Caps the compressor at the built-in ~50 % ratio
+  # (verified 35 Hz -> 30 Hz under load). Eco / quiet. Needs "Arm write" ON. State read from the bus.
+  # Live-test notes (Magis): caps only in HEATING, not DHW (tank charge runs full power, FR ignored);
+  # only bites while the compressor runs above ~32 Hz, so on a mild day at minimum modulation (~18 Hz)
+  # there is nothing to cut and it looks like "no effect"; the ramp-back after turning OFF is delayed
+  # (~1 min), so do A/B tests patiently; the custom ratio value 0x42F1 is rejected (you get the fixed ~50 %).
+  - platform: template
+    name: ${n_f1f2_fr_enable}
+    icon: mdi:speedometer-slow
+    lambda: |-
+      float v = id(f1f2_hub).read_value(0x40A7);
+      if (isnan(v)) return {};
+      return v > 0.5;
+    turn_on_action:
+      - lambda: "id(f1f2_hub).fr_set_enable(true);"
+    turn_off_action:
+      - lambda: "id(f1f2_hub).fr_set_enable(false);"

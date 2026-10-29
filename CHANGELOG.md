@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.1.0
+
+- **Control is now native in the `f1f2_nasa` reader** — one component that reads *and* writes, so a single device can do both on one UART (two NASA components cannot share a UART in ESPHome). New package **`packages/f1f2_control.yaml`**: **Arm write** gate (`allow_write`, off by default), **Outing mode** (`0x406D`) and **FR – limit compressor** (`0x40A7`). Writes are gated by the arm switch **and** a whitelist in the hub (only `0x406D` / `0x40A7`); compressor / EEV / protection / water-flow / setpoint are refused. The hub reuses its existing silence-window transmit path; `f1f2_transmit: "true"` is required.
+- This is the recommended single-device read+write path. The separate `nasa_bridge` component stays for a dedicated control node, but do not run both NASA components on one shared UART.
+
 ## v2.0.0
 
 The repo now ships **two components**. `f1f2_nasa` stays the read-only reader (the default, unchanged); a second component **`nasa_bridge`** adds an **optional, gated control path** (parallel tap + inject). The reader's entities and names are unchanged, so existing installs keep their history.

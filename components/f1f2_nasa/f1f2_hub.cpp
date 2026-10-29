@@ -68,6 +68,8 @@ void NasaHub::dump_config() {
                   this->response_timeout_, this->max_attempts_);
     ESP_LOGCONFIG(TAG, "  Poll interval: %u s, polled messages: %u", this->poll_interval_ / 1000,
                   unsigned(this->poll_ids_.size()));
+    ESP_LOGCONFIG(TAG, "  Write gate: %s; control whitelist: 0x406D (outing), 0x40A7 (FR limit)",
+                  this->allow_write_ ? "ARMED" : "OFF (safe)");
   }
   size_t n = 0;
   for (auto &kv : this->listeners_)
@@ -222,6 +224,7 @@ void NasaHub::handle_packet_(const Packet &p) {
     return;
   uint32_t src = p.src.raw();
   for (const Message &m : p.messages) {
+    this->last_value_[m.id] = m.value;  // remember every value, for control readback
     auto it = this->listeners_.find(m.id);
     if (it == this->listeners_.end())
       continue;
@@ -374,13 +377,20 @@ void NasaHub::try_transmit_() {
     }
     // retry below once the bus is quiet
   } else {
-    if (this->queue_.empty())
+    if (this->queue_.empty() && this->write_queue_.empty())
       return;
   }
   // Talk only into silence and never in the middle of a frame being received.
   if (!this->rx_.empty() || now - this->last_rx_byte_ < this->quiet_time_)
     return;
   if (!this->in_flight_) {
+    // Control writes go first (fire-and-forget; state is confirmed by the next NOTIFY/RESPONSE).
+    if (!this->write_queue_.empty()) {
+      WriteOp op = this->write_queue_.front();
+      this->write_queue_.pop_front();
+      this->send_write_(op);
+      return;  // one frame per silence window
+    }
     this->current_ = this->queue_.front();
     this->queue_.pop_front();
     this->current_.attempts = 0;
@@ -417,6 +427,68 @@ void NasaHub::send_request_(PendingRequest &req) {
     ESP_LOGD("f1f2_sniff", "TX t=%u %s | %s", unsigned(req.sent_at), p.to_string().c_str(),
              hex_bytes(frame.data(), frame.size()).c_str());
   }
+}
+
+// ---------------------------------------------------------------- control writes
+
+bool NasaHub::is_write_whitelisted_(uint16_t id) const {
+  // Only these control the pump through this component. Everything else (compressor, EEV, protection,
+  // water flow, water-law, setpoints...) is deliberately NOT writable here.
+  return id == 0x406D ||  // ENUM_IN_OUTING_MODE - away/outing activation
+         id == 0x40A7;    // FSV 5051 FR control enable - compressor frequency limit
+}
+
+void NasaHub::write_message(uint16_t id, uint32_t value) {
+  if (!this->transmit_) {
+    ESP_LOGW(TAG, "WRITE 0x%04X ignored: transmit is disabled", id);
+    return;
+  }
+  if (!this->allow_write_) {
+    ESP_LOGW(TAG, "WRITE 0x%04X BLOCKED: arm the write gate first", id);
+    return;
+  }
+  if (!this->is_write_whitelisted_(id)) {
+    ESP_LOGE(TAG, "WRITE 0x%04X REFUSED: not on the control whitelist", id);
+    return;
+  }
+  this->write_queue_.push_back(WriteOp{id, value});
+  ESP_LOGI(TAG, "WRITE 0x%04X = %u queued", id, unsigned(value));
+}
+
+void NasaHub::send_write_(const WriteOp &op) {
+  Packet p;
+  p.src = this->address_;
+  p.dst = Address::from_raw(this->indoor_address_);
+  p.packet_type = PacketType::NORMAL;
+  p.data_type = DataType::WRITE;
+  p.number = this->next_packet_number_();
+  Message m;
+  m.id = op.id;
+  m.kind = Message::kind_of(op.id);
+  m.value = op.value;
+  p.messages.push_back(m);
+  std::vector<uint8_t> frame = p.encode();
+  if (this->flow_control_pin_ != nullptr)
+    this->flow_control_pin_->digital_write(true);
+  this->write_array(frame);
+  this->flush();
+  if (this->flow_control_pin_ != nullptr)
+    this->flow_control_pin_->digital_write(false);
+  this->last_rx_byte_ = millis();  // our own frame occupies the bus as well
+  this->tx_frames_++;
+  ESP_LOGI(TAG, "WRITE 0x%04X = %u -> %s", op.id, unsigned(op.value),
+           Address::from_raw(this->indoor_address_).to_string().c_str());
+  if (this->sniffer_) {
+    ESP_LOGD("f1f2_sniff", "TX(write) %s | %s", p.to_string().c_str(),
+             hex_bytes(frame.data(), frame.size()).c_str());
+  }
+}
+
+float NasaHub::read_value(uint16_t id) const {
+  auto it = this->last_value_.find(id);
+  if (it == this->last_value_.end())
+    return NAN;
+  return float(it->second);
 }
 
 // ---------------------------------------------------------------- stats

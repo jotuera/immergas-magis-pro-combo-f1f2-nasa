@@ -116,6 +116,11 @@ Włącz przełącznik **Sniffer NASA** (diagnostyczny, po restarcie wyłączony)
 
 > **Przeczytaj najpierw.** Na Magisie pętlę trzyma Immergas: w testach prawie każdy zapis był nadpisany lub odrzucony. Działają dwie dźwignie i jeden status tylko do odczytu. Uczciwe wyniki per rejestr są w [FINDINGS.pl.md](FINDINGS.pl.md) i [FSV_MAP.pl.md](FSV_MAP.pl.md). To narzędzie badawcze do własnej jednostki, na własną odpowiedzialność — nie ogólne rozwiązanie sterujące.
 
+**Dwie drogi sterowania, wybierz jedną** (nigdy nie uruchamiaj dwóch komponentów NASA na jednym UART — odczyt UART w ESPHome jest niszczący, podkradałyby sobie bajty):
+
+- **Natywnie w `f1f2_nasa`** (zalecane, jedno urządzenie): dodaj **`packages/f1f2_control.yaml`** do zwykłego configu czytnika i ustaw `f1f2_transmit: "true"`. Jeden komponent bogato czyta *i* zapisuje dwie dźwignie poniżej. Najprostszy sposób na odczyt + sterowanie na jednym urządzeniu.
+- **Osobny węzeł `nasa_bridge`** (opisany niżej): oddzielne urządzenie/komponent tylko do sterowania, gdy czytnik trzymasz osobno.
+
 Komponent `nasa_bridge` (z `packages/bridge_core.yaml`) to **równoległy tap** na tej samej magistrali F1/F2: czyta jak czytnik i potrafi wstrzyknąć jedną ramkę NASA z whitelisty w oknie ciszy — **ale tylko po uzbrojeniu**. Co wystawia:
 
 - **Uzbrój zapis** (`switch`) — główna bramka. Nic nie wychodzi do pompy, dopóki nie jest ON (`allow_write`). Po restarcie wyłączona.
