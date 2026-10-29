@@ -2,10 +2,10 @@
 # ============================================================================================================
 #  DO NOT add this package unless you accept the risk. It creates the controls that let the f1f2_nasa hub
 #  INJECT NASA write frames to the heat pump. Three layered safety gates, each needs the one above it:
-#   1. Emulate NASA        - master bus-access fuse. Off = the hub transmits NOTHING (no polls, no writes);
+#   1. NASA connection      - master bus-access fuse. Off = the hub transmits NOTHING (no polls, no writes);
 #                            only passive broadcast sensors stay live.
-#   2. Emulate EHS panel   - active readback. Off = no READ polling, so FSV / control values go stale;
-#                            only the passive sensors are active.
+#   2. Emulate EHS panel   - active readback. Off = no READ polling; the editable FSV sliders and the
+#                            Outing/FR control switches go unavailable, only the passive sensors stay live.
 #   3. Active ODU control  - the write arm. A WRITE needs ALL THREE on, AND the message whitelisted
 #                            (outing 0x406D / FR 0x40A7); compressor / EEV / protection / flow are hard-blocked.
 #
@@ -15,7 +15,7 @@
 # ============================================================================================================
 
 switch:
-  # 1. Emulate NASA - master bus-access fuse. Off = pure passive listener (no TX at all).
+  # 1. NASA connection - master bus-access fuse. Off = pure passive listener (no TX at all).
   - platform: template
     name: ${n_f1f2_emulate_nasa}
     icon: mdi:lan-connect
@@ -37,7 +37,7 @@ switch:
     turn_off_action:
       - lambda: "id(f1f2_hub).set_panel_emulation(false);"
 
-  # 3. Active ODU control - the write arm. A WRITE needs this ON plus Emulate NASA + Emulate EHS panel.
+  # 3. Active ODU control - the write arm. A WRITE needs this ON plus NASA connection + Emulate EHS panel.
   - platform: template
     name: ${n_f1f2_arm}
     icon: mdi:lock-open-alert
@@ -56,6 +56,7 @@ switch:
     name: ${n_f1f2_outing}
     icon: mdi:bag-suitcase
     lambda: |-
+      if (!id(f1f2_hub).get_panel_emulation()) return {};   // unavailable when EHS panel is off
       float v = id(f1f2_hub).read_value(0x406D);
       if (isnan(v)) return {};
       return v > 0.5;
@@ -74,6 +75,7 @@ switch:
     name: ${n_f1f2_fr_enable}
     icon: mdi:speedometer-slow
     lambda: |-
+      if (!id(f1f2_hub).get_panel_emulation()) return {};   // unavailable when EHS panel is off
       float v = id(f1f2_hub).read_value(0x40A7);
       if (isnan(v)) return {};
       return v > 0.5;

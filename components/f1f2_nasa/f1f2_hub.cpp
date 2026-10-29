@@ -68,7 +68,7 @@ void NasaHub::dump_config() {
                   this->response_timeout_, this->max_attempts_);
     ESP_LOGCONFIG(TAG, "  Poll interval: %u s, polled messages: %u", this->poll_interval_ / 1000,
                   unsigned(this->poll_ids_.size()));
-    ESP_LOGCONFIG(TAG, "  Emulate NASA (bus access): %s; Emulate EHS panel (polling): %s",
+    ESP_LOGCONFIG(TAG, "  NASA connection (bus access): %s; Emulate EHS panel (polling): %s",
                   YESNO(this->bus_enabled_), YESNO(this->panel_emulation_));
     ESP_LOGCONFIG(TAG, "  Write gate: %s; control whitelist: 0x406D (outing), 0x40A7 (FR limit)",
                   this->allow_write_ ? "ARMED" : "OFF (safe)");
@@ -108,7 +108,7 @@ void NasaHub::loop() {
     this->feed(buf, n);
   }
 
-  // Emulate NASA (bus_enabled_) is the master TX fuse; Emulate EHS panel (panel_emulation_) enables the
+  // NASA connection (bus_enabled_) is the master TX fuse; Emulate EHS panel (panel_emulation_) enables the
   // active readback polling. With either off we never transmit the corresponding frames (RX still works).
   if (this->transmit_ && this->bus_enabled_) {
     if (this->panel_emulation_ && !this->poll_ids_.empty()) {
@@ -337,7 +337,7 @@ uint8_t NasaHub::next_packet_number_() {
 
 void NasaHub::request_read(const std::vector<uint16_t> &ids) {
   if (!this->transmit_ || !this->bus_enabled_ || !this->panel_emulation_)
-    return;  // active reads need Emulate NASA + Emulate EHS panel
+    return;  // active reads need NASA connection + Emulate EHS panel
   for (size_t i = 0; i < ids.size(); i += NASA_MAX_MESSAGES_PER_FRAME) {
     PendingRequest r;
     r.dst = this->read_address_;
@@ -499,7 +499,7 @@ void NasaHub::write_message(uint16_t id, uint32_t value) {
     return;
   }
   if (!this->bus_enabled_) {
-    ESP_LOGW(TAG, "WRITE 0x%04X BLOCKED: Emulate NASA (bus access) is off", id);
+    ESP_LOGW(TAG, "WRITE 0x%04X BLOCKED: NASA connection (bus access) is off", id);
     return;
   }
   if (!this->panel_emulation_) {
@@ -552,6 +552,19 @@ float NasaHub::read_value(uint16_t id) const {
   if (it == this->last_value_.end())
     return NAN;
   return float(it->second);
+}
+
+void NasaHub::set_panel_emulation(bool on) {
+  if (this->panel_emulation_ == on)
+    return;
+  this->panel_emulation_ = on;
+  // Tell every registered entity the readback gate changed. Control entities (numbers, control switches)
+  // go unavailable while off; passive sensors ignore it. On enable, refresh the readback right away.
+  for (auto &kv : this->listeners_)
+    for (NasaListener *l : kv.second)
+      l->on_reads_gated(!on);
+  if (on)
+    this->poll_now();
 }
 
 // ---------------------------------------------------------------- stats

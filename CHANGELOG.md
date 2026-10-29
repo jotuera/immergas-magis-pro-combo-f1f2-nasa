@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.5.1
+
+- **Emulate EHS panel now makes the control entities unavailable when off** (not just stale): the editable FSV `number` sliders and the Outing / FR control switches report *unavailable* while the EHS-panel readback gate is off, so only the passive sensors stay live — as intended. Turning it back on refreshes the readback immediately.
+- Renamed **Emulate NASA → NASA connection** (`Połączenie NASA`).
+
 ## v2.5.0
 
 - **Layered bus-access gates** (two new switches in `f1f2_control`, each needs the one above it):

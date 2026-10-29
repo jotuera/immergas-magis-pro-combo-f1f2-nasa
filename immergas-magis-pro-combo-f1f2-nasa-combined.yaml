@@ -7,7 +7,7 @@
 # This file uses f1f2_core (UART + the f1f2_nasa hub + the component download), the reader entity packages,
 # and f1f2_control (the write levers). f1f2_transmit must be "true" so the hub can poll and write.
 #
-# SAFETY: writing needs three layered switches ON - "Emulate NASA", "Emulate EHS panel" and "Active ODU
+# SAFETY: writing needs three layered switches ON - "NASA connection", "Emulate EHS panel" and "Active ODU
 # control" (allow_write) - and even then only whitelisted messages (outing 0x406D, FR enable 0x40A7) can
 # ever be written; compressor / EEV / protection / flow / setpoint are hard-refused in the hub. Read README
 # "Control" and FINDINGS.md first.
@@ -55,7 +55,7 @@ web_server:
 packages:
   f1f2_nasa:
     url: https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa
-    ref: v2.5.0
+    ref: v2.5.1
     refresh: 1d
     files:
       - packages/f1f2_core.yaml          # UART + the f1f2_nasa hub (ONE component) + component download

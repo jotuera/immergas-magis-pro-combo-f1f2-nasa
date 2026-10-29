@@ -14,7 +14,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 >
 > The `f1f2_nasa` component **reads** the bus by default, and can also **write** a few whitelisted settings once you add the control packages and arm it (see [Control](#control-optional-readwrite)).
 
-> **v2.5.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
+> **v2.5.1.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -71,12 +71,12 @@ Which registers the Immergas controller commands (visible/settable on the D+/D- 
 
 | File | Content |
 |---|---|
-| `packages/f1f2_control.yaml` | **writes**: Emulate NASA + Emulate EHS panel gates + Active ODU control arm + Outing mode (`0x406D`) + FR compressor limit (`0x40A7`) |
+| `packages/f1f2_control.yaml` | **writes**: NASA connection + Emulate EHS panel gates + Active ODU control arm + Outing mode (`0x406D`) + FR compressor limit (`0x40A7`) |
 | `packages/f1f2_outing_targets.yaml` | the 9 Outing-mode targets (FSV 5011–5019) as **editable sliders** (`number`) |
 
 ### Versions
 
-The example pins everything to a release tag (`ref: v2.5.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v2.5.1`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 
@@ -152,8 +152,8 @@ Control is **native** in `f1f2_nasa`: add **`packages/f1f2_control.yaml`** to th
 
 **Safety model** — three layered gates (switches), each needs the one above it:
 
-1. **Emulate NASA** — master bus-access fuse. Off = the hub transmits nothing (no polls, no writes); only passive broadcast sensors stay live. Default on.
-2. **Emulate EHS panel** — active readback. Off = no READ polling, so FSV / control values go stale; only passive sensors. Default on.
+1. **NASA connection** — master bus-access fuse. Off = the hub transmits nothing (no polls, no writes); only passive broadcast sensors stay live. Default on.
+2. **Emulate EHS panel** — active readback. Off = no READ polling; the editable FSV sliders and the Outing/FR control switches go *unavailable*, only passive sensors stay live. Default on; turning it back on refreshes the readback right away.
 3. **Active ODU control** — the write arm. Off after every reboot.
 
 A WRITE leaves the device only if **all three** are on **and** the message is whitelisted (the two fixed levers, plus any id you expose as an editable `number`). On top of that a **hard block** (`is_hard_blocked_`) refuses the compressor, EEV, protection, water-flow, unit on/off and operation-mode registers no matter what, even a mistaken `number:` on one; the FR ratio is hard-capped at 100 % so it can only derate. Passive listening is never gated. With `f1f2_control.yaml` absent, none of these switches exist and the device cannot write.

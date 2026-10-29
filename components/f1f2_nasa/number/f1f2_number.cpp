@@ -13,6 +13,11 @@ void NasaNumber::on_message(const Packet &packet, const Message &message) {
   this->publish_state(v);
 }
 
+void NasaNumber::on_reads_gated(bool gated) {
+  if (gated)
+    this->publish_state(NAN);  // EHS panel off -> this control entity is unavailable
+}
+
 void NasaNumber::control(float value) {
   if (this->hub_ == nullptr)
     return;

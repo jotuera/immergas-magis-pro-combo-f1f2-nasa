@@ -15,6 +15,7 @@ class NasaNumber : public number::Number, public NasaListener {
   void set_multiply(float v) { this->decoder_.multiply = v; }
   void add_nan_value(uint32_t v) { this->decoder_.nan_values.push_back(v); }
   void on_message(const Packet &packet, const Message &message) override;
+  void on_reads_gated(bool gated) override;  // unavailable while the EHS-panel readback gate is off
 
  protected:
   void control(float value) override;
