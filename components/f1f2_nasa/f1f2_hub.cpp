@@ -439,6 +439,8 @@ void NasaHub::send_request_(PendingRequest &req) {
 //     Samsung flow-check into running the compressor dry.
 //   - 4-way valve 0x801A, hot-gas valve 0x8017, defrost 0x402E / 0x8061, base heater 0x80AF, 2-/3-way
 //     valve 0x408A / 0x4067: ODU/Immergas actuators, not Samsung-only control levers.
+//   - unit on/off 0x4000 and operation mode 0x4001: Immergas owns these and would fight the write, and a
+//     stray write could stop heating - not worth the risk (reads still work, writes never).
 static bool is_hard_blocked_(uint16_t id) {
   switch (id) {
     case 0x8236:
@@ -458,6 +460,8 @@ static bool is_hard_blocked_(uint16_t id) {
     case 0x80AF:
     case 0x408A:
     case 0x4067:
+    case 0x4000:
+    case 0x4001:
       return true;
     default:
       return false;

@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.4.0
+
+- **Hardened the write block**: unit on/off (`0x4000`) and operation mode (`0x4001`) are now on the hard block (`is_hard_blocked_`) — they can never be written (Immergas owns them and a stray write could stop heating). Reads are unaffected.
+- **Read cleanup**: the raw duplicates of operation mode (`0x4001`) and the 3-way valve (`0x4067`) were removed from `f1f2_indoor`; the decoded text sensors (`operation_mode_text`, `three_way_valve_text`) stay. If you used the raw `*_operation_mode` / `*_three_way_valve` entity, switch to the text one (or re-declare the raw with `pdu:`).
+
 ## v2.3.0
 
 - **Removed the `nasa_bridge` component and all `bridge_*` packages.** Control is native in `f1f2_nasa` (one component reads and writes on one UART — two NASA components cannot share a UART), so the separate tap+inject path was redundant. Use `f1f2_control` (Arm + Outing + FR) and `f1f2_outing_targets` (editable FSV sliders). Nothing to change for a reader-only or a native-control install; only configs that pulled `bridge_*` packages need updating.

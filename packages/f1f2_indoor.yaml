@@ -21,8 +21,8 @@ sensor:
   - {platform: f1f2_nasa, key: capacity_absolute}
   - {platform: f1f2_nasa, key: indoor_eev}
   - {platform: f1f2_nasa, key: two_way_valve}
-  - {platform: f1f2_nasa, key: three_way_valve}
-  - {platform: f1f2_nasa, key: operation_mode}
+  # operation_mode (0x4001) and three_way_valve (0x4067) are exposed as decoded text_sensors below
+  # (operation_mode_text / three_way_valve_text) - the raw duplicates were removed.
   - {platform: f1f2_nasa, key: control_reference}
   - {platform: f1f2_nasa, key: status_bits_440e}
 

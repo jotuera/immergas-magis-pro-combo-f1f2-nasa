@@ -14,7 +14,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 >
 > The `f1f2_nasa` component **reads** the bus by default, and can also **write** a few whitelisted settings once you add the control packages and arm it (see [Control](#control-optional-readwrite)).
 
-> **v2.3.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
+> **v2.4.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -76,7 +76,7 @@ Which registers the Immergas controller commands (visible/settable on the D+/D- 
 
 ### Versions
 
-The example pins everything to a release tag (`ref: v2.3.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v2.4.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 
