@@ -1,6 +1,6 @@
 # Immergas Magis Pro / Combo F1/F2 (Samsung NASA) - package "f1f2_outing_targets"  -- OPTIONAL, WRITES
 # The Outing-mode target temperatures (FSV 5011-5019) as EDITABLE sliders. Changing one writes the FSV to
-# the indoor unit. Writing is still gated by the "Arm write" switch (f1f2_control); needs f1f2_transmit: "true".
+# the indoor unit. Writing is still gated by the "Active ODU control" switch (f1f2_control); needs f1f2_transmit: "true".
 # These set what the Outing switch applies. Cooling values (5011/5012/5015/5016) are inert on a heating Magis.
 # Part of jotuera/immergas-magis-pro-combo-f1f2-nasa (MIT).
 

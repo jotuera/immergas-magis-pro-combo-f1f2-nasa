@@ -14,7 +14,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 >
 > Komponent `f1f2_nasa` domyślnie **czyta** magistralę, a po dodaniu pakietów sterowania i uzbrojeniu potrafi też **zapisać** kilka rejestrów z whitelisty (zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)).
 
-> **v2.4.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
+> **v2.4.1.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
 
 ## Co dostajesz
 
@@ -55,7 +55,7 @@ Które rejestry steruje sterownik Immergasa (widoczne/ustawialne na magistralach
 
 ### Wersje
 
-Przykład przypina wszystko do tagu wydania (`ref: v2.4.0`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
+Przykład przypina wszystko do tagu wydania (`ref: v2.4.1`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
 
 ### Pakiety
 
@@ -115,7 +115,7 @@ Włącz przełącznik **Sniffer NASA** (diagnostyczny, po restarcie wyłączony)
 
 Sterowanie jest **natywne** w `f1f2_nasa`: dodaj **`packages/f1f2_control.yaml`** do zwykłego configu czytnika i ustaw `f1f2_transmit: "true"`. Jeden hub bogato czyta *i* zapisuje, na jednym UART. Co dostajesz:
 
-- **Uzbrój zapis** (`switch`) — główna bramka. Nic nie wychodzi do pompy, dopóki nie jest ON (`allow_write`). Po restarcie wyłączona.
+- **Aktywne sterowanie ODU** (`switch`) — główna bramka. Nic nie wychodzi do pompy, dopóki nie jest ON (`allow_write`). Po restarcie wyłączona.
 - **Tryb wyjazdowy** (`0x406D`) — aktywuje tryb away Samsunga; jedyna dźwignia, która potrafi przejąć zadaną grzania (FSV 5011–5019 ustawiają jej temperatury). Na Magisie Immergas może ją nadpisać.
 - **FR – ogranicz sprężarkę** (`0x40A7`) — **potwierdzone, że działa**: ścina sprężarkę do fabrycznego ok. 50% ratio (zmierzone 35 Hz → 30 Hz pod obciążeniem). Dźwignia eco / cicha; działa tylko gdy sprężarka pracuje powyżej ~32 Hz. Własna wartość ratio (`0x42F1`) jest przez Magis odrzucana, więc dostajesz stały fabryczny poziom.
 - **Edytowalne FSV** — dodaj **`packages/f1f2_outing_targets.yaml`** po 9 nastaw trybu wyjazdowego (FSV 5011–5019) jako suwaki, albo zadeklaruj własne `number:` z `platform: f1f2_nasa` i `fsv:` (zob. „Ustawienia").
@@ -133,7 +133,7 @@ Jedno urządzenie robi jedno i drugie — zob. `immergas-magis-pro-combo-f1f2-na
 
 ## Zastrzeżenie
 
-Niezależny projekt hobbystyczny, niezwiązany z Samsungiem ani Immergasem. Używasz na własną odpowiedzialność. Domyślna konfiguracja (czytnik) tylko słucha i wysyła zapytania READ, niczego w pompie nie zmienia. Opcjonalna ścieżka sterowania ([Sterowanie](#sterowanie-opcjonalne-readwrite)) potrafi zapisać kilka rejestrów z whitelisty, ale dopiero po dodaniu jej pakietów i włączeniu przełącznika **Uzbrój zapis** — przed użyciem przeczytaj model bezpieczeństwa i [FINDINGS.pl.md](FINDINGS.pl.md).
+Niezależny projekt hobbystyczny, niezwiązany z Samsungiem ani Immergasem. Używasz na własną odpowiedzialność. Domyślna konfiguracja (czytnik) tylko słucha i wysyła zapytania READ, niczego w pompie nie zmienia. Opcjonalna ścieżka sterowania ([Sterowanie](#sterowanie-opcjonalne-readwrite)) potrafi zapisać kilka rejestrów z whitelisty, ale dopiero po dodaniu jej pakietów i włączeniu przełącznika **Aktywne sterowanie ODU** — przed użyciem przeczytaj model bezpieczeństwa i [FINDINGS.pl.md](FINDINGS.pl.md).
 
 ## Licencja
 

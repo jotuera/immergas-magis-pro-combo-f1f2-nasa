@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.4.1
+
+- **Renamed the control entities** (shorter, clearer): Arm write → **Active ODU control**, Outing mode (activate) → **Outing mode**, FR – limit compressor → **Compressor frequency limit**. Home Assistant creates new entities for the new names; delete the old ones.
+
 ## v2.4.0
 
 - **Hardened the write block**: unit on/off (`0x4000`) and operation mode (`0x4001`) are now on the hard block (`is_hard_blocked_`) — they can never be written (Immergas owns them and a stray write could stop heating). Reads are unaffected.

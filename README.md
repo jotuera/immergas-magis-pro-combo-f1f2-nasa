@@ -14,7 +14,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 >
 > The `f1f2_nasa` component **reads** the bus by default, and can also **write** a few whitelisted settings once you add the control packages and arm it (see [Control](#control-optional-readwrite)).
 
-> **v2.4.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
+> **v2.4.1.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -76,7 +76,7 @@ Which registers the Immergas controller commands (visible/settable on the D+/D- 
 
 ### Versions
 
-The example pins everything to a release tag (`ref: v2.4.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v2.4.1`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 
@@ -144,7 +144,7 @@ Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value 
 
 Control is **native** in `f1f2_nasa`: add **`packages/f1f2_control.yaml`** to the normal reader config and set `f1f2_transmit: "true"`. The one hub reads richly *and* writes, on one UART. What you get:
 
-- **Arm write** (`switch`) — the master gate. Nothing is ever transmitted to the pump until this is ON (`allow_write`). Off after every reboot.
+- **Active ODU control** (`switch`) — the master gate. Nothing is ever transmitted to the pump until this is ON (`allow_write`). Off after every reboot.
 - **Outing mode** (`0x406D`) — activates Samsung away mode; the one lever that can take over the heating target (FSV 5011–5019 set its temperatures). On a Magis it may still be overridden by Immergas.
 - **FR – limit compressor** (`0x40A7`) — **confirmed working**: caps the compressor at the built-in ~50 % ratio (verified 35 Hz → 30 Hz under load). An eco / quiet lever; it only bites while the compressor runs above ~32 Hz. The custom ratio value (`0x42F1`) is rejected by a Magis, so you get the fixed default.
 - **Editable FSV** — add **`packages/f1f2_outing_targets.yaml`** for the 9 Outing-mode targets (FSV 5011–5019) as sliders, or declare your own `number:` with `platform: f1f2_nasa` and `fsv:` (see "Settings").
@@ -162,7 +162,7 @@ One device does both — see `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
 
 ## Disclaimer
 
-This is an independent hobby project, not affiliated with Samsung or Immergas. You use it at your own risk. The default (reader) configuration only listens and sends READ requests; it does not change any setting of your heat pump. The optional control path ([Control](#control-optional-readwrite)) can write a few whitelisted settings, but only after you add its packages and turn on the **Arm write** switch — review the safety model and [FINDINGS.md](FINDINGS.md) before using it.
+This is an independent hobby project, not affiliated with Samsung or Immergas. You use it at your own risk. The default (reader) configuration only listens and sends READ requests; it does not change any setting of your heat pump. The optional control path ([Control](#control-optional-readwrite)) can write a few whitelisted settings, but only after you add its packages and turn on the **Active ODU control** switch — review the safety model and [FINDINGS.md](FINDINGS.md) before using it.
 
 ## License
 

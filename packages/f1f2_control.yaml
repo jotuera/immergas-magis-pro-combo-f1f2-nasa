@@ -2,7 +2,7 @@
 # ============================================================================================================
 #  DO NOT add this package unless you accept the risk. It creates the controls that let the f1f2_nasa hub
 #  INJECT NASA write frames to the heat pump. Even then:
-#   * nothing is transmitted until you turn ON the "Arm write" switch (the allow_write gate), AND
+#   * nothing is transmitted until you turn ON the "Active ODU control" switch (the allow_write gate), AND
 #   * only the whitelisted messages can ever be written (outing 0x406D and FR enable 0x40A7); the
 #     compressor / EEV / protection / water-flow / setpoint registers are refused in the component.
 #
@@ -24,7 +24,7 @@ switch:
       - lambda: "id(f1f2_hub).set_allow_write(false);"
 
   # Outing / away mode activation (ENUM_IN_OUTING_MODE 0x406D). FSV 5011-5019 set its target temperatures;
-  # this switch flips the mode. Needs "Arm write" ON. It DOES take over the heating target (0x4247), but the
+  # this switch flips the mode. Needs "Active ODU control" ON. It DOES take over the heating target (0x4247), but the
   # Immergas controller contests it: the injected state flickers against the value Immergas broadcasts, so the
   # switch reads its state from the bus (read_value), never optimistically, and a revert is visible.
   - platform: template
@@ -40,7 +40,7 @@ switch:
       - lambda: "id(f1f2_hub).outing_set(false);"
 
   # FR control enable (FSV 5051 / NASA 0x40A7). Caps the compressor at the built-in ~50 % ratio
-  # (verified 35 Hz -> 30 Hz under load). Eco / quiet. Needs "Arm write" ON. State read from the bus.
+  # (verified 35 Hz -> 30 Hz under load). Eco / quiet. Needs "Active ODU control" ON. State read from the bus.
   # Live-test notes (Magis): caps only in HEATING, not DHW (tank charge runs full power, FR ignored);
   # only bites while the compressor runs above ~32 Hz, so on a mild day at minimum modulation (~18 Hz)
   # there is nothing to cut and it looks like "no effect"; the ramp-back after turning OFF is delayed

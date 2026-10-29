@@ -10,6 +10,6 @@ substitutions:
   n_f1f2_cop_instant: "COP chwilowy"
   n_f1f2_cop_total: "COP całkowity"
   # sterowanie (pakiet f1f2_control, opcjonalny - zapisuje do pompy)
-  n_f1f2_arm: "Uzbrój zapis (sterowanie ODU)"
-  n_f1f2_outing: "Tryb wyjazdowy (aktywacja)"
-  n_f1f2_fr_enable: "FR - ogranicz sprężarkę (0x40A7)"
+  n_f1f2_arm: "Aktywne sterowanie ODU"
+  n_f1f2_outing: "Tryb wyjazdowy"
+  n_f1f2_fr_enable: "Ograniczenie częstotliwości sprężarki"
