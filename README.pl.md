@@ -14,7 +14,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 >
 > Komponent `f1f2_nasa` domyślnie **czyta** magistralę, a po dodaniu pakietów sterowania i uzbrojeniu potrafi też **zapisać** kilka rejestrów z whitelisty (zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)).
 
-> **v2.5.1.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
+> **v2.5.2.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
 
 ## Co dostajesz
 
@@ -55,7 +55,7 @@ Które rejestry steruje sterownik Immergasa (widoczne/ustawialne na magistralach
 
 ### Wersje
 
-Przykład przypina wszystko do tagu wydania (`ref: v2.5.1`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
+Przykład przypina wszystko do tagu wydania (`ref: v2.5.2`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
 
 ### Pakiety
 
@@ -123,11 +123,11 @@ Sterowanie jest **natywne** w `f1f2_nasa`: dodaj **`packages/f1f2_control.yaml`*
 
 **Model bezpieczeństwa** — trzy warstwowe bramki (switche), każda wymaga tej powyżej:
 
-1. **Połączenie NASA** — nadrzędny bezpiecznik dostępu do magistrali. OFF = hub nic nie nadaje (brak odpytań i zapisów); żywe tylko pasywne sensory z broadcastów. Domyślnie ON.
-2. **Emuluj panel EHS** — aktywny odczyt. OFF = brak odpytań READ; edytowalne suwaki FSV i przełączniki Outing/FR przechodzą w *unavailable*, żywe tylko pasywne sensory. Domyślnie ON; włączenie z powrotem odświeża odczyt natychmiast.
+1. **Połączenie NASA** — nadrzędny bezpiecznik. OFF = hub całkowicie ignoruje magistralę (RX odrzucany, brak odpytań i zapisów); **wszystkie encje** (sensory, binarne, tekstowe, sterowanie) → **niedostępne** — urządzenie odłączone. Domyślnie ON.
+2. **Emuluj panel EHS** — aktywny odczyt. OFF = brak odpytań READ; edytowalne suwaki FSV i przełączniki Outing/FR przechodzą w **niedostępne**, pasywne sensory zostają żywe. Domyślnie ON; włączenie z powrotem odświeża odczyt natychmiast.
 3. **Aktywne sterowanie ODU** — uzbrojenie zapisu. Po restarcie wyłączone.
 
-WRITE wychodzi tylko gdy **wszystkie trzy** są ON **oraz** komunikat jest na whiteliście (dwie stałe dźwignie plus to, co jawnie wystawisz jako edytowalny `number`). Dodatkowo **twarda blokada** (`is_hard_blocked_`) odrzuca rejestry sprężarki, EEV, ochrony, przepływu, wł/wył jednostki i trybu pracy niezależnie od wszystkiego, nawet przy błędnym `number:`; ratio FR jest twardo ograniczone do 100%. Pasywny nasłuch nigdy nie jest bramkowany. Bez `f1f2_control.yaml` żaden z tych switchy nie istnieje i urządzenie nie może zapisywać.
+WRITE wychodzi tylko gdy **wszystkie trzy** są ON **oraz** komunikat jest na whiteliście (dwie stałe dźwignie plus to, co jawnie wystawisz jako edytowalny `number`). Dodatkowo **twarda blokada** (`is_hard_blocked_`) odrzuca rejestry sprężarki, EEV, ochrony, przepływu, wł/wył jednostki i trybu pracy niezależnie od wszystkiego, nawet przy błędnym `number:`; ratio FR jest twardo ograniczone do 100%. Bez `f1f2_control.yaml` żaden z tych switchy nie istnieje i urządzenie nie może zapisywać.
 
 Jedno urządzenie robi jedno i drugie — zob. `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
 

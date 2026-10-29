@@ -10,6 +10,7 @@ class NasaBinarySensor : public binary_sensor::BinarySensor, public NasaListener
   void set_mask(uint32_t m) { this->mask_ = m; }
   void set_republish_interval(uint32_t ms) { this->republish_ms_ = ms; }
   void on_message(const Packet &packet, const Message &message) override;
+  void on_gate_change(bool bus_on, bool panel_on) override;  // unavailable while NASA connection is off
 
  protected:
   uint32_t mask_{0xFFFFFFFF};

@@ -105,12 +105,19 @@ void NasaHub::loop() {
     if (!this->read_array(buf, n))
       break;
     this->last_rx_byte_ = millis();
-    this->feed(buf, n);
+    if (this->bus_enabled_)
+      this->feed(buf, n);  // NASA connection off = ignore the bus entirely (drain RX, do not dispatch)
   }
 
-  // NASA connection (bus_enabled_) is the master TX fuse; Emulate EHS panel (panel_emulation_) enables the
-  // active readback polling. With either off we never transmit the corresponding frames (RX still works).
-  if (this->transmit_ && this->bus_enabled_) {
+  // NASA connection (bus_enabled_) is the master fuse: off = no RX dispatch (entities are unavailable),
+  // no polling, no writes - the device is disconnected from the bus. Nothing else to do this loop.
+  if (!this->bus_enabled_) {
+    this->rx_.clear();
+    return;
+  }
+
+  // Emulate EHS panel (panel_emulation_) enables the active readback polling.
+  if (this->transmit_) {
     if (this->panel_emulation_ && !this->poll_ids_.empty()) {
       bool due = !this->first_poll_done_ ? now > 30000 : now - this->last_poll_ >= this->poll_interval_;
       if (due)
@@ -554,15 +561,28 @@ float NasaHub::read_value(uint16_t id) const {
   return float(it->second);
 }
 
+void NasaHub::notify_gates_() {
+  // Tell every entity the current availability. A sensor is live while NASA connection is on; a control
+  // entity (number / control switch) is live only while both NASA connection and EHS panel are on.
+  for (auto &kv : this->listeners_)
+    for (NasaListener *l : kv.second)
+      l->on_gate_change(this->bus_enabled_, this->panel_emulation_);
+}
+
+void NasaHub::set_bus_enabled(bool on) {
+  if (this->bus_enabled_ == on)
+    return;
+  this->bus_enabled_ = on;
+  this->notify_gates_();  // off -> all entities unavailable (disconnected); on -> they repopulate from the bus
+  if (on)
+    this->poll_now();
+}
+
 void NasaHub::set_panel_emulation(bool on) {
   if (this->panel_emulation_ == on)
     return;
   this->panel_emulation_ = on;
-  // Tell every registered entity the readback gate changed. Control entities (numbers, control switches)
-  // go unavailable while off; passive sensors ignore it. On enable, refresh the readback right away.
-  for (auto &kv : this->listeners_)
-    for (NasaListener *l : kv.second)
-      l->on_reads_gated(!on);
+  this->notify_gates_();  // off -> control/FSV entities unavailable; passive sensors stay
   if (on)
     this->poll_now();
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.5.2
+
+- **NASA connection off now really disconnects**: the hub drains the bus but no longer dispatches received frames, so **every** entity — numeric sensors, binary sensors, text sensors and the control entities — goes **unavailable** (sensors via `invalidate_state()` / `has_state=false`), so the device looks offline from the bus, as a master fuse should. Turning it back on repopulates from the bus.
+
 ## v2.5.1
 
 - **Emulate EHS panel now makes the control entities unavailable when off** (not just stale): the editable FSV `number` sliders and the Outing / FR control switches report *unavailable* while the EHS-panel readback gate is off, so only the passive sensors stay live — as intended. Turning it back on refreshes the readback immediately.

@@ -13,6 +13,7 @@ class NasaSensor : public sensor::Sensor, public NasaListener {
   void add_nan_value(uint32_t v) { this->decoder_.nan_values.push_back(v); }
   void set_republish_interval(uint32_t ms) { this->republish_ms_ = ms; }
   void on_message(const Packet &packet, const Message &message) override;
+  void on_gate_change(bool bus_on, bool panel_on) override;  // unavailable while NASA connection is off
 
  protected:
   ValueDecoder decoder_;

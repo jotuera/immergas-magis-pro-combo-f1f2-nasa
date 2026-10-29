@@ -17,6 +17,7 @@ class NasaTextSensor : public text_sensor::TextSensor, public NasaListener {
   void set_unknown_format(const std::string &f) { this->unknown_format_ = f; }
   void set_republish_interval(uint32_t ms) { this->republish_ms_ = ms; }
   void on_message(const Packet &packet, const Message &message) override;
+  void on_gate_change(bool bus_on, bool panel_on) override;  // unavailable while NASA connection is off
 
  protected:
   std::string format_(const Message &message) const;

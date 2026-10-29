@@ -13,9 +13,9 @@ void NasaNumber::on_message(const Packet &packet, const Message &message) {
   this->publish_state(v);
 }
 
-void NasaNumber::on_reads_gated(bool gated) {
-  if (gated)
-    this->publish_state(NAN);  // EHS panel off -> this control entity is unavailable
+void NasaNumber::on_gate_change(bool bus_on, bool panel_on) {
+  if (!bus_on || !panel_on)
+    this->publish_state(NAN);  // a control entity is unavailable unless both gates are on
 }
 
 void NasaNumber::control(float value) {

@@ -18,5 +18,10 @@ void NasaSensor::on_message(const Packet &packet, const Message &message) {
   this->publish_state(v);
 }
 
+void NasaSensor::on_gate_change(bool bus_on, bool panel_on) {
+  if (!bus_on)
+    this->publish_state(NAN);  // NASA connection off: the device is disconnected, sensor is unavailable
+}
+
 }  // namespace f1f2_nasa
 }  // namespace esphome

@@ -5,7 +5,7 @@
 # limit of the night function), fan, EEV, power, energy, defrost, errors, firmware and all FSV installer settings.
 # Uses its own component `f1f2_nasa` (no third-party NASA component needed). No cloud.
 #
-# Project : jotuera.immergas-magis-pro-combo-f1f2-nasa  |  v2.5.1
+# Project : jotuera.immergas-magis-pro-combo-f1f2-nasa  |  v2.5.2
 # Repo    : https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa
 # License : MIT (c) 2026 JoTu
 # Tested  : Magis Combo 9 Plus V2 + Audax Pro 9 V2 outdoor unit, MIM-B19N rotary switch = 1.
@@ -72,7 +72,7 @@ web_server:
 packages:
   f1f2_nasa:
     url: https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa
-    ref: v2.5.1
+    ref: v2.5.2
     refresh: 1d
     files:
       - packages/f1f2_core.yaml          # UART, f1f2_nasa hub, device list                     (required)

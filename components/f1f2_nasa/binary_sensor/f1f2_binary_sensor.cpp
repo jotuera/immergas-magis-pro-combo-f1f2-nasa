@@ -16,5 +16,12 @@ void NasaBinarySensor::on_message(const Packet &packet, const Message &message) 
   this->publish_state(v);
 }
 
+void NasaBinarySensor::on_gate_change(bool bus_on, bool panel_on) {
+  if (!bus_on) {
+    this->invalidate_state();  // NASA connection off: disconnected -> unavailable (has_state = false)
+    this->published_ = false;
+  }
+}
+
 }  // namespace f1f2_nasa
 }  // namespace esphome

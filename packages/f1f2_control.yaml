@@ -56,7 +56,7 @@ switch:
     name: ${n_f1f2_outing}
     icon: mdi:bag-suitcase
     lambda: |-
-      if (!id(f1f2_hub).get_panel_emulation()) return {};   // unavailable when EHS panel is off
+      if (!id(f1f2_hub).get_bus_enabled() || !id(f1f2_hub).get_panel_emulation()) return {};  // unavailable unless NASA conn + EHS panel on
       float v = id(f1f2_hub).read_value(0x406D);
       if (isnan(v)) return {};
       return v > 0.5;
@@ -75,7 +75,7 @@ switch:
     name: ${n_f1f2_fr_enable}
     icon: mdi:speedometer-slow
     lambda: |-
-      if (!id(f1f2_hub).get_panel_emulation()) return {};   // unavailable when EHS panel is off
+      if (!id(f1f2_hub).get_bus_enabled() || !id(f1f2_hub).get_panel_emulation()) return {};  // unavailable unless NASA conn + EHS panel on
       float v = id(f1f2_hub).read_value(0x40A7);
       if (isnan(v)) return {};
       return v > 0.5;

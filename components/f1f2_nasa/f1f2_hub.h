@@ -37,9 +37,10 @@ class NasaListener {
   uint32_t get_source() const { return this->source_; }
   bool get_poll() const { return this->poll_; }
   virtual void on_message(const Packet &packet, const Message &message) = 0;
-  // Called when the panel-emulation (active readback) gate changes. gated=true -> this entity's value is no
-  // longer refreshed; a control entity (number / control switch) should go unavailable. Default: ignore.
-  virtual void on_reads_gated(bool gated) {}
+  // Called when a bus-access gate changes. A sensor is unavailable while bus_on is false (NASA connection
+  // off = disconnected); a control entity (number / control switch) is unavailable unless both are true.
+  // Default: ignore (passive entities that only react to frames do not need this).
+  virtual void on_gate_change(bool bus_on, bool panel_on) {}
 
  protected:
   uint16_t message_id_{0};
@@ -111,13 +112,13 @@ class NasaHub : public Component, public uart::UARTDevice {
   uint32_t get_republish_interval() const { return this->republish_interval_; }
 
   // --- bus access gates (layered safety) ---
-  // NASA connection (master fuse): when false the hub makes NO transmission at all - no READ polls, no writes.
-  // Passive listening (RX of broadcasts) keeps working. Default on.
-  void set_bus_enabled(bool on) { this->bus_enabled_ = on; }
+  // NASA connection (master fuse): when false the hub ignores the bus entirely - RX is drained but not
+  // dispatched, no polls, no writes. ALL entities go unavailable (the device is disconnected). Default on.
+  void set_bus_enabled(bool on);
   bool get_bus_enabled() const { return this->bus_enabled_; }
-  // Emulate EHS panel: when false the hub does not actively poll (no READ requests). The control / FSV
-  // entities then go unavailable (only passively broadcast sensors stay live). Writes also need this on.
-  // Default on. (Defined in the .cpp: it notifies entities and refreshes on enable.)
+  // Emulate EHS panel: when false the hub does not actively poll (no READ requests); the control / FSV
+  // entities go unavailable (only the passively broadcast sensors stay live). Writes also need this on.
+  // Default on. (Both setters are in the .cpp: they notify entities and refresh the readback on enable.)
   void set_panel_emulation(bool on);
   bool get_panel_emulation() const { return this->panel_emulation_; }
 
@@ -164,6 +165,7 @@ class NasaHub : public Component, public uart::UARTDevice {
   void send_request_(PendingRequest &req);
   void send_write_(const WriteOp &op);
   bool is_write_whitelisted_(uint16_t id) const;
+  void notify_gates_();  // tell every entity the current (bus_enabled_, panel_emulation_) availability
   uint8_t next_packet_number_();
   void publish_stats_();
   void sniff_(const Packet &p);
