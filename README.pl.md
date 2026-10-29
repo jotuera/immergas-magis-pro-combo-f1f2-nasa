@@ -130,7 +130,7 @@ Komponent `nasa_bridge` (z `packages/bridge_core.yaml`) to **równoległy tap** 
 
 **Model bezpieczeństwa** (w komponencie, nie tylko w configu): WRITE wychodzi tylko gdy `allow_write` jest ON **oraz** komunikat jest na krótkiej whiteliście (FR enable/ratio, outing, silence, FSV oznaczone jako zapisywalne). Sprężarki, EEV, ochron i rejestru **przepływu** nie da się zapisać nigdy, a ratio FR jest twardo ograniczone do 100%, więc może tylko dławić. READ nigdy nie jest bramkowany. Bez `bridge_control.yaml` nie powstają żadne encje zapisu.
 
-**Jedno urządzenie, czytnik + sterowanie.** Czytnik (`f1f2_nasa`, nasłuch) i most (`nasa_bridge`) są na *tej samej* magistrali F1/F2, więc — inaczej niż pozostałe magistrale rodziny — **dzielą jeden UART**: zadeklaruj jeden `uart`, daj obu hubom ten sam `uart_id`, czytnik zostaw na `f1f2_transmit: "false"` i pozwól nadawać tylko mostowi, a `auto_poll` ustaw po dokładnie jednej stronie. Zob. `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
+**Jedno urządzenie, czytnik + sterowanie.** Użyj **ścieżki natywnej**: jeden komponent `f1f2_nasa` z pakietem `f1f2_control` i `f1f2_transmit: "true"`. Jeden hub czyta i zapisuje na jednym UART. **Nie** dawaj drugiego komponentu NASA (`nasa_bridge`) na ten sam UART — odczyt UART w ESPHome jest niszczący, dwa komponenty podkradałyby sobie bajty, nic by się nie dekodowało, a urządzenie może wpaść w boot-loop. Zob. `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
 
 ## Uwagi
 

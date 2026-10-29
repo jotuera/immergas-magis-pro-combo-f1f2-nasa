@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.1
+
+- **Fixed the combined example** (`immergas-magis-pro-combo-f1f2-nasa-combined.yaml`): it now uses a **single** `f1f2_nasa` component with the `f1f2_control` package (the earlier version wrongly put two NASA components on one shared UART, which cannot work — ESPHome UART reads are destructive). The full `f1f2_fsv` package is commented out; only the 9 Outing-mode settings (FSV 5011–5019) that drive the working lever are exposed. README "one device" guidance corrected to match.
+
 ## v2.1.0
 
 - **Control is now native in the `f1f2_nasa` reader** — one component that reads *and* writes, so a single device can do both on one UART (two NASA components cannot share a UART in ESPHome). New package **`packages/f1f2_control.yaml`**: **Arm write** gate (`allow_write`, off by default), **Outing mode** (`0x406D`) and **FR – limit compressor** (`0x40A7`). Writes are gated by the arm switch **and** a whitelist in the hub (only `0x406D` / `0x40A7`); compressor / EEV / protection / water-flow / setpoint are refused. The hub reuses its existing silence-window transmit path; `f1f2_transmit: "true"` is required.

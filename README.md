@@ -159,7 +159,7 @@ The `nasa_bridge` component (from `packages/bridge_core.yaml`) is a **parallel t
 
 **Safety model** (in the component, not just the config): a WRITE leaves the device only if `allow_write` is ON **and** the message is on a short whitelist (FR enable/ratio, outing, silence, and FSV flagged writable). The compressor, EEV, protection and **water-flow** registers can never be written, and the FR ratio is hard-capped at 100 % so it can only derate. READs are never gated. With `bridge_control.yaml` absent, no write controls are created at all.
 
-**One device, reader + control.** The reader (`f1f2_nasa`, listening) and the bridge (`nasa_bridge`) are on the *same* F1/F2 bus, so — unlike the other family buses — they **share one UART**: declare one `uart`, give both hubs the same `uart_id`, keep the reader at `f1f2_transmit: "false"` and let only the bridge transmit, and set `auto_poll` on exactly one side. See `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
+**One device, reader + control.** Use the **native path**: one `f1f2_nasa` component with the `f1f2_control` package and `f1f2_transmit: "true"`. One hub reads and writes on one UART. **Do not** put a second NASA component (`nasa_bridge`) on the same UART — ESPHome UART reads are destructive, the two would steal each other's bytes, nothing would decode, and the device can boot-loop. See `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
 
 ## Notes
 

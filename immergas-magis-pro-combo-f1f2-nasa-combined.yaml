@@ -1,53 +1,38 @@
-# Immergas Magis Pro / Combo - F1/F2 Samsung NASA - COMBINED reader + control on ONE device.
+# Immergas Magis Pro / Combo - F1/F2 Samsung NASA - reader + control on ONE device, ONE component.
 #
-# The read-only reader (f1f2_nasa) and the tap+inject control path (nasa_bridge) are on the SAME F1/F2 bus,
-# so they share ONE uart (unlike the dd-/tt- family buses). Only the bridge ever transmits; the reader
-# listens (f1f2_transmit implied false - it has no transmit here) and sees the answers to the bridge's polls.
+# IMPORTANT: use a SINGLE NASA component. In ESPHome a UART read is destructive, so two components reading
+# the same bus steal each other's bytes (no frames decode, and the device can boot-loop). Therefore control
+# is native in `f1f2_nasa` (package f1f2_control), not a second component. Reader + control, one hub, one UART.
 #
-# This file declares the device, one uart and BOTH hubs inline, then pulls only the ENTITY packages from
-# GitHub (NOT f1f2_core / bridge_core - those would each define their own uart and clash). For a reader-only
-# or a control-only device use the normal main YAML with f1f2_core or bridge_core instead.
+# This file uses f1f2_core (UART + the f1f2_nasa hub + the component download), the reader entity packages,
+# and f1f2_control (the write levers). f1f2_transmit must be "true" so the hub can poll and write.
 #
 # SAFETY: writing is OFF until you turn on the "Arm write" switch (allow_write). Only whitelisted messages
-# (outing / FR / silence / writable FSV) can ever be written; compressor / EEV / protection / flow never.
-# Read README "Control" and FINDINGS.md first.
+# (outing 0x406D, FR enable 0x40A7) can ever be written; compressor / EEV / protection / flow / setpoint are
+# refused in the hub. Read README "Control" and FINDINGS.md first.
 
 substitutions:
-  device_name: immergas-f1f2-combined
+  device_name: immergas-f1f2
   friendly_name: Immergas F1 F2
-
-  # --- one shared RS485 (F1/F2 / MIM side). Match your wiring. ---
-  uart_tx_pin: GPIO19
-  uart_rx_pin: GPIO22
-  bridge_de_pin: GPIO25            # DE/TX-enable of the transceiver (the bridge drives it when injecting)
-
-  # --- reader (f1f2_nasa) ---
-  f1f2_indoor_address: "20.00.01"
-  f1f2_outdoor_address: "10.00.00"
-
-  # --- control (nasa_bridge) ---
-  bridge_allow_write: "false"      # master gate: never transmits a WRITE until armed from HA
-  bridge_relay_enabled: "false"    # parallel TAP (recommended)
-  bridge_auto_poll: "true"         # the bridge polls the FSV catalog; keep polling on EXACTLY one side
-  bridge_inject_gap: 40ms
-  bridge_diag_interval: 5s
+  # RS485 pins. Default: M5Stack Atom + Atomic RS485 Base (GPIO19/22, has a DE pin - set f1f2 flow_control_pin
+  # under f1f2_nasa if your board needs it). For an AtomS3 Lite + isolated RS485 Unit on the Grove port set
+  # board m5stack-atoms3 below and f1f2_uart_rx_pin: GPIO1 / f1f2_uart_tx_pin: GPIO2 (auto-direction, no DE).
+  f1f2_uart_tx_pin: GPIO19
+  f1f2_uart_rx_pin: GPIO22
+  f1f2_transmit: "true"            # required: the hub polls and writes
 
 esphome:
   name: ${device_name}
   friendly_name: ${friendly_name}
   min_version: 2026.9.0
-  project:
-    name: "jotuera.immergas-magis-pro-combo-f1f2-nasa"
-    version: "2.0.0"
 
 esp32:
-  board: m5stack-atom
+  board: m5stack-atom              # AtomS3 Lite: m5stack-atoms3
   framework:
     type: esp-idf
 
 logger:
   level: INFO
-  baud_rate: 0                     # free the hardware UART for the bus
 
 api:
   encryption:
@@ -61,58 +46,38 @@ wifi:
   ap: {}
 captive_portal:
 
-# Both components are vendored in this repo; pull them at the release tag.
-external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v2.0.0
-    components: [f1f2_nasa, nasa_bridge]
-    refresh: 1d
-
-# ONE uart, shared by both hubs. 9600 8E1. MIM rotary switch must be 1.
-uart:
-  - id: f1f2_uart
-    tx_pin: ${uart_tx_pin}
-    rx_pin: ${uart_rx_pin}
-    baud_rate: 9600
-    parity: EVEN
-    stop_bits: 1
-    rx_buffer_size: 1024
-
-# Reader: listens only (no transmit param = pure listener here), rich decoded entities.
-f1f2_nasa:
-  id: f1f2_hub
-  uart_id: f1f2_uart
-  language: ${f1f2_language}
-  transmit: "false"                # reader does not transmit; the bridge polls instead
-  indoor_address: ${f1f2_indoor_address}
-  outdoor_address: ${f1f2_outdoor_address}
-
-# Control: same uart, owns the DE pin for its injects.
-nasa_bridge:
-  id: nasa
-  mim_uart: f1f2_uart
-  mim_de_pin: ${bridge_de_pin}
-  source_address: [0x80, 0xFF, 0x00]
-  relay_enabled: ${bridge_relay_enabled}
-  auto_poll: ${bridge_auto_poll}
-  allow_write: ${bridge_allow_write}
-  inject_gap: ${bridge_inject_gap}
-  diag_interval: ${bridge_diag_interval}
+web_server:
+  port: 80
+  version: 3
+  local: true
 
 packages:
-  reader:
+  f1f2_nasa:
     url: https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa
-    ref: v2.0.0
+    ref: v2.1.1
     refresh: 1d
     files:
-      # reader entities only (NOT f1f2_core - uart/hub declared above)
+      - packages/f1f2_core.yaml          # UART + the f1f2_nasa hub (ONE component) + component download
       - packages/f1f2_indoor.yaml
       - packages/f1f2_outdoor.yaml
       - packages/f1f2_info.yaml
-      - packages/f1f2_fsv.yaml
+      # - packages/f1f2_fsv.yaml         # all 94 installer FSV as read-only sensors - commented out (clutter).
+      #                                    Only the 9 that drive the working lever are exposed below; the rest
+      #                                    are documented in FSV_MAP.md. Uncomment for the full installer set.
       - packages/f1f2_computed.yaml
       - packages/f1f2_diagnostics.yaml
-      - packages/lang/f1f2_pl.yaml          # reader language (pick en or pl)
-      # control entities (NOT bridge_core - hub declared above)
-      - packages/bridge_control.yaml        # WRITES (outing + FR + Arm). Remove for read-only.
-      - packages/bridge_status_pl.yaml      # error code (read-only)
-      - packages/lang/bridge_pl.yaml        # control language (pick en or pl)
+      - packages/f1f2_control.yaml        # WRITE levers: Arm + Outing (0x406D) + FR (0x40A7). Remove for read-only.
+      - packages/lang/f1f2_pl.yaml        # language (pick en or pl)
+
+# The only installer settings worth exposing here: the Outing-mode targets (FSV 5011-5019), which set what
+# the Outing switch applies. FR 5051 is the FR switch (0x40A7) in Control, not a read-only sensor.
+sensor:
+  - {platform: f1f2_nasa, fsv: 5011}
+  - {platform: f1f2_nasa, fsv: 5012}
+  - {platform: f1f2_nasa, fsv: 5013}
+  - {platform: f1f2_nasa, fsv: 5014}
+  - {platform: f1f2_nasa, fsv: 5015}
+  - {platform: f1f2_nasa, fsv: 5016}
+  - {platform: f1f2_nasa, fsv: 5017}
+  - {platform: f1f2_nasa, fsv: 5018}
+  - {platform: f1f2_nasa, fsv: 5019}

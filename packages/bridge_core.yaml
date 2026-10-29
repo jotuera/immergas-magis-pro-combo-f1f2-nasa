@@ -28,9 +28,9 @@ substitutions:
 # add your own esphome.project if you want one.
 
 # The nasa_bridge component (Samsung NASA tap + inject), downloaded from GitHub (this repo).
-# @v2.0.0 = this release; @main = latest development version.
+# @v2.1.1 = this release; @main = latest development version.
 external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v2.0.0
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v2.1.1
     components: [nasa_bridge]
     refresh: 1d
 
