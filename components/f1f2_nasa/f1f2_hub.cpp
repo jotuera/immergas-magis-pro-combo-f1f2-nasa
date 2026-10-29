@@ -68,6 +68,8 @@ void NasaHub::dump_config() {
                   this->response_timeout_, this->max_attempts_);
     ESP_LOGCONFIG(TAG, "  Poll interval: %u s, polled messages: %u", this->poll_interval_ / 1000,
                   unsigned(this->poll_ids_.size()));
+    ESP_LOGCONFIG(TAG, "  Emulate NASA (bus access): %s; Emulate EHS panel (polling): %s",
+                  YESNO(this->bus_enabled_), YESNO(this->panel_emulation_));
     ESP_LOGCONFIG(TAG, "  Write gate: %s; control whitelist: 0x406D (outing), 0x40A7 (FR limit)",
                   this->allow_write_ ? "ARMED" : "OFF (safe)");
   }
@@ -106,8 +108,10 @@ void NasaHub::loop() {
     this->feed(buf, n);
   }
 
-  if (this->transmit_) {
-    if (!this->poll_ids_.empty()) {
+  // Emulate NASA (bus_enabled_) is the master TX fuse; Emulate EHS panel (panel_emulation_) enables the
+  // active readback polling. With either off we never transmit the corresponding frames (RX still works).
+  if (this->transmit_ && this->bus_enabled_) {
+    if (this->panel_emulation_ && !this->poll_ids_.empty()) {
       bool due = !this->first_poll_done_ ? now > 30000 : now - this->last_poll_ >= this->poll_interval_;
       if (due)
         this->poll_now();
@@ -332,8 +336,8 @@ uint8_t NasaHub::next_packet_number_() {
 }
 
 void NasaHub::request_read(const std::vector<uint16_t> &ids) {
-  if (!this->transmit_)
-    return;
+  if (!this->transmit_ || !this->bus_enabled_ || !this->panel_emulation_)
+    return;  // active reads need Emulate NASA + Emulate EHS panel
   for (size_t i = 0; i < ids.size(); i += NASA_MAX_MESSAGES_PER_FRAME) {
     PendingRequest r;
     r.dst = this->read_address_;
@@ -492,6 +496,14 @@ void NasaHub::register_writable(uint16_t id) {
 void NasaHub::write_message(uint16_t id, uint32_t value) {
   if (!this->transmit_) {
     ESP_LOGW(TAG, "WRITE 0x%04X ignored: transmit is disabled", id);
+    return;
+  }
+  if (!this->bus_enabled_) {
+    ESP_LOGW(TAG, "WRITE 0x%04X BLOCKED: Emulate NASA (bus access) is off", id);
+    return;
+  }
+  if (!this->panel_emulation_) {
+    ESP_LOGW(TAG, "WRITE 0x%04X BLOCKED: Emulate EHS panel is off", id);
     return;
   }
   if (!this->allow_write_) {

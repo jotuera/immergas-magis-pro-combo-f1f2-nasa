@@ -1,10 +1,13 @@
 # Immergas Magis Pro / Combo F1/F2 (Samsung NASA) - package "f1f2_control"  -- OPTIONAL, WRITES TO THE PUMP
 # ============================================================================================================
 #  DO NOT add this package unless you accept the risk. It creates the controls that let the f1f2_nasa hub
-#  INJECT NASA write frames to the heat pump. Even then:
-#   * nothing is transmitted until you turn ON the "Active ODU control" switch (the allow_write gate), AND
-#   * only the whitelisted messages can ever be written (outing 0x406D and FR enable 0x40A7); the
-#     compressor / EEV / protection / water-flow / setpoint registers are refused in the component.
+#  INJECT NASA write frames to the heat pump. Three layered safety gates, each needs the one above it:
+#   1. Emulate NASA        - master bus-access fuse. Off = the hub transmits NOTHING (no polls, no writes);
+#                            only passive broadcast sensors stay live.
+#   2. Emulate EHS panel   - active readback. Off = no READ polling, so FSV / control values go stale;
+#                            only the passive sensors are active.
+#   3. Active ODU control  - the write arm. A WRITE needs ALL THREE on, AND the message whitelisted
+#                            (outing 0x406D / FR 0x40A7); compressor / EEV / protection / flow are hard-blocked.
 #
 #  On a Magis the Immergas controller owns the loop: most writes are overridden. The two levers that work:
 #  OUTING can take over the heating target; FR caps the compressor (~50 % ratio, eco/quiet). See README
@@ -12,7 +15,29 @@
 # ============================================================================================================
 
 switch:
-  # ARM: the master write gate. Nothing is transmitted to the pump until this is ON. (Reads are benign.)
+  # 1. Emulate NASA - master bus-access fuse. Off = pure passive listener (no TX at all).
+  - platform: template
+    name: ${n_f1f2_emulate_nasa}
+    icon: mdi:lan-connect
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    turn_on_action:
+      - lambda: "id(f1f2_hub).set_bus_enabled(true);"
+    turn_off_action:
+      - lambda: "id(f1f2_hub).set_bus_enabled(false);"
+
+  # 2. Emulate EHS panel - active readback / polling of FSV + control registers. Off = only passive sensors.
+  - platform: template
+    name: ${n_f1f2_emulate_panel}
+    icon: mdi:remote
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    turn_on_action:
+      - lambda: "id(f1f2_hub).set_panel_emulation(true);"
+    turn_off_action:
+      - lambda: "id(f1f2_hub).set_panel_emulation(false);"
+
+  # 3. Active ODU control - the write arm. A WRITE needs this ON plus Emulate NASA + Emulate EHS panel.
   - platform: template
     name: ${n_f1f2_arm}
     icon: mdi:lock-open-alert

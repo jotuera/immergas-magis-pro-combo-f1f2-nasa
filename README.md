@@ -14,7 +14,7 @@ Read everything the **outdoor unit** of an Immergas Magis Pro / Combo V2 (a Sams
 >
 > The `f1f2_nasa` component **reads** the bus by default, and can also **write** a few whitelisted settings once you add the control packages and arm it (see [Control](#control-optional-readwrite)).
 
-> **v2.4.1.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
+> **v2.5.0.** Tested on a **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Feedback from other Magis Pro / Combo installs is very welcome. Upgrading: see [CHANGELOG.md](CHANGELOG.md).
 
 ## What you get
 
@@ -71,12 +71,12 @@ Which registers the Immergas controller commands (visible/settable on the D+/D- 
 
 | File | Content |
 |---|---|
-| `packages/f1f2_control.yaml` | **writes**: Arm gate + Outing mode (`0x406D`) + FR compressor limit (`0x40A7`) |
+| `packages/f1f2_control.yaml` | **writes**: Emulate NASA + Emulate EHS panel gates + Active ODU control arm + Outing mode (`0x406D`) + FR compressor limit (`0x40A7`) |
 | `packages/f1f2_outing_targets.yaml` | the 9 Outing-mode targets (FSV 5011–5019) as **editable sliders** (`number`) |
 
 ### Versions
 
-The example pins everything to a release tag (`ref: v2.4.1`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
+The example pins everything to a release tag (`ref: v2.5.0`; the cores download the components with the same tag). Change `ref:` to a newer tag to upgrade, or to `main` to follow the development version.
 
 ### Settings (substitutions)
 
@@ -150,7 +150,13 @@ Control is **native** in `f1f2_nasa`: add **`packages/f1f2_control.yaml`** to th
 - **Editable FSV** — add **`packages/f1f2_outing_targets.yaml`** for the 9 Outing-mode targets (FSV 5011–5019) as sliders, or declare your own `number:` with `platform: f1f2_nasa` and `fsv:` (see "Settings").
 - The active Samsung **error code** is already in the reader (`system_error`, from `f1f2_outdoor`); descriptions in [ERROR_CODES.md](ERROR_CODES.md).
 
-**Safety model** (in the component, not just the config): a WRITE leaves the device only if `allow_write` is ON **and** the message is whitelisted — the two fixed levers, plus any id you expose as an editable `number`. On top of that a **hard block** (`is_hard_blocked_`) refuses the compressor, EEV, protection and **water-flow** registers no matter what, even a mistaken `number:` on one of them; the FR ratio is hard-capped at 100 % so it can only derate. READs are never gated. With `f1f2_control.yaml` absent, no write controls are created at all.
+**Safety model** — three layered gates (switches), each needs the one above it:
+
+1. **Emulate NASA** — master bus-access fuse. Off = the hub transmits nothing (no polls, no writes); only passive broadcast sensors stay live. Default on.
+2. **Emulate EHS panel** — active readback. Off = no READ polling, so FSV / control values go stale; only passive sensors. Default on.
+3. **Active ODU control** — the write arm. Off after every reboot.
+
+A WRITE leaves the device only if **all three** are on **and** the message is whitelisted (the two fixed levers, plus any id you expose as an editable `number`). On top of that a **hard block** (`is_hard_blocked_`) refuses the compressor, EEV, protection, water-flow, unit on/off and operation-mode registers no matter what, even a mistaken `number:` on one; the FR ratio is hard-capped at 100 % so it can only derate. Passive listening is never gated. With `f1f2_control.yaml` absent, none of these switches exist and the device cannot write.
 
 One device does both — see `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
 

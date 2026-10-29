@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.5.0
+
+- **Layered bus-access gates** (two new switches in `f1f2_control`, each needs the one above it):
+  1. **Emulate NASA** — master bus-access fuse. Off = the hub transmits nothing (no polls, no writes); only passive broadcast sensors stay live. Default on.
+  2. **Emulate EHS panel** — active readback. Off = no READ polling, so FSV / control values go stale; only passive sensors. Default on.
+  3. **Active ODU control** (existing) — the write arm. A WRITE now needs **all three** on, plus the message whitelisted and not hard-blocked.
+- Reads: active polling needs Emulate NASA + Emulate EHS panel; passive listening (broadcast sensors) always works.
+
 ## v2.4.1
 
 - **Renamed the control entities** (shorter, clearer): Arm write → **Active ODU control**, Outing mode (activate) → **Outing mode**, FR – limit compressor → **Compressor frequency limit**. Home Assistant creates new entities for the new names; delete the old ones.

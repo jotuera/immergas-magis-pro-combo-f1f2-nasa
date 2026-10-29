@@ -14,7 +14,7 @@ Odczyt wszystkiego, co **jednostka zewnętrzna** Immergas Magis Pro / Combo V2 (
 >
 > Komponent `f1f2_nasa` domyślnie **czyta** magistralę, a po dodaniu pakietów sterowania i uzbrojeniu potrafi też **zapisać** kilka rejestrów z whitelisty (zob. [Sterowanie](#sterowanie-opcjonalne-readwrite)).
 
-> **v2.4.1.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
+> **v2.5.0.** Przetestowane na **Magis Combo 9 Plus V2 + Audax Pro 9 V2**. Opinie z innych instalacji mile widziane. Aktualizacja: zob. [CHANGELOG.md](CHANGELOG.md).
 
 ## Co dostajesz
 
@@ -55,7 +55,7 @@ Które rejestry steruje sterownik Immergasa (widoczne/ustawialne na magistralach
 
 ### Wersje
 
-Przykład przypina wszystko do tagu wydania (`ref: v2.4.1`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
+Przykład przypina wszystko do tagu wydania (`ref: v2.5.0`; rdzenie pobierają komponenty z tym samym tagiem). Żeby zaktualizować, zmień `ref:` na nowszy tag; `main` oznacza zawsze najnowszą wersję rozwojową.
 
 ### Pakiety
 
@@ -75,7 +75,7 @@ Przykład przypina wszystko do tagu wydania (`ref: v2.4.1`; rdzenie pobierają k
 
 | Plik | Zawartość |
 |---|---|
-| `packages/f1f2_control.yaml` | **zapisy**: bramka Uzbrój + Tryb wyjazdowy (`0x406D`) + FR ograniczenie sprężarki (`0x40A7`) |
+| `packages/f1f2_control.yaml` | **zapisy**: bramki Emuluj NASA + Emuluj panel EHS + uzbrojenie Aktywne sterowanie ODU + Tryb wyjazdowy (`0x406D`) + FR ograniczenie sprężarki (`0x40A7`) |
 | `packages/f1f2_outing_targets.yaml` | 9 nastaw trybu wyjazdowego (FSV 5011–5019) jako **edytowalne suwaki** (`number`) |
 
 Ustawienia (podstawienia `f1f2_*`, np. piny, adresy, `f1f2_transmit`, `f1f2_poll_interval`, nazwy `n_f1f2_*`) i sposoby deklarowania własnych encji (`platform: f1f2_nasa` po `key`, kodzie `fsv` albo surowym `pdu`) opisuje [README.md](README.md#settings-substitutions). Pełna lista kluczy jest w [PDU_MAP.md](PDU_MAP.md).
@@ -121,7 +121,13 @@ Sterowanie jest **natywne** w `f1f2_nasa`: dodaj **`packages/f1f2_control.yaml`*
 - **Edytowalne FSV** — dodaj **`packages/f1f2_outing_targets.yaml`** po 9 nastaw trybu wyjazdowego (FSV 5011–5019) jako suwaki, albo zadeklaruj własne `number:` z `platform: f1f2_nasa` i `fsv:` (zob. „Ustawienia").
 - Aktywny **kod błędu** Samsung jest już w czytniku (`system_error`, z `f1f2_outdoor`); opisy w [ERROR_CODES.pl.md](ERROR_CODES.pl.md).
 
-**Model bezpieczeństwa** (w komponencie, nie tylko w configu): WRITE wychodzi tylko gdy `allow_write` jest ON **oraz** komunikat jest na whiteliście — dwie stałe dźwignie plus to, co jawnie wystawisz jako edytowalny `number`. Dodatkowo **twarda blokada** (`is_hard_blocked_`) odrzuca rejestry sprężarki, EEV, ochrony i **przepływu** niezależnie od wszystkiego, nawet przy błędnym `number:` na takim rejestrze; ratio FR jest twardo ograniczone do 100%, więc może tylko dławić. READ nigdy nie jest bramkowany. Bez `f1f2_control.yaml` nie powstają żadne encje zapisu.
+**Model bezpieczeństwa** — trzy warstwowe bramki (switche), każda wymaga tej powyżej:
+
+1. **Emuluj NASA** — nadrzędny bezpiecznik dostępu do magistrali. OFF = hub nic nie nadaje (brak odpytań i zapisów); żywe tylko pasywne sensory z broadcastów. Domyślnie ON.
+2. **Emuluj panel EHS** — aktywny odczyt. OFF = brak odpytań READ, więc wartości FSV / sterowania się starzeją; tylko pasywne sensory. Domyślnie ON.
+3. **Aktywne sterowanie ODU** — uzbrojenie zapisu. Po restarcie wyłączone.
+
+WRITE wychodzi tylko gdy **wszystkie trzy** są ON **oraz** komunikat jest na whiteliście (dwie stałe dźwignie plus to, co jawnie wystawisz jako edytowalny `number`). Dodatkowo **twarda blokada** (`is_hard_blocked_`) odrzuca rejestry sprężarki, EEV, ochrony, przepływu, wł/wył jednostki i trybu pracy niezależnie od wszystkiego, nawet przy błędnym `number:`; ratio FR jest twardo ograniczone do 100%. Pasywny nasłuch nigdy nie jest bramkowany. Bez `f1f2_control.yaml` żaden z tych switchy nie istnieje i urządzenie nie może zapisywać.
 
 Jedno urządzenie robi jedno i drugie — zob. `immergas-magis-pro-combo-f1f2-nasa-combined.yaml`.
 

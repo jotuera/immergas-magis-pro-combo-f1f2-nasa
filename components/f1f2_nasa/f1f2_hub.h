@@ -107,8 +107,18 @@ class NasaHub : public Component, public uart::UARTDevice {
   bool is_sniffer_enabled() const { return this->sniffer_; }
   uint32_t get_republish_interval() const { return this->republish_interval_; }
 
+  // --- bus access gates (layered safety) ---
+  // Emulate NASA (master fuse): when false the hub makes NO transmission at all - no READ polls, no writes.
+  // Passive listening (RX of broadcasts) keeps working. Default on.
+  void set_bus_enabled(bool on) { this->bus_enabled_ = on; }
+  bool get_bus_enabled() const { return this->bus_enabled_; }
+  // Emulate EHS panel: when false the hub does not actively poll (no READ requests), so the FSV / control
+  // readback goes stale - only the passively broadcast sensors stay live. Writes also need this on. Default on.
+  void set_panel_emulation(bool on) { this->panel_emulation_ = on; }
+  bool get_panel_emulation() const { return this->panel_emulation_; }
+
   // --- control writes (optional; off until armed) ---
-  // Master write gate. No control WRITE ever leaves the device unless this is true.
+  // Master write gate. A control WRITE needs this AND bus_enabled AND panel_emulation to be true.
   void set_allow_write(bool on) { this->allow_write_ = on; }
   bool get_allow_write() const { return this->allow_write_; }
   // Queue a whitelisted control WRITE to the indoor unit. Gated by allow_write AND a short whitelist;
@@ -187,6 +197,10 @@ class NasaHub : public Component, public uart::UARTDevice {
   uint8_t packet_number_{0};
   uint32_t last_poll_{0};
   bool first_poll_done_{false};
+
+  // bus access gates (layered safety)
+  bool bus_enabled_{true};       // Emulate NASA: master TX fuse
+  bool panel_emulation_{true};   // Emulate EHS panel: active readback / polling
 
   // control writes
   std::deque<WriteOp> write_queue_;
