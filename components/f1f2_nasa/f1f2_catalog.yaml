@@ -90,7 +90,6 @@ sensors:
   raw_824b:               {pdu: 0x824B, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_824c:               {pdu: 0x824C, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_82e1:               {pdu: 0x82E1, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
-  raw_80b1:               {pdu: 0x80B1, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: candidate}
   raw_840f:               {pdu: 0x840F, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_8417:               {pdu: 0x8417, src: outdoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
 
@@ -108,6 +107,9 @@ binary_sensors:
   four_way_valve:         {pdu: 0x801A, src: outdoor}
   hot_gas_valve:          {pdu: 0x8017, src: outdoor}
   base_heater:            {pdu: 0x80AF, src: outdoor, dc: heat}
+  # 0x80B1 = 1 while the compressor runs under the Immergas night-function (U11) frequency limit (read-only
+  # ODU flag; the limit itself is driven by Immergas via 0x428D -> 0x8239).
+  night_limit:            {pdu: 0x80B1, src: outdoor, icon: "mdi:weather-night"}
 
 text_sensors:
   # mode: map (translations maps.<map>), error (translations errors), firmware (structure), hex (structure)

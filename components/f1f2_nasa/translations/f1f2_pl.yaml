@@ -69,7 +69,6 @@ sensors:
   raw_824b: NASA PDU zewn. 824B RAW
   raw_824c: NASA PDU zewn. 824C RAW
   raw_82e1: NASA PDU zewn. 82E1 RAW
-  raw_80b1: NASA PDU zewn. 80B1 RAW
   raw_840f: NASA PDU zewn. 840F LONG RAW
   raw_8417: NASA PDU zewn. 8417 LONG RAW
   rx_frames: NASA odebrane ramki
@@ -91,6 +90,7 @@ binary_sensors:
   four_way_valve: Zawór 4-drogowy
   hot_gas_valve: Zawór gorącego gazu
   base_heater: Grzałka tacy ociekowej
+  night_limit: Limit nocny sprężarki (U11)
 
 text_sensors:
   outdoor_driving_mode: Tryb pracy jednostki zewnętrznej

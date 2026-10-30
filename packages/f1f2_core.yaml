@@ -5,7 +5,7 @@
 # repos on one device.
 
 substitutions:
-  f1f2_project_version: "2.6.1"
+  f1f2_project_version: "2.6.2"
   # RS485 pins (M5Stack Atom + Atomic RS485 Base). Override in your main YAML if your wiring differs.
   f1f2_uart_tx_pin: GPIO19
   f1f2_uart_rx_pin: GPIO22
@@ -23,9 +23,9 @@ esphome:
     version: "${f1f2_project_version}"
 
 # The f1f2_nasa component (Samsung NASA protocol), downloaded from GitHub.
-# @v2.6.1 = this release; @main = latest development version.
+# @v2.6.2 = this release; @main = latest development version.
 external_components:
-  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v2.6.1
+  - source: github://jotuera/immergas-magis-pro-combo-f1f2-nasa@v2.6.2
     components: [f1f2_nasa]
     refresh: 1d
 
@@ -53,3 +53,10 @@ f1f2_nasa:
 text_sensor:
   # units that talk on the bus (address discovery)
   - {platform: f1f2_nasa, type: devices}
+  # this integration's version (static), e.g. for checking what the device is running
+  - platform: template
+    name: "${f1f2_name_prefix}${n_f1f2_project_version}"
+    icon: "mdi:tag-outline"
+    entity_category: diagnostic
+    update_interval: 6h
+    lambda: 'return std::string("${f1f2_project_version}");'

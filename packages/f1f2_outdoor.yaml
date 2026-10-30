@@ -35,6 +35,7 @@ binary_sensor:
   - {platform: f1f2_nasa, key: four_way_valve, id: f1f2_four_way_valve}
   - {platform: f1f2_nasa, key: hot_gas_valve, id: f1f2_hot_gas_valve}
   - {platform: f1f2_nasa, key: base_heater, id: f1f2_base_heater}
+  - {platform: f1f2_nasa, key: night_limit, id: f1f2_night_limit}
 
 text_sensor:
   - {platform: f1f2_nasa, key: outdoor_driving_mode, id: f1f2_outdoor_driving_mode}

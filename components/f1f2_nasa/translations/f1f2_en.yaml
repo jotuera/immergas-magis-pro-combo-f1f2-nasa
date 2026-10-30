@@ -70,7 +70,6 @@ sensors:
   raw_824b: NASA Outdoor PDU 824B RAW
   raw_824c: NASA Outdoor PDU 824C RAW
   raw_82e1: NASA Outdoor PDU 82E1 RAW
-  raw_80b1: NASA Outdoor PDU 80B1 RAW
   raw_840f: NASA Outdoor PDU 840F LONG RAW
   raw_8417: NASA Outdoor PDU 8417 LONG RAW
   # hub statistics (type:)
@@ -93,6 +92,7 @@ binary_sensors:
   four_way_valve: 4-Way Valve
   hot_gas_valve: Hot Gas Valve
   base_heater: Base Heater
+  night_limit: Compressor night limit (U11)
 
 text_sensors:
   outdoor_driving_mode: Outdoor Driving Mode

@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.6.2
+
+- **Decoded `0x80B1`** as a named read-only binary sensor **"Compressor night limit (U11)"** (outdoor): on while the compressor runs under the Immergas night-function frequency limit. Replaces the raw diagnostic `raw_80b1`. The limit itself is driven by Immergas (U11 → `0x428D` → `0x8239`), so this is a status flag only.
+
 ## v2.6.1
 
 - **Text sensors show a "—" marker when NASA connection is off** instead of a stale value. A text sensor has no real "unavailable" that Home Assistant honours (confirmed on a live Magis: `has_state=false` + a state callback still showed the last string), so the no-data marker is the reliable clean behaviour. Numeric and binary sensors still go truly unavailable (NaN / `invalidate_state()`); a real text value returns on the next frame.

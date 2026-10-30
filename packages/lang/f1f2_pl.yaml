@@ -5,6 +5,7 @@
 
 substitutions:
   f1f2_language: pl
+  n_f1f2_project_version: "Wersja projektu"
   n_f1f2_flow_delta: "Różnica temperatur zasilania i powrotu"
   n_f1f2_daily_energy: "Energia pobrana dziś"
   n_f1f2_cop_instant: "COP chwilowy"
