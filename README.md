@@ -152,7 +152,7 @@ Control is **native** in `f1f2_nasa`: add **`packages/f1f2_control.yaml`** to th
 
 **Safety model** — three layered gates (switches), each needs the one above it:
 
-1. **NASA connection** — master fuse. Off = the hub ignores the bus entirely (RX drained but not dispatched, no polls, no writes); **every** entity (sensors, binary sensors, text sensors, control) goes **unavailable** — the device is disconnected. Default on.
+1. **NASA connection** — master fuse. Off = the hub ignores the bus entirely (RX drained but not dispatched, no polls, no writes); numeric sensors, binary sensors and the control entities go **unavailable**, and text sensors show a **"—"** marker (HA has no real "unavailable" for text) — the device is disconnected. Default on.
 2. **Emulate EHS panel** — active readback. Off = no READ polling; the editable FSV sliders and the Outing/FR control switches go **unavailable**, the passive sensors stay live. Default on; turning it back on refreshes the readback right away.
 3. **Active ODU control** — the write arm. Off after every reboot.
 

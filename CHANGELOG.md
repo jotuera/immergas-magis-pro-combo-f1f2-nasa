@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.6.1
+
+- **Text sensors show a "—" marker when NASA connection is off** instead of a stale value. A text sensor has no real "unavailable" that Home Assistant honours (confirmed on a live Magis: `has_state=false` + a state callback still showed the last string), so the no-data marker is the reliable clean behaviour. Numeric and binary sensors still go truly unavailable (NaN / `invalidate_state()`); a real text value returns on the next frame.
+
 ## v2.6.0
 
 - **Name prefix** for combining with dd-modbus / tt-bms on one device: hub option `name_prefix:` (component) and

@@ -123,7 +123,7 @@ Sterowanie jest **natywne** w `f1f2_nasa`: dodaj **`packages/f1f2_control.yaml`*
 
 **Model bezpieczeństwa** — trzy warstwowe bramki (switche), każda wymaga tej powyżej:
 
-1. **Połączenie NASA** — nadrzędny bezpiecznik. OFF = hub całkowicie ignoruje magistralę (RX odrzucany, brak odpytań i zapisów); **wszystkie encje** (sensory, binarne, tekstowe, sterowanie) → **niedostępne** — urządzenie odłączone. Domyślnie ON.
+1. **Połączenie NASA** — nadrzędny bezpiecznik. OFF = hub całkowicie ignoruje magistralę (RX odrzucany, brak odpytań i zapisów); sensory numeryczne, binarne i encje sterowania → **niedostępne**, a sensory tekstowe pokazują znacznik **„—"** (HA nie ma dla tekstu prawdziwego „unavailable") — urządzenie odłączone. Domyślnie ON.
 2. **Emuluj panel EHS** — aktywny odczyt. OFF = brak odpytań READ; edytowalne suwaki FSV i przełączniki Outing/FR przechodzą w **niedostępne**, pasywne sensory zostają żywe. Domyślnie ON; włączenie z powrotem odświeża odczyt natychmiast.
 3. **Aktywne sterowanie ODU** — uzbrojenie zapisu. Po restarcie wyłączone.
 

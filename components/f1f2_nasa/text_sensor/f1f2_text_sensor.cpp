@@ -56,12 +56,10 @@ void NasaTextSensor::on_message(const Packet &packet, const Message &message) {
 
 void NasaTextSensor::on_gate_change(bool bus_on, bool panel_on) {
   if (!bus_on) {
-    // NASA connection off: disconnected. Mark the state missing so the API reports it unavailable
-    // (api_connection: resp.missing_state = !text_sensor->has_state()). Notify the callback manager
-    // directly instead of notify_frontend_() - that helper's first line is set_has_state(true), which
-    // would immediately undo the has_state(false) below.
-    this->set_has_state(false);
-    this->callback_.call(this->state);
+    // NASA connection off: disconnected. A text sensor has no real "unavailable" that Home Assistant
+    // honours (tried has_state=false + a state callback: HA keeps showing the last string). So publish a
+    // clear no-data marker instead of leaving the stale value; a real value returns on the next frame.
+    this->publish_state("—");
     this->published_ = false;
   }
 }
