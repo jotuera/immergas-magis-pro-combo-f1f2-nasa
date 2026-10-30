@@ -36,7 +36,6 @@ sensors:
   raw_0415: NASA Indoor PDU 0415 LONG RAW
   raw_4006: NASA Indoor PDU 4006 RAW
   raw_440a: NASA Indoor PDU 440A LONG RAW
-  raw_428d: NASA Indoor PDU 428D RAW
   outdoor_temperature: Outdoor Temperature
   compressor_frequency: Compressor Current Frequency
   order_frequency: Compressor 1 Order Frequency
@@ -93,6 +92,7 @@ binary_sensors:
   hot_gas_valve: Hot Gas Valve
   base_heater: Base Heater
   night_limit: Compressor night limit (U11)
+  night_mode: Night function (U11) active
 
 text_sensors:
   outdoor_driving_mode: Outdoor Driving Mode

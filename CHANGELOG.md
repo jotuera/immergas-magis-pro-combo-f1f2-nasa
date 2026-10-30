@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.6.3
+
+- **Decoded `0x428D`** (the Immergas night-function U11 request from the MIM) into two read-only entities, replacing the raw `raw_428d`: a binary sensor **"Night function (U11) active"** (on while `0x428D` ≠ 0) and a **"Night capacity limit"** `%` template sensor (its low byte, 30 % while active). Pairs with the `0x80B1` "Compressor night limit" sensor.
+
 ## v2.6.2
 
 - **Decoded `0x80B1`** as a named read-only binary sensor **"Compressor night limit (U11)"** (outdoor): on while the compressor runs under the Immergas night-function frequency limit. Replaces the raw diagnostic `raw_80b1`. The limit itself is driven by Immergas (U11 → `0x428D` → `0x8239`), so this is a status flag only.

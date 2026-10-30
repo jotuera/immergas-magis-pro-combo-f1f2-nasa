@@ -25,6 +25,18 @@ sensor:
   # (operation_mode_text / three_way_valve_text) - the raw duplicates were removed.
   - {platform: f1f2_nasa, key: control_reference, id: f1f2_control_reference}
   - {platform: f1f2_nasa, key: status_bits_440e, id: f1f2_status_bits_440e}
+  # Night function (U11) capacity limit %: the low byte of 0x428D (30 % while active, 0 otherwise).
+  - platform: template
+    name: "${f1f2_name_prefix}${n_f1f2_night_limit_pct}"
+    icon: "mdi:percent"
+    unit_of_measurement: "%"
+    accuracy_decimals: 0
+    update_interval: 10s
+    lambda: |-
+      if (!id(f1f2_hub).get_bus_enabled()) return NAN;   // NASA connection off -> unavailable
+      float v = id(f1f2_hub).read_value(0x428D);
+      if (isnan(v)) return NAN;
+      return fmodf(v, 256.0f);   // low byte = capacity limit %
 
 binary_sensor:
   - {platform: f1f2_nasa, key: water_pump, id: f1f2_water_pump}
@@ -33,6 +45,7 @@ binary_sensor:
   - {platform: f1f2_nasa, key: defrost, id: f1f2_defrost}
   - {platform: f1f2_nasa, key: dhw_power, id: f1f2_dhw_power}
   - {platform: f1f2_nasa, key: zone1_power, id: f1f2_zone1_power}
+  - {platform: f1f2_nasa, key: night_mode, id: f1f2_night_mode}
   # zone2_power / pv_control / smart_grid moved to the optional f1f2_ehs_extra (a Magis has none of them).
 
 text_sensor:

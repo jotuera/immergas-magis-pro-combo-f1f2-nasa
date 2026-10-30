@@ -14,7 +14,7 @@ sensor:
   - {platform: f1f2_nasa, key: raw_0415, id: f1f2_raw_0415}
   - {platform: f1f2_nasa, key: raw_4006, id: f1f2_raw_4006}
   - {platform: f1f2_nasa, key: raw_440a, id: f1f2_raw_440a}
-  - {platform: f1f2_nasa, key: raw_428d, id: f1f2_raw_428d}
+  # 0x428D decoded as "night_mode" (binary) + a night-capacity-% template sensor in f1f2_indoor.
   - {platform: f1f2_nasa, key: raw_041b, id: f1f2_raw_041b}
   - {platform: f1f2_nasa, key: raw_8201, id: f1f2_raw_8201}
   - {platform: f1f2_nasa, key: raw_823f, id: f1f2_raw_823f}

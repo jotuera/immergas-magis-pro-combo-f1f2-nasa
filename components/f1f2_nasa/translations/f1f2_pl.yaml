@@ -35,7 +35,6 @@ sensors:
   raw_0415: NASA PDU wewn. 0415 LONG RAW
   raw_4006: NASA PDU wewn. 4006 RAW
   raw_440a: NASA PDU wewn. 440A LONG RAW
-  raw_428d: NASA PDU wewn. 428D RAW
   outdoor_temperature: Temperatura zewnętrzna
   compressor_frequency: Częstotliwość sprężarki
   order_frequency: Częstotliwość zlecona sprężarki
@@ -91,6 +90,7 @@ binary_sensors:
   hot_gas_valve: Zawór gorącego gazu
   base_heater: Grzałka tacy ociekowej
   night_limit: Limit nocny sprężarki (U11)
+  night_mode: Funkcja nocna U11 (aktywna)
 
 text_sensors:
   outdoor_driving_mode: Tryb pracy jednostki zewnętrznej

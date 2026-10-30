@@ -51,7 +51,6 @@ sensors:
   raw_0415:               {pdu: 0x0415, src: indoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_4006:               {pdu: 0x4006, src: indoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
   raw_440a:               {pdu: 0x440A, src: indoor, dec: raw, acc: 0, cat: diagnostic, status: unknown}
-  raw_428d:               {pdu: 0x428D, src: indoor, dec: raw, acc: 0, cat: diagnostic, status: candidate}
 
   # ---------------------------------------------------------------- outdoor unit, 10.00.00
   outdoor_temperature:    {pdu: 0x8204, src: outdoor, dec: temp, unit: "°C", dc: temperature, sc: measurement, acc: 1}
@@ -103,6 +102,9 @@ binary_sensors:
   zone2_power:            {pdu: 0x411E, src: indoor, dc: power}
   pv_control:             {pdu: 0x4123, src: indoor}
   smart_grid:             {pdu: 0x4124, src: indoor}
+  # 0x428D != 0 while the Immergas night function U11 is active (the MIM broadcasts 0x011E = 30 % capacity
+  # request; the % itself is the low byte - exposed as the "night capacity limit" template sensor).
+  night_mode:             {pdu: 0x428D, src: indoor, icon: "mdi:weather-night"}
   compressor:             {pdu: 0x8010, src: outdoor, dc: running}
   four_way_valve:         {pdu: 0x801A, src: outdoor}
   hot_gas_valve:          {pdu: 0x8017, src: outdoor}
