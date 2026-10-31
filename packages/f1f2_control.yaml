@@ -40,9 +40,10 @@ switch:
   # 3. Active ODU control - the write arm. A WRITE needs this ON plus NASA connection + Emulate EHS panel.
   - platform: template
     name: "${f1f2_name_prefix}${n_f1f2_arm}"
+    id: f1f2_write_arm
     icon: mdi:lock-open-alert
     optimistic: true
-    restore_mode: ALWAYS_OFF
+    restore_mode: ${f1f2_write_arm_restore}   # ALWAYS_OFF by default (f1f2_core)
     turn_on_action:
       - lambda: "id(f1f2_hub).set_allow_write(true);"
     turn_off_action:

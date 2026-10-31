@@ -5,7 +5,7 @@
 # repos on one device.
 
 substitutions:
-  f1f2_project_version: "2.7.0"
+  f1f2_project_version: "2.7.1"
   # RS485 pins (M5Stack Atom + Atomic RS485 Base). Override in your main YAML if your wiring differs.
   f1f2_uart_tx_pin: GPIO19
   f1f2_uart_rx_pin: GPIO22
@@ -16,6 +16,10 @@ substitutions:
   # Text put in front of every entity name. Empty = names as before. On a device shared with other Immergas
   # buses, e.g. f1f2_name_prefix: "Immergas FF - " -> "Immergas FF - Flow temperature".
   f1f2_name_prefix: ""
+  # Start state of "Active ODU control" (the write arm, f1f2_control). ALWAYS_OFF = safe default, arm by hand after
+  # every restart. ALWAYS_ON = writes to the whitelisted controls (outing, FR, the editable FSV numbers you loaded)
+  # are always allowed; compressor / EEV / protection / flow stay hard-blocked in code either way.
+  f1f2_write_arm_restore: ALWAYS_OFF
 
 esphome:
   project:

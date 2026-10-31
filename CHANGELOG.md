@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.7.1
+
+- **"Active ODU control" can start armed.** New substitution `f1f2_write_arm_restore` (default `ALWAYS_OFF`, unchanged behaviour); set it to `ALWAYS_ON` in the main YAML to keep the write arm on after every restart, so the tested controls (outing `0x406D`, FR `0x40A7` and the editable FSV numbers you load, e.g. 5011–5019) are always writable. The whitelist and the hard block of compressor / EEV / protection / flow registers are unchanged. The switch now has `id: f1f2_write_arm` (e.g. to hide it with `!extend … internal: true`). YAML only, the component is unchanged (still `@v2.7.0`).
+
 ## v2.7.0
 
 - **Discovery mode** — a new diagnostic switch **"Discovery (context change log)"** in `f1f2_diagnostics`. Like the bus sniffer it logs every PDU value change (tag `f1f2_sniff`), but each line also carries a snapshot of the reference signals at that moment: `| comp=… drv=… mode=… defr=… night=… 3w=… tout=…` (compressor Hz `0x8238`, outdoor driving mode `0x8001`, indoor mode `0x4001`, defrost `0x402E`, night request `0x428D`, three-way valve `0x4067`, outdoor temp `0x8204`). Lets you tie an undecoded PDU to what the pump was doing when it changed.
