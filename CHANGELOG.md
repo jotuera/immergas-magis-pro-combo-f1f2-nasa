@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.7.0
+
+- **Discovery mode** — a new diagnostic switch **"Discovery (context change log)"** in `f1f2_diagnostics`. Like the bus sniffer it logs every PDU value change (tag `f1f2_sniff`), but each line also carries a snapshot of the reference signals at that moment: `| comp=… drv=… mode=… defr=… night=… 3w=… tout=…` (compressor Hz `0x8238`, outdoor driving mode `0x8001`, indoor mode `0x4001`, defrost `0x402E`, night request `0x428D`, three-way valve `0x4067`, outdoor temp `0x8204`). Lets you tie an undecoded PDU to what the pump was doing when it changed.
+- **Correlation parser** `tools/sniffer_correlate.py` — feed it a captured Discovery log and it reports, per PDU, which reference signal its value tracks best (Pearson |r|), so an unknown PDU like `0x840F` can be guessed as "tracks compressor running". Pure stdlib; `--pdu <hex>` gives the full breakdown for one PDU. Workflow for decoding the remaining raw PDUs.
+
 ## v2.6.3
 
 - **Decoded `0x428D`** (the Immergas night-function U11 request from the MIM) into two read-only entities, replacing the raw `raw_428d`: a binary sensor **"Night function (U11) active"** (on while `0x428D` ≠ 0) and a **"Night capacity limit"** `%` template sensor (its low byte, 30 % while active). Pairs with the `0x80B1` "Compressor night limit" sensor.

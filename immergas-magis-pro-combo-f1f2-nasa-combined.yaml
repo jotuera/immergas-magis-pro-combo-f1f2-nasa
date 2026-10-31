@@ -55,7 +55,7 @@ web_server:
 packages:
   f1f2_nasa:
     url: https://github.com/jotuera/immergas-magis-pro-combo-f1f2-nasa
-    ref: v2.6.3
+    ref: v2.7.0
     refresh: 1d
     files:
       - packages/f1f2_core.yaml          # UART + the f1f2_nasa hub (ONE component) + component download

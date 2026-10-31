@@ -39,3 +39,15 @@ text_sensor:
 
 switch:
   - platform: f1f2_nasa   # bus sniffer: logs every value change (tag "f1f2_sniff"), whole frames at DEBUG level
+  # discovery: like the sniffer value-change log, but each line also carries a snapshot of the reference
+  # signals (comp / mode / defrost / night / 3-way / outdoor temp) - feed the log to tools/sniffer_correlate.py
+  - platform: template
+    name: "${f1f2_name_prefix}${n_f1f2_discovery}"
+    icon: "mdi:magnify-expand"
+    entity_category: diagnostic
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    turn_on_action:
+      - lambda: "id(f1f2_hub).set_discovery_enabled(true);"
+    turn_off_action:
+      - lambda: "id(f1f2_hub).set_discovery_enabled(false);"

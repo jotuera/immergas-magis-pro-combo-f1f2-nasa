@@ -138,6 +138,10 @@ If the list stays empty, the log says so after 60 s. Check F1/F2 → A/B (swap A
 
 Turn on the **NASA Sniffer** switch (diagnostic, off after reboot). Every value change is then logged as `10.00.00 8238: 0 -> 30` (tag `f1f2_sniff`, level INFO). At level DEBUG (`logger: logs: f1f2_sniff: DEBUG`) every frame is logged too, with the device time and the silence before it, e.g. `RX t=123456 gap=12 skip=5 [xxxxxxxxxx] dt=3 10.00.00 > B0.00.FF NOTIFY #42 ... | 3200...34` (`skip` = bytes seen between frames, their hex in brackets, `dt` = ms from the last of them to the frame) (also `BAD` frames with a wrong CRC and our own `TX` frames); while the sniffer is on, the main loop runs at full speed so the times are accurate to about 1 ms. The last frame and change are shown in two text sensors. This is the easiest way to contribute decodings: capture a log during a defrost, a DHW run or frost, then open an issue.
 
+### Discovery (decoding RAW PDUs)
+
+The **Discovery (context change log)** switch is the sniffer with a twist: every change line also carries a snapshot of the reference signals at that moment — `… 840F: 0 -> 1 | comp=30 drv=2 mode=4 defr=0 night=286 3w=0 tout=50` (compressor Hz, outdoor driving mode, indoor mode, defrost, night request, three-way valve, outdoor temp). Capture a Discovery log over a day that covers heating, DHW, night mode and a defrost, then run [`tools/sniffer_correlate.py`](tools/sniffer_correlate.py) over it: for every PDU it reports which reference signal the value tracks best (Pearson |r|), so an undecoded PDU like `0x840F` can be guessed as "tracks the compressor running". `python tools/sniffer_correlate.py log.txt --pdu 840F` gives the full breakdown for one PDU.
+
 ## Control (optional, read+write)
 
 > **Read this first.** On a Magis the Immergas controller owns the loop: in testing almost every write was overridden or rejected. Two levers do work, and one read-only status is useful. The honest, per-register results are in [FINDINGS.md](FINDINGS.md) and [FSV_MAP.md](FSV_MAP.md). This is a research tool for your own unit, at your own risk — not a general control solution.

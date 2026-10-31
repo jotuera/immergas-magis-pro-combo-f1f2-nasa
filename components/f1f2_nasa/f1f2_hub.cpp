@@ -216,7 +216,7 @@ void NasaHub::handle_packet_(const Packet &p) {
 
   this->note_device_(p.src);
 
-  if (this->sniffer_)
+  if (this->sniffer_ || this->discovery_)
     this->sniff_(p);
 
   // Reply to our pending request?
@@ -264,7 +264,18 @@ void NasaHub::sniff_(const Packet &p) {
                unsigned(m.value));
     }
     this->sniff_last_[key] = m.value;
-    ESP_LOGI("f1f2_sniff", "%s", b);
+    if (this->discovery_) {
+      // append a snapshot of the reference signals so the change can be correlated at a glance
+      // (parsed by tools/sniffer_correlate.py). -1 = that reference not seen yet.
+      auto ref = [this](uint16_t id) -> long {
+        auto it = this->last_value_.find(id);
+        return it == this->last_value_.end() ? -1L : static_cast<long>(it->second);
+      };
+      ESP_LOGI("f1f2_sniff", "%s | comp=%ld drv=%ld mode=%ld defr=%ld night=%ld 3w=%ld tout=%ld", b,
+               ref(0x8238), ref(0x8001), ref(0x4001), ref(0x402E), ref(0x428D), ref(0x4067), ref(0x8204));
+    } else {
+      ESP_LOGI("f1f2_sniff", "%s", b);
+    }
 #ifdef USE_TEXT_SENSOR
     if (this->last_change_text_ != nullptr)
       this->last_change_text_->publish_state(b);

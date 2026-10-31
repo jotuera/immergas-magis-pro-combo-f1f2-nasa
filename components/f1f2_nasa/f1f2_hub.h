@@ -109,6 +109,11 @@ class NasaHub : public Component, public uart::UARTDevice {
       this->high_freq_.stop();
   }
   bool is_sniffer_enabled() const { return this->sniffer_; }
+  // Discovery: like the sniffer value-change log, but every change line also carries a snapshot of the key
+  // reference signals (compressor Hz, modes, defrost, night, 3-way valve, outdoor temp) so an unknown PDU's
+  // change can be correlated at a glance. Pair with the tools/sniffer_correlate.py analyser.
+  void set_discovery_enabled(bool on) { this->discovery_ = on; }
+  bool is_discovery_enabled() const { return this->discovery_; }
   uint32_t get_republish_interval() const { return this->republish_interval_; }
 
   // --- bus access gates (layered safety) ---
@@ -183,6 +188,7 @@ class NasaHub : public Component, public uart::UARTDevice {
   uint32_t republish_interval_{60 * 1000};
   GPIOPin *flow_control_pin_{nullptr};
   bool sniffer_{false};
+  bool discovery_{false};
 
   std::map<uint16_t, std::vector<NasaListener *>> listeners_;
   std::vector<uint16_t> poll_ids_;

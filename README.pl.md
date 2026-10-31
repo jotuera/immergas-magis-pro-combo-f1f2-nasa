@@ -109,6 +109,10 @@ Jeśli lista zostaje pusta, log mówi o tym po 60 s. Sprawdź podłączenie F1/F
 
 Włącz przełącznik **Sniffer NASA** (diagnostyczny, po restarcie wyłączony). Każda zmiana wartości jest wtedy logowana jako `10.00.00 8238: 0 -> 30` (tag `f1f2_sniff`, poziom INFO), każda cała ramka na poziomie DEBUG (`logger: logs: f1f2_sniff: DEBUG`) razem z czasem z urządzenia i ciszą przed nią (`RX t=… gap=… skip=…`, także ramki `BAD` z błędnym CRC i nasze `TX`; dokładność ok. 1 ms), a ostatnia ramka i zmiana pojawiają się w dwóch sensorach tekstowych. To najprostszy sposób, żeby pomóc w dekodowaniu: nagraj log podczas odszraniania, grzania CWU albo mrozu i załóż issue.
 
+### Discovery (dekodowanie RAW PDU)
+
+Przełącznik **Discovery (log zmian z kontekstem)** to sniffer z dodatkiem: każda linia zmiany niesie też migawkę sygnałów referencyjnych z tej chwili — `… 840F: 0 -> 1 | comp=30 drv=2 mode=4 defr=0 night=286 3w=0 tout=50` (Hz sprężarki, tryb pracy ODU, tryb jednostki wewnętrznej, odszranianie, żądanie nocne, zawór trójdrożny, temp. zewn.). Nagraj log Discovery przez dobę obejmującą grzanie, CWU, tryb nocny i odszranianie, a potem puść na nim [`tools/sniffer_correlate.py`](tools/sniffer_correlate.py): dla każdego PDU pokaże, z którym sygnałem referencyjnym jego wartość koreluje najlepiej (Pearson |r|), więc nieznane PDU jak `0x840F` można zgadnąć jako „podąża za pracą sprężarki". `python tools/sniffer_correlate.py log.txt --pdu 840F` daje pełny rozkład dla jednego PDU.
+
 ## Sterowanie (opcjonalne, read+write)
 
 > **Przeczytaj najpierw.** Na Magisie pętlę trzyma Immergas: w testach prawie każdy zapis był nadpisany lub odrzucony. Działają dwie dźwignie i jeden status tylko do odczytu. Uczciwe wyniki per rejestr są w [FINDINGS.pl.md](FINDINGS.pl.md) i [FSV_MAP.pl.md](FSV_MAP.pl.md). To narzędzie badawcze do własnej jednostki, na własną odpowiedzialność — nie ogólne rozwiązanie sterujące.
